@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Aurana's big dick simulator RTFM</title>
+  <meta name="author" content="">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+  <h1>Notes</h1>
+  <ul>
+    <li>
+      The weapon skill mechanics are implemented assuming the information in <a href="https://github.com/magey/classic-warrior/wiki/">this source</a> is correct.
+    </li>
+    <li>
+      All weapon damage is averaged, there is no point in wasting time RNGing it.
+    </li>
+    <li>
+      Things that are working so far:
+      <ul>
+        <li>
+          Basic setup wih UI, Web Worker and main loop
+        </li>
+        <li>
+          Combat mechanics, including target level, weapon skill etc.
+        </li>
+        <li>
+          Raw damage calculations and Flurry
+        </li>
+        <li>
+          Basic rage mechanics (need to double check the numbers)
+        </li>
+        <li>
+          Basic logging and results
+        </li>
+      </ul>
+    </li>
+    <li>
+      Lots of things are still missing. In particular:
+      <ul>
+        <li>
+          Custom talent spec, Anger Management, Unbridled Wrath, Deep Wounds (Impale is in)
+        </li>
+        <li>
+          Custom rotation, Hamstring spam etc.
+        </li>
+        <li>
+          Character and target level selection
+        </li>
+        <li>
+          Two-hand weapons and daggers
+        </li>
+        <li>
+          Armor and armor reduction (Bonereaver's Edge)
+        </li>
+        <li>
+          Heroic Strike and the <a href="https://github.com/SunwellTracker/issues/issues/2170">heroic strike bug</a> (Also HS rank IX from Dire Maul)
+        </li>
+        <li>
+          Procs (Crusader, Windfury and Hand of Justice in particular)
+        </li>
+        <li>
+          ...
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h1>FAQ</h1>
+    <p>
+      Q: What is this?
+      <br>A: A Classic WoW Fury warrior DPS simulator.
+    </p>
+    <p>
+      Q: What do I do with it?
+      <br>A: Simulate your DPS. (I may at some point add EP calculations.)
+    </p>
+    <p>
+      Q: How do I use it?
+      <br>A: Enter the stats of your character, hit 'Simulate' and wait for results.
+    </p>
+    <p>
+      Q: Why did you write it?
+      <br>A: I wanted to know how much offhand speed affects Flurry uptime and DPS. (It does, but not a lot.)
+    </p>
+    <p>
+      Q: Are you sure it's implemented correctly?
+      <br>A: Not really. Maybe. It's classified.
+    </p>
+    <p>
+      Q: How can I see the code?
+      <br>A: The JS isn't obfuscated, just look at it in your browser's dev tools.
+    </p>
+    <p>
+      Q: Your code sucks!
+      <br>A: Your mom sucks. Look, I wrote this in like two afternoons ok?
+    </p>
+    <p>
+      Q: I have questions or suggestions. Can I contact you?
+      <br>A: No. But if you post on <a href="https://discord.gg/HxQeTQF">Warrior Classic Discord</a> I might read your post.
+    </p>
+    <p>
+      Q: Has anyone actually asked you any of these questions?
+      <br>No.
+    </p>
+</body>
+
+</html>

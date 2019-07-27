@@ -1,0 +1,43 @@
+body {
+  font-family: 'Roboto';
+}
+
+span {
+  margin: 0 4px 0 4px;
+}
+
+.stat {
+  display: inline-block;
+  min-width: 110px;
+}
+
+.log {
+  font-size: 12px;
+}
+
+input[type=number] {
+  /*background: #f0f0f0;*/
+  border: 1px #fff solid;
+  border-bottom: 1px #ddd solid;
+  display: inline-block;
+  width: 40px;
+  text-align: right;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+#hs_rage,
+#hs_bt_cd,
+#hs_ww_cd {
+  text-align: left;
+  width: 24px;
+}
+
+#duration {
+  text-align: left;
+  width: 30px;
+}

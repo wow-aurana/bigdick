@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Aurana's big dick simulator</title>
+  <meta name="author" content="">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <p>Read <a href="rtfm.html">RTFM<a>. Enter your character's stats...</p>
+  <span class="stat">AP:</span><input type="number" id="ap" min="0" max="5000" value="1200"><br>
+  <span class="stat">Crit %:</span><input type="number" id="crit" min="0" max="100" step="0.01" value="31.5"><br>
+  <span class="stat">Hit % on gear:</span><input type="number" id="hit" min="0" max="100" value="10"><br>
+
+  <span class="stat">Mainhand min:</span><input type="number" id="main_min" min="0" max="1000" value="81">
+  <span>max:</span><input type="number" id="main_max" min="0" max="1000" value="151">
+  <span>speed:</span><input type="number" id="main_speed" min="1" max="4" step="0.01" value="2.8">
+  <span>skill:</span><input type="number" id="main_skill" min="300" max="310" value="300"><br>
+
+  <span class="stat">Offhand min:</span><input type="number" id="off_min" min="0" max="1000" value="52">
+  <span>max:</span><input type="number" id="off_max" min="0" max="1000" value="97">
+  <span>speed:</span><input type="number" id="off_speed" min="1" max="4" step="0.01" value="1.8">
+  <span>skill:</span><input type="number" id="off_skill" min="300" max="310" value="300">
+  <br><br>
+
+  <span class="stat">Heroic Strike when rage > </span><input type="number" id="hs_rage" min="12" max="100" value="40">
+  <span>Bloodthirst CD > </span><input type="number" id="hs_bt_cd" min="0" max="6" step="0.01" value="2">
+  <span>Whirlwind CD > </span><input type="number" id="hs_ww_cd" min="0" max="10" step="0.01" value="3">
+  <br><br>
+
+  <span class="stat">Sim duration (seconds):</span><input style="width: 200px" type="number" id="duration" min="1000" value="10000000"><br><br>
+
+  <span>...then push button: </span><input type="submit" id="submit" value="Simulate">
+ 
+ <p>Results:</p>
+ <p id="output"></p>
+
+  <script src="js/dom.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
