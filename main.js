@@ -13,7 +13,7 @@ const offhand = new Checkbox('off', (e) => {
 const submit = new Submit(() => {
   const config = {
     char: {
-      level: 60,
+      level: getInputNumber('charlvl'),
       stats: {
         ap: getInputNumber('ap'),
         crit: getInputNumber('crit'),
@@ -34,7 +34,7 @@ const submit = new Submit(() => {
       },
     },
     target: {
-      level: 63,
+      level: getInputNumber('targetlvl'),
       armor: 4000,
     },
     duration: getInputNumber('duration'),

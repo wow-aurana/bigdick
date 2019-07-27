@@ -25,7 +25,6 @@ input[type=number] {
   border-bottom: 1px #ddd solid;
   display: inline-block;
   width: 40px;
-  text-align: right;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
