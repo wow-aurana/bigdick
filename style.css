@@ -15,6 +15,10 @@ span {
   font-size: 12px;
 }
 
+.log:first-of-type {
+  font-size: 18px;
+}
+
 input[type=number] {
   -moz-appearance: textfield;
   border: 1px #fff solid;

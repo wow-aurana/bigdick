@@ -30,20 +30,29 @@ function runSimulation(cfg) {
     char.advanceTime(nextEventTimer);
     nextEvent.swing();
     char.main.applyFlurry();
-    char.off && char.off.applyFlurry();
+    if (char.off) char.off.applyFlurry();
     char.heroicQueued |= char.shouldHeroicStrike();
   }
 
   let result = [];
   const dmgSources = [char.heroic].concat(char.swings);
   const dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
+  let whiteDmg = char.main.log.dmg;
+  if (char.off) whiteDmg += char.off.log.dmg; 
   result.push('DPS: ' + (dmg / duration).toFixed(1));
+  result.push('White damage: ' + (whiteDmg * 100 / dmg).toFixed(1) + '%'
+             +', Bloodthirst: '
+             + (char.bloodthirst.log.dmg * 100 / dmg).toFixed(1) + '%'
+             +', Whirlwind: '
+             + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%'
+             +', Heroic Strike: '
+             + (char.heroic.log.dmg * 100 / dmg).toFixed(1) + '%');
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
              + (duration / (char.main.log.swings
                             + char.heroic.log.swings)).toFixed(3));
-  char.off && result.push('Offhand average swing time: '
+  if (char.off) result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Bloodthirsts: '
              + (duration / char.bloodthirst.log.swings).toFixed(3) + 's');
@@ -61,7 +70,7 @@ function runSimulation(cfg) {
              + (char.main.crusader.count / (duration / 60)).toFixed(2)
              + ', uptime: '
              + (char.main.crusader.uptime * 100 / duration).toFixed(1) + '%');
-  char.off && char.off.crusader && result.push('Offhand crusader procs: '
+  if (char.off) char.off.crusader && result.push('Offhand crusader procs: '
              + char.off.crusader.count
              + ', effective ppm: '
              + (char.off.crusader.count / (duration / 60)).toFixed(2)
