@@ -74,13 +74,29 @@ class Cooldown {
     this.name = name;
   }
   
+  running() { return this.timer > 0; }
+  tick(seconds) { this.timer -= seconds; }
+
   use() {
     console.assert(this.timer <= 0,
         'Trying use ' + this.name + ' before it is ready');
     this.timer = this.duration;
   }
+}
 
-  tick(seconds) {
-    this.timer -= seconds;
+class Aura {
+  constructor(duration, name = 'cooldown') {
+    this.duration = duration;
+    this.name = name;
+    this.timer = 0;
+    this.count = 0;
+    this.uptime = 0;
   }
+  
+  running() { return this.timer > 0; }
+  tick(seconds) {
+    this.uptime += m.min(seconds, this.timer);
+    this.timer = m.max(0, this.timer - seconds);
+  }
+  gain() { this.timer = this.duration; this.count += 1; }
 }

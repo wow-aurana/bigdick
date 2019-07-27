@@ -36,10 +36,6 @@ function runSimulation(cfg) {
 
   let result = [];
   const dmgSources = [char.heroic].concat(char.swings);
-  dmgSources.forEach((s) => {
-    result.push(s.log.string());
-  });
-
   const dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
   result.push('DPS: ' + (dmg / duration).toFixed(1));
   result.push('Flurry uptime: '
@@ -48,17 +44,32 @@ function runSimulation(cfg) {
              + (duration / (char.main.log.swings
                             + char.heroic.log.swings)).toFixed(3));
   char.off && result.push('Offhand average swing time: '
-             + (duration / char.off.log.swings).toFixed(3));
+             + (duration / char.off.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Bloodthirsts: '
-             + (duration / char.bloodthirst.log.swings).toFixed(3));
+             + (duration / char.bloodthirst.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Whirlwinds: '
-             + (duration / char.whirlwind.log.swings).toFixed(3));
+             + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Heroic Strikes: '
-             + (duration / char.heroic.log.swings).toFixed(3));
+             + (duration / char.heroic.log.swings).toFixed(3) + 's');
   result.push('Avg. rage gain per white hit: '
              + (char.rage.gained / char.rage.count).toFixed(2)
              + ', per second: '
              + (char.rage.gained / duration).toFixed(3));
+  char.main.crusader && result.push('Mainhand crusader procs: '
+             + char.main.crusader.count
+             + ', effective ppm: '
+             + (char.main.crusader.count / (duration / 60)).toFixed(2)
+             + ', uptime: '
+             + (char.main.crusader.uptime * 100 / duration).toFixed(1) + '%');
+  char.off && char.off.crusader && result.push('Offhand crusader procs: '
+             + char.off.crusader.count
+             + ', effective ppm: '
+             + (char.off.crusader.count / (duration / 60)).toFixed(2)
+             + ', uptime: '
+             + (char.off.crusader.uptime * 100 / duration).toFixed(1) + '%');
+  for (const source of dmgSources) {
+    result.push(source.log.string());
+  }
 
   postMessage(result);
 }

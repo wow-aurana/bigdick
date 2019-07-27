@@ -10,6 +10,12 @@ class Weapon {
     this.isMainhand = true;
     this.flurried = false;
     this.table = {};
+    this.crusader = stats.crusader ? new Aura(15, 'Crusader') : null;
+  }
+
+  tick(seconds) {
+    this.cooldown.tick(seconds);
+    if (this.crusader) this.crusader.tick(seconds);
   }
 
   // TODO armor
@@ -69,6 +75,13 @@ class Weapon {
     }
   }
   
+  proc() {
+    if (this.crusader) {
+      const roll = m.random() * 60;
+      if (roll < this.stats.speed) this.crusader.gain();
+    }
+  }
+
   swing() {
     this.char.flurry.useCharge();
     this.cooldown.use();
@@ -84,7 +97,6 @@ class Weapon {
 
     this.log.swings += 1;
     const rageBar = this.char.rage;
-    const baseDmg = this.getDmg();
 
     let roll = m.random() * 100;
     // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
@@ -99,21 +111,25 @@ class Weapon {
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
-      const dmg = baseDmg * this.glanceMul;
+      this.proc();
+      const dmg = this.getDmg() * this.glanceMul;
       this.log.dmg += dmg;
       rageBar.gain(rageBar.toRage(dmg));
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
-      const dmg = baseDmg * 2;
+      this.proc();
+      const dmg = this.getDmg() * 2;
       this.log.dmg += dmg;
       rageBar.gain(rageBar.toRage(dmg));
       this.char.flurry.refresh();
 
     } else {  // hit
       this.log.hits += 1;
-      this.log.dmg += baseDmg;
-      rageBar.gain(rageBar.toRage(baseDmg));
+      this.proc();
+      const dmg = this.getDmg();
+      this.log.dmg += dmg;
+      rageBar.gain(rageBar.toRage(dmg));
     }
   }
 }

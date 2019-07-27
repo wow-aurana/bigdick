@@ -29,11 +29,17 @@ class Character {
       this.gcd,
       this.flurry,
     ];
-    if (this.off) this.cooldowns.unshift(this.off.cooldown);
-    this.cooldowns.unshift(this.main.cooldown);
+    if (this.off) this.cooldowns.unshift(this.off);
+    this.cooldowns.unshift(this.main);
   }
 
-  getAp() { return this.stats.ap; }
+  getAp() {
+    let ap = this.stats.ap;
+    // TODO no kings
+    if (this.main.crusader && this.main.crusader.running()) ap += 220;
+    if (this.off && this.off.crusader && this.off.crusader.running()) ap += 220;
+    return ap;
+  }
 
   setTarget(target) {
     for (const swing of this.swings) {

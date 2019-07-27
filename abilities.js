@@ -64,11 +64,13 @@ class Ability {
 
     } else if (secondRoll < this.table.crit) {
       this.log.crits += 1;
+      this.char.main.proc();
       this.log.dmg += this.getDmg() * 2.2;
       this.char.flurry.refresh();
 
     } else {  // hit
       this.log.hits += 1;
+      this.char.main.proc();
       this.log.dmg += this.getDmg();
     }
   }
