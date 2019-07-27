@@ -6,8 +6,9 @@ class Character {
     this.rage = new Rage(char.level);
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.main, 'Mainhand');
-    this.off = new Weapon(this, char.off, 'Offhand');
-    this.off.isMainhand = false;
+    this.off = char.off ? new Weapon(this, char.off, 'Offhand') : null;
+    if (this.off) this.off.isMainhand = false;
+    this.wpnspec = char.stats.twohand ? 1.03 : 1;
 
     // Abilites use char.mainhand
     this.bloodthirst = new Bloodthirst(this);
@@ -18,7 +19,18 @@ class Character {
     this.heroicQueued = false;
     this.heroicWhen = char.hswhen;
 
-    this.swings = [this.main, this.off, this.bloodthirst, this.whirlwind];
+    this.swings = [this.bloodthirst, this.whirlwind];
+    if (this.off) this.swings.unshift(this.off);
+    this.swings.unshift(this.main);
+
+    this.cooldowns = [
+      this.bloodthirst.cooldown,
+      this.whirlwind.cooldown,
+      this.gcd,
+      this.flurry,
+    ];
+    if (this.off) this.cooldowns.unshift(this.off.cooldown);
+    this.cooldowns.unshift(this.main.cooldown);
   }
 
   getAp() { return this.stats.ap; }
@@ -44,11 +56,7 @@ class Character {
   }
 
   advanceTime(seconds) {
-    for (const e of [this.main, this.off]) {
-      console.assert(e.cooldown.timer >= seconds, 'Tried to reduce attack cooldown below 0.');
-      e.cooldown.tick(seconds);
-    }
-    for (const e of [this.bloodthirst.cooldown, this.whirlwind.cooldown, this.gcd, this.flurry]) {
+    for (const e of this.cooldowns) {
       e.tick(seconds);
     }
   }

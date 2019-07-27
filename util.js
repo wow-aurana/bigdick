@@ -1,5 +1,6 @@
 const m = Math;
-const clamp = (min, max) => (value) => value < min ? min : value > max ? max : value;
+const clamp =
+    (min, max) => (value) => value < min ? min : value > max ? max : value;
 
 class SwingLog {
   constructor(name) {
@@ -74,7 +75,8 @@ class Cooldown {
   }
   
   use() {
-    console.assert(this.timer <= 0, 'Trying use ' + this.name + ' before it is ready');
+    console.assert(this.timer <= 0,
+        'Trying use ' + this.name + ' before it is ready');
     this.timer = this.duration;
   }
 

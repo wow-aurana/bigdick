@@ -19,7 +19,7 @@ function runSimulation(cfg) {
 
   while (timer < duration) {
     const progress = Math.round(timer / duration * 100);
-    if (progress > reportedProgress ) {
+    if (progress > reportedProgress) {
       reportedProgress = progress;
       reportProgress(progress);
     }
@@ -30,7 +30,7 @@ function runSimulation(cfg) {
     char.advanceTime(nextEventTimer);
     nextEvent.swing();
     char.main.applyFlurry();
-    char.off.applyFlurry();
+    char.off && char.off.applyFlurry();
     char.heroicQueued |= char.shouldHeroicStrike();
   }
 
@@ -45,8 +45,9 @@ function runSimulation(cfg) {
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
-             + (duration / (char.main.log.swings + char.heroic.log.swings)).toFixed(3));
-  result.push('Offhand average swing time: '
+             + (duration / (char.main.log.swings
+                            + char.heroic.log.swings)).toFixed(3));
+  char.off && result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3));
   result.push('Avg. time between Bloodthirsts: '
              + (duration / char.bloodthirst.log.swings).toFixed(3));

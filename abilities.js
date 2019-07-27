@@ -25,8 +25,8 @@ class Ability {
     const skillDiff = targetDef - this.char.main.stats.skill;
 
     // miss
-    this.miss = 
-        clamp(0, 100)(5 + (skillDiff > 10 ? 1 : 0) + skillDiff * .1 - stats.hit);
+    this.miss = clamp(0, 100)(5 + (skillDiff > 10 ? 1 : 0)
+                              + skillDiff * .1 - stats.hit);
     
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
@@ -34,7 +34,8 @@ class Ability {
     // crit
     const baseSkillDiff = targetDef - baseSkill;
     const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
-    this.table.crit = clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
+    this.table.crit =
+        clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
     this.table.crit += this.table.dodge;
   }
 
@@ -79,7 +80,9 @@ class Bloodthirst extends Ability {
   }
 
   // TODO armor
-  getDmg() { return this.char.getAp() * .45; }
+  getDmg() {
+    return this.char.getAp() * .45 * this.char.wpnspec;
+  }
 }
 
 class Whirlwind extends Ability {
@@ -90,14 +93,17 @@ class Whirlwind extends Ability {
 
   // TODO armor
   getDmg() {
-    // TODO 2hand and daggers
-    return this.char.main.avgDmg + this.char.getAp() / 14 * 2.4;
+    // TODO dagger
+    const normalization = this.char.stats.twohand ? 3.4 : 2.4;
+    const dmg =
+        this.char.main.avgDmg + this.char.getAp() / 14 * normalization;  
+    return dmg * this.char.wpnspec;
   }
 }
 
 class HeroicStrike extends Ability {
   constructor(char) {
-    super(char, 12, 0, 'Heroic Strike');
+    super(char, 13, 0, 'Heroic Strike');
     // TODO confirm that HS does not refund rage on dodge/parry/miss
     this.refundRage = false;
     this.onGcd = false;
@@ -105,6 +111,6 @@ class HeroicStrike extends Ability {
 
   // TODO armor
   getDmg() {
-    return this.char.main.getDmg() + 138;
+    return this.char.main.getDmg() + 138 * this.char.wpnspec;
   }
 }

@@ -15,7 +15,7 @@ class Weapon {
   // TODO armor
   getDmg() {
     const dmg = (this.avgDmg + this.char.getAp() / 14 * this.stats.speed);
-    return dmg * (this.isMainhand ? 1 : .625);
+    return dmg * (this.isMainhand ? 1 : .625) * this.char.wpnspec;
   }
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
@@ -25,10 +25,12 @@ class Weapon {
     const targetDef = target.level * 5;
     const baseSkill = this.char.level * 5;
     const skillDiff = targetDef - this.stats.skill;
+    const penalty = this.char.off ? 19 : 0;
 
     // miss
     this.table.miss = 
-        clamp(0, 100)(19 + 5 + (skillDiff > 10 ? 1 : 0) + skillDiff * .1 - this.char.stats.hit);
+        clamp(0, 100)(penalty + 5 + (skillDiff > 10 ? 1 : 0)
+                     + skillDiff * .1 - this.char.stats.hit);
     
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
@@ -36,13 +38,15 @@ class Weapon {
 
     // glance
     this.glanceMul = clamp(.2, .95)(.65 + (15 - skillDiff) * .04);
-    this.table.glance = clamp(0, 100)(10 + (targetDef - m.min(baseSkill, this.stats.skill)) * 2); 
+    const glance = 10 + (targetDef - m.min(baseSkill, this.stats.skill)) * 2;
+    this.table.glance = clamp(0, 100)(glance); 
     this.table.glance += this.table.dodge;
 
     // crit
     const baseSkillDiff = targetDef - baseSkill;
     const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
-    this.table.crit = clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
+    this.table.crit =
+        clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
     this.table.crit += this.table.glance;
   }
 
