@@ -34,7 +34,7 @@ const submit = new Submit(() => {
     },
     duration: getInputNumber('duration'),
   }
-  const worker = new Worker('js/sim.js');
+  const worker = new Worker('sim.js');
   worker.onerror = function(e) {
     console.log('Worker error: ' + e);
   }
