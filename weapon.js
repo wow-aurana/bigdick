@@ -71,9 +71,11 @@ class Weapon {
     this.flurried = false;  // will be recalculated in main loop
 
     if (this.isMainhand && this.char.heroicQueued) {
-      this.char.heroic.swing();
       this.char.heroicQueued = false;
-      return;
+      if (this.char.heroic.canUse()) {
+        this.char.heroic.swing();
+        return;
+      }
     }
 
     this.log.swings += 1;

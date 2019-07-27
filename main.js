@@ -36,10 +36,12 @@ const submit = new Submit(() => {
   }
   const worker = new Worker('sim.js');
   worker.onerror = function(e) {
-    console.log('Worker error: ' + e);
+    console.log('Worker error:');
+    console.log(e);
   }
   worker.onmessageerror = function(e) {
-    console.log('Worker error: ' + e);
+    console.log('Worker error:');
+    console.log(e);
   }
   worker.onmessage = function(e) {
     output.clear();

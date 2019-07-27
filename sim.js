@@ -31,7 +31,7 @@ function runSimulation(cfg) {
     nextEvent.swing();
     char.main.applyFlurry();
     char.off.applyFlurry();
-    char.heroicQueued = char.shouldHeroicStrike();
+    char.heroicQueued |= char.shouldHeroicStrike();
   }
 
   let result = [];
