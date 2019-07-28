@@ -73,6 +73,9 @@ const submit = new Submit(() => {
     for (const e of result) {
       output.print(e);
     }
+    if (result.length > 1 && getChecked('ping')) {
+      new Audio('https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3').play();
+    }
   };
   worker.postMessage(config);
 });

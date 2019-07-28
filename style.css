@@ -3,13 +3,14 @@ body {
 }
 
 span {
-  margin: 0 4px 0 4px;
+  margin: 0 4px 0 0;
   display: inline-block;
+  font-size: 16px;
+  margin-bottom: 3px;
 }
 
 .stat {
   min-width: 110px;
-  margin-bottom: 3px;
 }
 
 .log {
@@ -21,15 +22,17 @@ span {
 }
 
 input {
-  border: 1px #f4f4f4 solid;
-  /*border-bottom: 1px #ddd solid;*/
+  border: 1px #fff solid;
   display: inline-block;
+  color: #358;
+  font-family: 'Roboto';
+  font-size: 15px;
 }
 
 input[type=number] {
   -moz-appearance: textfield;
-  width: 40px;
-  text-align: right;
+  text-align: left;
+  width: 26px;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -38,14 +41,16 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0; 
 }
 
-#hs_rage,
-#hs_bt_cd,
-#hs_ww_cd {
-  text-align: left;
-  width: 24px;
+#targetlvl,
+#charlvl,
+#hit,
+#crit,
+#ap {
+  width: 40px;
+  text-align: right;
+
 }
 
 #duration {
-  text-align: left;
-  width: 30px;
+  width: 140px;
 }

@@ -21,12 +21,12 @@
   <br>
   <span class="stat">AP:</span><input type="number" id="ap" min="0" max="5000" value="1200">
   <br>
-  <span class="stat">Hit % on gear:</span><input type="number" id="hit" min="0" max="100" value="10">
+  <span class="stat">Hit on gear:</span><input type="number" id="hit" min="0" max="100" value="10"><span>%</span>
   <br>
-  <span class="stat">Crit %:</span><input type="number" id="crit" min="0" max="100" step="0.01" value="31.5"><span style="font-size: 14px">(in Berserker Stance)</span>
+  <span class="stat">Crit:</span><input type="number" id="crit" min="0" max="100" step="0.01" value="31.5"><span>% in Berserker Stance</span>
   <br>
   <br>
-  <span class="stat">Talent spec:</span><input style="width: 500px" id="talents" value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
+  <span class="stat">Talent spec:</span><input style="width: 600px" id="talents" value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
   <br>
   <br>
   <input type="checkbox" id="main" checked disabled>
@@ -44,7 +44,8 @@
   <span>skill:</span><input type="number" id="off_skill" min="300" max="310" value="300">
   <input type="checkbox" id="off_crusader" checked><span>Crusader </span>
   <br>
-  <input type="checkbox" id="hoj" checked><span class="stat">Hand of Justice </span>
+  <input type="checkbox" id="hoj" checked>
+  <span class="stat">Hand of Justice </span>
   <br>
   <br>
   <span class="stat">Heroic Strike when rage > </span><input type="number" id="hs_rage" min="13" max="100" value="40">
@@ -52,10 +53,9 @@
   <span>and Whirlwind CD > </span><input type="number" id="hs_ww_cd" min="0" max="10" step="0.01" value="3">
   <br>
   <br>
-  <span class="stat">Sim duration (seconds):</span><input style="width: 200px" type="number" id="duration" min="10" value="10000000">
-  <br>
-  <br>
-  <span>...then push button: </span><input type="submit" id="submit" value="Simulate">
+  <span class="stat">Sim duration (seconds):</span><input type="number" id="duration" min="10" value="10000000"> <input type="checkbox" id="ping"><span class="stat">ping when ready</span>
+  
+  <p>...then push button: <input type="submit" id="submit" value="Simulate"></p>
  
   <p>Results:</p>
   <p id="output"></p>
