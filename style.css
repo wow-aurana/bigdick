@@ -21,13 +21,13 @@ span {
 }
 
 input {
-  -moz-appearance: textfield;
   border: 1px #f4f4f4 solid;
   /*border-bottom: 1px #ddd solid;*/
   display: inline-block;
 }
 
 input[type=number] {
+  -moz-appearance: textfield;
   width: 40px;
   text-align: right;
 }
