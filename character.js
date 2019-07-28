@@ -13,12 +13,12 @@ class Character {
     this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
     this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
 
+    // Weapons, procs etc.
+    this.handOfJustice = char.hoj;
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.main, 'Mainhand');
     this.off = char.off ? new Weapon(this, char.off, 'Offhand') : null;
     if (this.off) this.off.isMainhand = false;
-    
-
 
     // Abilites use char.mainhand
     this.bloodthirst = new Bloodthirst(this);
@@ -45,9 +45,9 @@ class Character {
 
   getAp() {
     let ap = this.stats.ap;
-    // TODO no kings
-    if (this.main.crusader && this.main.crusader.running()) ap += 220;
-    if (this.off && this.off.crusader && this.off.crusader.running()) ap += 220;
+    // TODO Blessing of Kings
+    if (this.main.crusader && this.main.crusader.running()) ap += 200;
+    if (this.off && this.off.crusader && this.off.crusader.running()) ap += 200;
     return ap;
   }
 
@@ -62,6 +62,13 @@ class Character {
     return this.heroicWhen.rage < this.rage.current 
         && this.heroicWhen.btcd < this.bloodthirst.getCooldown()
         && this.heroicWhen.wwcd < this.whirlwind.getCooldown();
+  }
+
+  procHoJ() {
+    if (this.handOfJustice && m.random() <= .02) {
+      this.main.cooldown.reset();
+      this.main.swing(true);
+    }
   }
 
   getNextEvent() {

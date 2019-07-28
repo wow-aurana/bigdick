@@ -4,11 +4,12 @@ body {
 
 span {
   margin: 0 4px 0 4px;
+  display: inline-block;
 }
 
 .stat {
-  display: inline-block;
   min-width: 110px;
+  margin-bottom: 3px;
 }
 
 .log {
@@ -21,13 +22,14 @@ span {
 
 input {
   -moz-appearance: textfield;
-  border: 1px #fff solid;
-  border-bottom: 1px #ddd solid;
+  border: 1px #f4f4f4 solid;
+  /*border-bottom: 1px #ddd solid;*/
   display: inline-block;
 }
 
 input[type=number] {
   width: 40px;
+  text-align: right;
 }
 
 input[type=number]::-webkit-inner-spin-button, 

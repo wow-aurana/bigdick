@@ -24,6 +24,7 @@ const submit = new Submit(() => {
       level: getInputNumber('charlvl'),
       talents: talentUrl,
       twohand: getChecked('2hand'),
+      hoj: getChecked('hoj'),
       stats: {
         ap: getInputNumber('ap'),
         crit: getInputNumber('crit'),

@@ -78,14 +78,15 @@ class Weapon {
     }
   }
   
-  proc() {
+  proc(extraSwing) {
     if (this.crusader) {
       const roll = m.random() * 60;
       if (roll < this.stats.speed) this.crusader.gain();
     }
+    if (!extraSwing) this.char.procHoJ();
   }
 
-  swing() {
+  swing(extraSwing = false) {
     this.char.flurry.useCharge();
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
@@ -114,14 +115,14 @@ class Weapon {
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
-      this.proc();
+      this.proc(extraSwing);
       const dmg = this.getDmg() * this.glanceMul;
       this.log.dmg += dmg;
       rageBar.gain(rageBar.toRage(dmg));
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
-      this.proc();
+      this.proc(extraSwing);
       const dmg = this.getDmg() * 2;
       this.log.dmg += dmg;
       rageBar.gain(rageBar.toRage(dmg));
@@ -129,7 +130,7 @@ class Weapon {
 
     } else {  // hit
       this.log.hits += 1;
-      this.proc();
+      this.proc(extraSwing);
       const dmg = this.getDmg();
       this.log.dmg += dmg;
       rageBar.gain(rageBar.toRage(dmg));

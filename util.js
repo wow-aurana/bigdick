@@ -82,6 +82,8 @@ class Cooldown {
         'Trying use ' + this.name + ' before it is ready');
     this.timer = this.duration;
   }
+
+  reset() { this.timer = 0; }
 }
 
 class Aura {
