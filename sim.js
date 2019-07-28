@@ -26,7 +26,8 @@ function runSimulation(cfg) {
     }
 
     const nextEvent = char.getNextEvent();
-    nextEventTimer = nextEvent.getCooldown(); 
+    nextEventTimer = nextEvent.timeUntil();
+    console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
     timer += nextEventTimer;
     char.advanceTime(nextEventTimer);
 
@@ -37,30 +38,34 @@ function runSimulation(cfg) {
   }
 
   let result = [];
-  const dmgSources = [char.heroic].concat(char.swings);
+  const dmgSources = [...char.autos].concat(char.abilities);
+  if (char.heroic) dmgSources.push(char.heroic);
   const dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
   let whiteDmg = char.main.log.dmg;
   if (char.off) whiteDmg += char.off.log.dmg; 
   result.push('DPS: ' + (dmg / duration).toFixed(1));
   result.push('White damage: ' + (whiteDmg * 100 / dmg).toFixed(1) + '%'
-             +', Bloodthirst: '
+             + ', Bloodthirst: '
              + (char.bloodthirst.log.dmg * 100 / dmg).toFixed(1) + '%'
-             +', Whirlwind: '
-             + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%'
-             +', Heroic Strike: '
+             + ', Whirlwind: '
+             + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%');
+  if (char.heroic) result[result.length - 1]
+             += (', Heroic Strike: '
              + (char.heroic.log.dmg * 100 / dmg).toFixed(1) + '%');
+  if (char.slam) result[result.length - 1]
+             += (', Slam: '
+             + (char.slam.log.dmg * 100 / dmg).toFixed(1) + '%');
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
-             + (duration / (char.main.log.swings
-                            + char.heroic.log.swings)).toFixed(3));
+             + (duration / (char.main.log.swings)).toFixed(3));
   if (char.off) result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Bloodthirsts: '
              + (duration / char.bloodthirst.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Whirlwinds: '
              + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
-  result.push('Avg. time between Heroic Strikes: '
+  if (char.heroic) result.push('Avg. time between Heroic Strikes: '
              + (duration / char.heroic.log.swings).toFixed(3) + 's');
   result.push('Avg. rage gain per white hit: '
              + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)

@@ -13,6 +13,12 @@ span {
   min-width: 110px;
 }
 
+.inactive,
+input:disabled {
+  background-color: rgba(0,0,0,0);
+  opacity: .7;
+}
+
 .log {
   font-size: 12px;
 }
@@ -45,6 +51,7 @@ input[type=number]::-webkit-outer-spin-button {
 #charlvl,
 #hit,
 #crit,
+#slam_delay,
 #ap {
   width: 40px;
   text-align: right;

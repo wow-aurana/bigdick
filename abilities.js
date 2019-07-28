@@ -12,6 +12,8 @@ class Ability {
     this.onGcd = true;
   }
 
+  tick(seconds) { this.cooldown.tick(seconds); }
+
   getDmg() {
     console.assert(false, 'Not implemented.');
     return 0;
@@ -40,14 +42,14 @@ class Ability {
 
   }
 
-  getCooldown() { return m.max(this.cooldown.timer, this.char.gcd.timer); }
+  timeUntil() {
+    return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil());
+  }
+  
   canUse() { return this.char.rage.has(this.cost); }
   
   swing() {
     this.log.swings += 1;
-
-    this.cooldown.use();
-    this.onGcd && this.char.gcd.use();
     this.char.rage.use(this.cost);
 
     // Yellow attacks are on a 2 roll system
@@ -74,7 +76,11 @@ class Ability {
     }
   }
 
-  handle() { this.swing(); }
+  handle() {
+    this.cooldown.use();
+    this.onGcd && this.char.gcd.use();
+    this.swing();
+  }
 }
 
 class Bloodthirst extends Ability {
@@ -82,9 +88,42 @@ class Bloodthirst extends Ability {
     super(char, 30, 6, 'Bloodthirst');
   }
 
-  // TODO armor
+  getDmg() { return this.char.getAp() * .45 * this.char.wpnspec; }
+}
+
+class Slam extends Ability {
+  constructor(char, slamWhen) {
+    super(char, 15, 0, 'Slam');
+    this.slamWhen = slamWhen;
+    this.casting = false;
+    this.opportunity = new Cooldown(this.slamWhen.delay / 1000, 'Slam now!');
+  }
+  tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
+
+  canUse() {
+    return !this.casting
+           && this.opportunity.running()
+           && this.char.rage.has(m.max(this.cost, this.slamWhen.rage));
+  }
+
   getDmg() {
-    return this.char.getAp() * .45 * this.char.wpnspec;
+    return this.char.main.getDmg() + 87 * this.char.wpnspec;
+  }
+
+  swing() {
+    console.assert(this.casting, 'Trying to swing slam when not casting');
+    this.casting = false;
+    super.swing();
+    for (const a of this.char.autos) {
+      a.cooldown.force();
+    }
+  }
+
+  handle() {
+    this.cooldown.use();
+    this.onGcd && this.char.gcd.use();
+    this.casting = true;
+    this.char.slamSwing.use();
   }
 }
 
@@ -94,7 +133,6 @@ class Whirlwind extends Ability {
     this.refundRage = false;
   }
 
-  // TODO armor
   getDmg() {
     // TODO dagger
     const normalization = this.char.stats.twohand ? 3.4 : 2.4;
@@ -112,7 +150,6 @@ class HeroicStrike extends Ability {
     this.onGcd = false;
   }
 
-  // TODO armor
   getDmg() {
     return this.char.main.getDmg() + 138 * this.char.wpnspec;
   }

@@ -84,7 +84,8 @@ class Cooldown {
   }
   
   running() { return this.timer > 0; }
-  tick(seconds) { this.timer -= seconds; }
+  timeUntil() { return this.timer; }
+  tick(seconds) { this.timer = m.max(this.timer - seconds, 0); }
 
   use() {
     console.assert(this.timer <= 0,
@@ -92,7 +93,18 @@ class Cooldown {
     this.timer = this.duration;
   }
 
+  force() { this.timer = this.duration; }
   reset() { this.timer = 0; }
+}
+
+class SlamSwing extends Cooldown {
+  constructor(slam, castTime) {
+    super(castTime, 'Slam swing');
+    this.slam = slam;
+  }
+
+  canUse() { return this.slam.casting; }
+  handle() { this.slam.swing(); }
 }
 
 class AngerManagement extends Cooldown {
@@ -102,9 +114,7 @@ class AngerManagement extends Cooldown {
   }
 
   canUse() { return true; }
-  getCooldown() { return this.timer; }
   handle() { this.use(); this.rage.gain(1); }
-
 }
 
 class Aura {

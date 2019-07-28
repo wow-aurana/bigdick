@@ -13,9 +13,19 @@ function getChecked(id) {
 }
 
 class Checkbox {
-  constructor(id, callback) {
+  constructor(id, toggleInputs, callback = null) {
     this.el = document.getElementById(id);
-    this.el.onclick = callback;
+    this.el.onclick = (ev) => {
+      const checked = ev.target.checked;
+      for (const id of toggleInputs) {
+        document.getElementById(id).disabled = !checked;
+      }
+      // same class as checkbox id
+      for (const el of document.getElementsByClassName(id)) {
+        el.classList.toggle('inactive', !checked);
+      }
+      callback && callback(ev);
+    }
   }
 
   checked() { return this.el.checked; }

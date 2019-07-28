@@ -18,7 +18,6 @@ class Weapon {
     if (this.crusader) this.crusader.tick(seconds);
   }
 
-  // TODO armor
   getDmg(extraAp = 0) {
     const dmg =
         this.avgDmg + (this.char.getAp() + extraAp) / 14 * this.stats.speed;
@@ -61,11 +60,11 @@ class Weapon {
     this.table.crit += this.table.glance;
   }
 
-  getCooldown() {
-    return this.cooldown.timer;
+  timeUntil() {
+    return this.cooldown.timeUntil();
   }
 
-  canUse() { return true; }
+  canUse() { return !(this.char.slam && this.char.slam.casting); }
 
   applyFlurry() {
     // This code assumes that the remaining swing time is recalculated
@@ -91,9 +90,11 @@ class Weapon {
   }
 
   swing(extraSwing = false, extraAp = 0) {
-    this.char.flurry.useCharge();
+    this.log.swings += 1;
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
+
+    if (this.isMainhand && this.char.slam) this.char.slam.opportunity.force();
 
     if (!extraSwing && this.isMainhand && this.char.heroicQueued) {
       this.char.heroicQueued = false;
@@ -102,8 +103,6 @@ class Weapon {
         return;
       }
     }
-
-    this.log.swings += 1;
 
     let roll = m.random() * 100;
     // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
@@ -143,5 +142,9 @@ class Weapon {
     }
   }
 
-  handle() { this.swing(); }
+  handle() {
+    // If swing procs use flurry charges, this belongs in swing() instead.
+    this.char.flurry.useCharge();
+    this.swing();
+  }
 }

@@ -14,13 +14,14 @@ class Character {
     this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
     this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
     this.extraRageChance = talents.unbridledWrath * .08;
+    this.slamCast = 1.5 - talents.improvedSlam * .1;
 
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
     this.windfuryTotem = char.wftotem;
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.main, 'Mainhand');
-    this.off = char.off ? new Weapon(this, char.off, 'Offhand') : null;
+    this.off = !char.off ? null : new Weapon(this, char.off, 'Offhand');
     if (this.off) this.off.isMainhand = false;
 
     // Abilites use char.mainhand
@@ -28,26 +29,27 @@ class Character {
     this.whirlwind = new Whirlwind(this);
 
     // Heroic Strike
-    this.heroic = new HeroicStrike(this);
+    this.heroicWhen = char.hswhen || null;
+    this.heroic = !this.heroicWhen ? null : new HeroicStrike(this);
     this.heroicQueued = false;
-    this.heroicWhen = char.hswhen;
 
-    this.swings = [this.bloodthirst, this.whirlwind];
-    if (this.off) this.swings.unshift(this.off);
-    this.swings.unshift(this.main);
+    // Slam
+    this.slam = !char.slamwhen ? null : new Slam(this, char.slamwhen);
+    this.slamSwing = !char.slamwhen ? null
+                                    : new SlamSwing(this.slam, this.slamCast);
 
-    this.events = [...this.swings];
+    // Setup
+    this.abilities = [this.bloodthirst, this.whirlwind];
+    if (this.slam) this.abilities.unshift(this.slam);
+
+    this.autos = [this.main];
+    if (this.off) this.autos.push(this.off);
+
+    this.events = [...this.abilities].concat(this.autos);
     if (this.anger) this.events.unshift(this.anger);
- 
-    this.cooldowns = [
-      this.bloodthirst.cooldown,
-      this.whirlwind.cooldown,
-      this.gcd,
-      this.flurry,
-    ];
-    if (this.anger) this.cooldowns.unshift(this.anger);
-    if (this.off) this.cooldowns.unshift(this.off);
-    this.cooldowns.unshift(this.main);
+    if (this.slam) this.events.unshift(this.slamSwing);
+
+    this.cooldowns = [...this.events].concat([this.gcd, this.flurry]);
   }
 
   getAp() {
@@ -59,16 +61,16 @@ class Character {
   }
 
   setTarget(target) {
-    for (const swing of this.swings) {
+    for (const swing of this.abilities.concat(this.autos)) {
       swing.setTarget(target);
     }
-    this.heroic.setTarget(target);
+    if (this.heroic) this.heroic.setTarget(target);
   }
 
   shouldHeroicStrike() {
-    return this.heroicWhen.rage < this.rage.current 
-        && this.heroicWhen.btcd < this.bloodthirst.getCooldown()
-        && this.heroicWhen.wwcd < this.whirlwind.getCooldown();
+    return this.heroicWhen && this.heroicWhen.rage < this.rage.current 
+        && this.heroicWhen.btcd < this.bloodthirst.timeUntil()
+        && this.heroicWhen.wwcd < this.whirlwind.timeUntil();
   }
 
   procHoJ() {
@@ -86,8 +88,10 @@ class Character {
   }
 
   getNextEvent() {
+    // if (this.slam && this.slam.casting)
+    //   debugger;
     const nextEvent = this.events.reduce((ret, e) => {
-      return (e.canUse() && e.getCooldown() < ret.getCooldown()) ? e : ret;
+      return (e.canUse() && e.timeUntil() < ret.timeUntil()) ? e : ret;
     }, this.main);
     return nextEvent;
   }

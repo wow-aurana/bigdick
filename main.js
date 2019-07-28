@@ -1,14 +1,17 @@
 
 const output = new Output();
 
-const offhand = new Checkbox('off', (e) => {
-  const checked = e.target.checked;
+const offhand =
+    new Checkbox(
+        'offhand',
+        ['off_min', 'off_max', 'off_speed', 'off_skill', 'off_crusader'],
+        (ev) => {
+          const checked = ev.target.checked;
+          document.getElementById('2hand').checked = !checked;
+        });
 
-  for (const id of ['off_min', 'off_max', 'off_speed', 'off_skill']) {
-    document.getElementById(id).disabled = !checked;
-  }
-  document.getElementById('2hand').checked = !checked;
-});
+const heroic = new Checkbox('hero', ['hs_rage', 'hs_bt_cd', 'hs_ww_cd']);
+const slam = new Checkbox('slam', ['slam_delay', 'slam_rage']);
 
 const submit = new Submit(() => {
   const talentSource = 'classic.wowhead.com/talent-calc/warrior/';
@@ -38,11 +41,6 @@ const submit = new Submit(() => {
         skill: getInputNumber('main_skill'),
         crusader: getChecked('main_crusader'),
       },
-      hswhen: {
-        rage: getInputNumber('hs_rage'),
-        btcd: getInputNumber('hs_bt_cd'),
-        wwcd: getInputNumber('hs_ww_cd'),
-      },
     },
     target: {
       level: getInputNumber('targetlvl'),
@@ -50,6 +48,7 @@ const submit = new Submit(() => {
     },
     duration: getInputNumber('duration'),
   }
+
   if (offhand.checked()) {
     config.char.off = {
       min: getInputNumber('off_min'),
@@ -59,6 +58,22 @@ const submit = new Submit(() => {
       crusader: getChecked('off_crusader'),
     };
   }
+
+  if (heroic.checked()) {
+    config.char.hswhen = {
+      rage: getInputNumber('hs_rage'),
+      btcd: getInputNumber('hs_bt_cd'),
+      wwcd: getInputNumber('hs_ww_cd'),
+    };
+  }
+
+  if (slam.checked()) {
+    config.char.slamwhen = {
+      rage: getInputNumber('slam_rage'),
+      delay: getInputNumber('slam_delay'),
+    };
+  }
+
   const worker = new Worker('sim.js');
   worker.onerror = function(e) {
     console.log('Worker error:');
