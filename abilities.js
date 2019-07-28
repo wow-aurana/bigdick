@@ -26,7 +26,7 @@ class Ability {
 
     // miss
     this.miss = clamp(0, 100)(5 + (skillDiff > 10 ? 1 : 0)
-                              + skillDiff * .1 - stats.hit);
+                                + skillDiff * .1 - stats.hit);
     
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
@@ -40,7 +40,6 @@ class Ability {
   }
 
   getCooldown() { return m.max(this.cooldown.timer, this.char.gcd.timer); }
-
   canUse() { return this.char.rage.has(this.cost); }
   
   swing() {
@@ -65,7 +64,7 @@ class Ability {
     } else if (secondRoll < this.table.crit) {
       this.log.crits += 1;
       this.char.main.proc();
-      this.log.dmg += this.getDmg() * 2.2;
+      this.log.dmg += this.getDmg() * this.char.yellowCritMul;
       this.char.flurry.refresh();
 
     } else {  // hit
@@ -105,7 +104,7 @@ class Whirlwind extends Ability {
 
 class HeroicStrike extends Ability {
   constructor(char) {
-    super(char, 13, 0, 'Heroic Strike');
+    super(char, char.heroicCost, 0, 'Heroic Strike');
     // TODO confirm that HS does not refund rage on dodge/parry/miss
     this.refundRage = false;
     this.onGcd = false;

@@ -4,11 +4,21 @@ class Character {
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
+    
+    // Talents
+    const talents = parseTalents(char.talents);
+    this.heroicCost = 15 - talents.improvedHeroicStrike;
+    this.yellowCritMul = 2 + talents.impale * .1;
+    this.wpnspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
+    this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
+    this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
+
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.main, 'Mainhand');
     this.off = char.off ? new Weapon(this, char.off, 'Offhand') : null;
     if (this.off) this.off.isMainhand = false;
-    this.wpnspec = char.stats.twohand ? 1.03 : 1;
+    
+
 
     // Abilites use char.mainhand
     this.bloodthirst = new Bloodthirst(this);

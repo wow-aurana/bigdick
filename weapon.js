@@ -21,7 +21,10 @@ class Weapon {
   // TODO armor
   getDmg() {
     const dmg = (this.avgDmg + this.char.getAp() / 14 * this.stats.speed);
-    return dmg * (this.isMainhand ? 1 : .625) * this.char.wpnspec;
+    if (this.isMainhand) {
+      return dmg * this.char.wpnspec;
+    }
+    return dmg * this.char.offhandDmgMul;
   }
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
@@ -66,11 +69,11 @@ class Weapon {
     // This code assumes that the remaining swing time is recalculated
     // if flurry goes up or down mid swing (e.g. offhand eats last charge).
     if (this.flurried && !this.char.flurry.hasCharges()) {
-      this.cooldown.timer *= 1.3;
+      this.cooldown.timer *= this.char.flurryHaste;
       this.flurried = false;
     }
     if (!this.flurried && this.char.flurry.hasCharges()) {
-      this.cooldown.timer /= 1.3;
+      this.cooldown.timer /= this.char.flurryHaste;
       this.flurried = true;
     }
   }

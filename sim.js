@@ -1,4 +1,5 @@
 importScripts('util.js');
+importScripts('talents.js');
 importScripts('weapon.js');
 importScripts('abilities.js');
 importScripts('character.js');

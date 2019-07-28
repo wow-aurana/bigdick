@@ -11,14 +11,23 @@ const offhand = new Checkbox('off', (e) => {
 });
 
 const submit = new Submit(() => {
+  const talentSource = 'classic.wowhead.com/talent-calc/warrior/';
+  const talentUrl = getInput('talents');
+  if (talentUrl.indexOf(talentSource) < 0) {
+    output.clear();
+    output.print('Use talent source from ' + talentSource);
+    return;
+  }
+
   const config = {
     char: {
       level: getInputNumber('charlvl'),
+      talents: talentUrl,
+      twohand: getChecked('2hand'),
       stats: {
         ap: getInputNumber('ap'),
         crit: getInputNumber('crit'),
         hit: getInputNumber('hit'),
-        twohand: getChecked('2hand'),
       },
       main: {
         min: getInputNumber('main_min'),

@@ -1,3 +1,8 @@
+function getInput(id) {
+  const el = document.getElementById(id);
+  return el.value;
+}
+
 function getInputNumber(id) {
   const el = document.getElementById(id);
   return parseFloat(el.value);
