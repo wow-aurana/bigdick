@@ -112,6 +112,9 @@ class Weapon {
 
     } else if (roll < this.table.dodge) {
       this.log.dodges += 1;
+      // According to Vilius on Fight Club, dodges give 75% rage.
+      const dmg = this.getDmg() * .75;
+      this.char.rage.gainFromSwing(dmg);
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;

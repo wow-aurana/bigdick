@@ -6,8 +6,8 @@ class Ability {
     this.cooldown = new Cooldown(cooldown, name);
     this.cost = rage;
 
-    this.miss = 0;
     this.table = {};
+    this.crit = 0;
     this.refundRage = true;
     this.onGcd = true;
   }
@@ -25,18 +25,19 @@ class Ability {
     const skillDiff = targetDef - this.char.main.stats.skill;
 
     // miss
-    this.miss = clamp(0, 100)(5 + (skillDiff > 10 ? 1 : 0)
-                                + skillDiff * .1 - stats.hit);
-    
+    this.table.miss = clamp(0, 100)(5 + (skillDiff > 10 ? 1 : 0)
+                                      + skillDiff * .1 - stats.hit);
+
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
+    this.table.dodge += this.table.miss;
 
     // crit
     const baseSkillDiff = targetDef - baseSkill;
     const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
     this.table.crit =
         clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
-    this.table.crit += this.table.dodge;
+
   }
 
   getCooldown() { return m.max(this.cooldown.timer, this.char.gcd.timer); }
@@ -50,27 +51,26 @@ class Ability {
     this.char.rage.use(this.cost);
 
     // Yellow attacks are on a 2 roll system
-    if (this.miss > 0 && m.random() * 100 < this.miss) {
+    const firstRoll = m.random() * 100;
+    if (firstRoll < this.table.miss) {
       this.log.misses += 1;
-      return;
-    }
-
-    const secondRoll = m.random() * 100;
-    if (secondRoll < this.table.dodge) {
+    } else if (firstRoll < this.table.dodge) {
       this.log.dodges += 1;
       // TODO figure out exact rage refunds
       if (this.refundRage) this.char.rage.gain(this.cost * .84);
+    } else {
+      const secondRoll = m.random() * 100;
+      if (secondRoll < this.table.crit) {
+        this.log.crits += 1;
+        this.char.main.proc();
+        this.log.dmg += this.getDmg() * this.char.yellowCritMul;
+        this.char.flurry.refresh();
 
-    } else if (secondRoll < this.table.crit) {
-      this.log.crits += 1;
-      this.char.main.proc();
-      this.log.dmg += this.getDmg() * this.char.yellowCritMul;
-      this.char.flurry.refresh();
-
-    } else {  // hit
-      this.log.hits += 1;
-      this.char.main.proc();
-      this.log.dmg += this.getDmg();
+      } else {  // hit
+        this.log.hits += 1;
+        this.char.main.proc();
+        this.log.dmg += this.getDmg();
+      }
     }
   }
 
