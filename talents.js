@@ -11,8 +11,8 @@ function parseTalents(url = defaultTalentUrl) {
     return (str && str.length > idx) ? (parseInt(str[idx]) || def) : def;
   }
   return {
-    improvedHeroicStrike: getValue(arms, 0, 0),
-    angerManagement: getValue(arms, 7, 0),
+    improvedHS: getValue(arms, 0, 0),
+    angerMgmt: getValue(arms, 7, 0),
     deepWounds: getValue(arms, 8, 0),
     twoHandSpec: getValue(arms, 9, 0),
     impale: getValue(arms, 10, 0),

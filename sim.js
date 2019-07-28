@@ -29,7 +29,8 @@ function runSimulation(cfg) {
     nextEventTimer = nextEvent.getCooldown(); 
     timer += nextEventTimer;
     char.advanceTime(nextEventTimer);
-    nextEvent.swing();
+
+    nextEvent.handle();
     char.main.applyFlurry();
     if (char.off) char.off.applyFlurry();
     char.heroicQueued |= char.shouldHeroicStrike();
@@ -62,7 +63,7 @@ function runSimulation(cfg) {
   result.push('Avg. time between Heroic Strikes: '
              + (duration / char.heroic.log.swings).toFixed(3) + 's');
   result.push('Avg. rage gain per white hit: '
-             + (char.rage.gained / char.rage.count).toFixed(2)
+             + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)
              + ', per second: '
              + (char.rage.gained / duration).toFixed(3));
   char.main.crusader && result.push('Mainhand crusader procs: '
@@ -88,4 +89,3 @@ onmessage = function(e) {
   const config = e.data;
   runSimulation(config);
 };
-

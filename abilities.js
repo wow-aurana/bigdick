@@ -73,6 +73,8 @@ class Ability {
       this.log.dmg += this.getDmg();
     }
   }
+
+  handle() { this.swing(); }
 }
 
 class Bloodthirst extends Ability {

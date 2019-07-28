@@ -79,6 +79,7 @@ class Weapon {
   }
   
   proc(extraSwing) {
+    if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
     if (this.crusader) {
       const roll = m.random() * 60;
       if (roll < this.stats.speed) this.crusader.gain();
@@ -100,7 +101,6 @@ class Weapon {
     }
 
     this.log.swings += 1;
-    const rageBar = this.char.rage;
 
     let roll = m.random() * 100;
     // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
@@ -118,14 +118,14 @@ class Weapon {
       this.proc(extraSwing);
       const dmg = this.getDmg() * this.glanceMul;
       this.log.dmg += dmg;
-      rageBar.gain(rageBar.toRage(dmg));
+      this.char.rage.gainFromSwing(dmg);
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
       this.proc(extraSwing);
       const dmg = this.getDmg() * 2;
       this.log.dmg += dmg;
-      rageBar.gain(rageBar.toRage(dmg));
+      this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
 
     } else {  // hit
@@ -133,7 +133,9 @@ class Weapon {
       this.proc(extraSwing);
       const dmg = this.getDmg();
       this.log.dmg += dmg;
-      rageBar.gain(rageBar.toRage(dmg));
+      this.char.rage.gainFromSwing(dmg);
     }
   }
+
+  handle() { this.swing(); }
 }

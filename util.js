@@ -35,16 +35,25 @@ class Rage {
   constructor(lvl) {
     this.gained = 0;
     this.current = 0;
-    this.count = 0
+    this.gainedFromSwings = 0;
+    this.swingCount = 0;
     // See https://wowwiki.fandom.com/wiki/Rage#Rage_conversion_value
     this.constant = 0.0091107836 * lvl * lvl + 3.225598133 * lvl + 4.2652911;
   }
-  toRage(dmg) { return dmg / this.constant * 7.5; }
+  
   has(amount) { return this.current >= amount; }
 
   gain(amount) {
-    this.count += 1;
     const gain = m.min(amount, 100 - this.current);
+    this.gained += gain;
+    this.current = this.current + gain;
+  }
+
+  gainFromSwing(dmg) {
+    this.swingCount += 1;
+    const amount = dmg / this.constant * 7.5
+    const gain = m.min(amount, 100 - this.current);
+    this.gainedFromSwings += gain;
     this.gained += gain;
     this.current = this.current + gain;
   }
@@ -84,6 +93,18 @@ class Cooldown {
   }
 
   reset() { this.timer = 0; }
+}
+
+class AngerManagement extends Cooldown {
+  constructor(rage) {
+    super(3, 'Anger Management');
+    this.rage = rage;
+  }
+
+  canUse() { return true; }
+  getCooldown() { return this.timer; }
+  handle() { this.use(); this.rage.gain(1); }
+
 }
 
 class Aura {

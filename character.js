@@ -7,11 +7,13 @@ class Character {
     
     // Talents
     const talents = parseTalents(char.talents);
-    this.heroicCost = 15 - talents.improvedHeroicStrike;
+    this.heroicCost = 15 - talents.improvedHS;
     this.yellowCritMul = 2 + talents.impale * .1;
     this.wpnspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
     this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
     this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
+    this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
+    this.extraRageChance = talents.unbridledWrath * .08;
 
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
@@ -33,12 +35,16 @@ class Character {
     if (this.off) this.swings.unshift(this.off);
     this.swings.unshift(this.main);
 
+    this.events = [...this.swings];
+    if (this.anger) this.events.unshift(this.anger);
+ 
     this.cooldowns = [
       this.bloodthirst.cooldown,
       this.whirlwind.cooldown,
       this.gcd,
       this.flurry,
     ];
+    if (this.anger) this.cooldowns.unshift(this.anger);
     if (this.off) this.cooldowns.unshift(this.off);
     this.cooldowns.unshift(this.main);
   }
@@ -72,7 +78,7 @@ class Character {
   }
 
   getNextEvent() {
-    const nextEvent = this.swings.reduce((ret, e) => {
+    const nextEvent = this.events.reduce((ret, e) => {
       return (e.canUse() && e.getCooldown() < ret.getCooldown()) ? e : ret;
     }, this.main);
     return nextEvent;
