@@ -17,6 +17,7 @@ class Character {
 
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
+    this.windfuryTotem = char.wftotem;
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.main, 'Mainhand');
     this.off = char.off ? new Weapon(this, char.off, 'Offhand') : null;
@@ -74,6 +75,13 @@ class Character {
     if (this.handOfJustice && m.random() <= .02) {
       this.main.cooldown.reset();
       this.main.swing(true);
+    }
+  }
+
+  procWindfury() {
+    if (this.windfuryTotem && m.random() <= .2) {
+      this.main.cooldown.reset();
+      this.main.swing(true, 315);
     }
   }
 

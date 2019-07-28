@@ -19,8 +19,10 @@ class Weapon {
   }
 
   // TODO armor
-  getDmg() {
-    const dmg = (this.avgDmg + this.char.getAp() / 14 * this.stats.speed);
+  getDmg(extraAp = 0) {
+    const dmg =
+        this.avgDmg + (this.char.getAp() + extraAp) / 14 * this.stats.speed;
+
     if (this.isMainhand) {
       return dmg * this.char.wpnspec;
     }
@@ -85,14 +87,15 @@ class Weapon {
       if (roll < this.stats.speed) this.crusader.gain();
     }
     if (!extraSwing) this.char.procHoJ();
+    if (!extraSwing) this.char.procWindfury();
   }
 
-  swing(extraSwing = false) {
+  swing(extraSwing = false, extraAp = 0) {
     this.char.flurry.useCharge();
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
 
-    if (this.isMainhand && this.char.heroicQueued) {
+    if (!extraSwing && this.isMainhand && this.char.heroicQueued) {
       this.char.heroicQueued = false;
       if (this.char.heroic.canUse()) {
         this.char.heroic.swing();
@@ -113,28 +116,28 @@ class Weapon {
     } else if (roll < this.table.dodge) {
       this.log.dodges += 1;
       // According to Vilius on Fight Club, dodges give 75% rage.
-      const dmg = this.getDmg() * .75;
+      const dmg = this.getDmg(extraAp) * .75;
       this.char.rage.gainFromSwing(dmg);
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
-      this.proc(extraSwing);
-      const dmg = this.getDmg() * this.glanceMul;
+      this.proc(extraSwing, extraAp);
+      const dmg = this.getDmg(extraAp) * this.glanceMul;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
-      this.proc(extraSwing);
-      const dmg = this.getDmg() * 2;
+      this.proc(extraSwing, extraAp);
+      const dmg = this.getDmg(extraAp) * 2;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
 
     } else {  // hit
       this.log.hits += 1;
-      this.proc(extraSwing);
-      const dmg = this.getDmg();
+      this.proc(extraSwing, extraAp);
+      const dmg = this.getDmg(extraAp);
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
     }

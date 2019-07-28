@@ -25,6 +25,7 @@ const submit = new Submit(() => {
       talents: talentUrl,
       twohand: getChecked('2hand'),
       hoj: getChecked('hoj'),
+      wftotem: getChecked('wftotem'),
       stats: {
         ap: getInputNumber('ap'),
         crit: getInputNumber('crit'),
