@@ -33,7 +33,7 @@ class Ability {
     const hitOnGear = m.max(0, this.char.stats.hit - (skillDiff > 10 ? 1 : 0));
     const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
     this.table.miss =
-        clamp(0, 100)(penalty + 5 + missFromSkill * .1 - hitOnGear);
+        clamp(0, 100)(5 + missFromSkill - hitOnGear);
 
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
