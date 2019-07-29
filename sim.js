@@ -58,7 +58,9 @@ function runSimulation(cfg) {
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
-             + (duration / (char.main.log.swings)).toFixed(3));
+             + (duration / (char.main.log.swings
+                           + (char.heroic ? char.heroic.log.swings
+                                         : 0))).toFixed(3));
   if (char.off) result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3) + 's');
   result.push('Avg. time between Bloodthirsts: '

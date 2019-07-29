@@ -93,7 +93,6 @@ class Weapon {
   }
 
   swing(extraSwing = false, extraAp = 0) {
-    this.log.swings += 1;
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
 
@@ -107,6 +106,7 @@ class Weapon {
       }
     }
 
+    this.log.swings += 1;
     let roll = m.random() * 100;
     // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
     // Put this back in if it turns out that it exists in classic

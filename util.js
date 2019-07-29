@@ -18,7 +18,7 @@ class SwingLog {
     const toPercent = (count) => {
       return '' + (count / this.swings * 100).toFixed(2) + '%';
     };
-    let ret = '' + this.name + ' dmg done: ' + m.round(this.dmg)
+    let ret = '' + this.name + ' damage done: ' + m.round(this.dmg)
               + ', swings: ' + this.swings
               + ', hits: ' + toPercent(this.hits)
               + ', crits: ' + toPercent(this.crits)
