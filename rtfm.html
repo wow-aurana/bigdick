@@ -22,6 +22,35 @@
       All weapon damage is averaged, there is no point in wasting time RNGing it.
     </li>
     <li>
+      The code makes a number of assumptions that are not verified yet:
+      <ul>
+        <li>
+          Extra swings like Hand of Justice and Windfury totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows
+        </li>
+        <li>
+          Extra swings like Hand of Justice and Windfury totem do *not* consume Flurry charges
+        </li>
+        <li>
+          All procs, including extra attacks always happen before the actual event that triggered them. In particular, an attack will profit form the attack power buff of a crusader proc that it itself caused
+        </li>
+        <li>
+          Extra attack procs cannot proc each other, although they can all proc on the same event
+        </li>
+        <li>
+          Dodged and parried white swings generate 75% of the rage that a normal hit would have
+        </li>
+        <li>
+          Glancing blows generate rage proportional to their damage, which means depending on your weapon skill, a glancing blow could generate less rage than a dodge
+        </li>
+        <li>
+          Slam rage costs are checked at the start of the cast, but the rage is subtracted at the end of the cast
+        </li>
+        <li>
+          Bloodthirst and Slam refund 84% of their rage costs if they dodge/parry but not when they miss. All other spells do not refund rage (or are not implemented yet).
+        </li>
+      </ul>
+    </li>
+    <li>
       Things that are working so far:
       <ul>
         <li>
