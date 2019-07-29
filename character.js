@@ -44,6 +44,8 @@ class Character {
 
     this.autos = [this.main];
     if (this.off) this.autos.push(this.off);
+    // First offhand swing delayed by 200ms (according to some guy on Discord)
+    if (this.off) this.off.cooldown.timer = .2;
 
     this.events = [...this.abilities].concat(this.autos);
     if (this.anger) this.events.unshift(this.anger);
