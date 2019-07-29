@@ -106,9 +106,10 @@ class Weapon {
 
     let roll = m.random() * 100;
     // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
-    const hsBug = (!this.isMainhand && this.char.heroicQueued)
-                  ? m.min(19, this.table.miss) : 0;
-    roll += hsBug;
+    // Put this back in if it turns out that it exists in classic
+    // const hsBug = (!this.isMainhand && this.char.heroicQueued)
+    //               ? m.min(19, this.table.miss) : 0;
+    // roll += hsBug;
     if (roll < this.table.miss) {
       this.log.misses += 1;
 
