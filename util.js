@@ -15,10 +15,11 @@ class SwingLog {
   }
 
   string() {
+    const swings = m.max(this.swings, 1);
     const toPercent = (count) => {
-      return '' + (count / this.swings * 100).toFixed(2) + '%';
+      return '' + (count / swings * 100).toFixed(2) + '%';
     };
-    let ret = '' + this.name + ' damage done: ' + m.round(this.dmg)
+    let ret = '' + this.name + ' damage per hit: ' + m.round(this.dmg / swings)
               + ', swings: ' + this.swings
               + ', hits: ' + toPercent(this.hits)
               + ', crits: ' + toPercent(this.crits)

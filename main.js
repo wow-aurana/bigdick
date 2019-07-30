@@ -1,21 +1,43 @@
 
 const output = new Output();
 
-const offhand =
-    new Checkbox(
-        'offhand',
-        ['off_min', 'off_max', 'off_speed', 'off_skill', 'off_crusader'],
-        (ev) => {
-          const checked = ev.target.checked;
-          document.getElementById('2hand').checked = !checked;
-        });
+const twohand = new Checkbox('twohand');
+twohand.check(false);
+const mainhand = new Checkbox('mainhand');
+const offhand = new Checkbox('offhand');
+twohand.clickCb = (enabled) => {
+  mainhand.check(!enabled, false);
+  offhand.check(!enabled, false);
+  offhand.enable(!enabled);
+};
 
-const heroic = new Checkbox('hero', ['hs_rage', 'hs_bt_cd', 'hs_ww_cd']);
-const slam = new Checkbox('slam', ['slam_delay', 'slam_rage']);
+mainhand.clickCb = (enabled) => {
+  twohand.check(!enabled, false);
+  offhand.enable(enabled);
+  offhand.check(enabled, false);
+};
 
-const submit = new Submit(() => {
+const abilities = [
+  new Checkbox('execute'),
+  new Checkbox('slam'),
+  new Checkbox('bloodthirst'),
+  new Checkbox('whirlwind'),
+  new Checkbox('heroic'),
+  new Checkbox('hamstring'),
+  mainhand,
+  offhand,
+  twohand,
+];
+
+abilities[0].check(false);  // Execute
+abilities[1].check(false);  // Slam
+abilities[5].check(false);  // Hamstring
+
+getElement('setup').addEventListener('submit', (e) => {
+  if (e.preventDefault) e.preventDefault();
+
   const talentSource = 'classic.wowhead.com/talent-calc/warrior/';
-  const talentUrl = getInput('talents');
+  const talentUrl = getInputString('talents');
   if (talentUrl.indexOf(talentSource) < 0) {
     output.clear();
     output.print('Use talent source from ' + talentSource);
@@ -26,20 +48,12 @@ const submit = new Submit(() => {
     char: {
       level: getInputNumber('charlvl'),
       talents: talentUrl,
-      twohand: getChecked('2hand'),
-      hoj: getChecked('hoj'),
-      wftotem: getChecked('wftotem'),
+      hoj: getInputChecked('hoj'),
+      wftotem: getInputChecked('wftotem'),
       stats: {
-        ap: getInputNumber('ap'),
-        crit: getInputNumber('crit'),
-        hit: getInputNumber('hit'),
-      },
-      main: {
-        min: getInputNumber('main_min'),
-        max: getInputNumber('main_max'),
-        speed: getInputNumber('main_speed'),
-        skill: getInputNumber('main_skill'),
-        crusader: getChecked('main_crusader'),
+        ap: getInputNumber('charap'),
+        crit: getInputNumber('charcrit'),
+        hit: getInputNumber('charhit'),
       },
     },
     target: {
@@ -49,29 +63,8 @@ const submit = new Submit(() => {
     duration: getInputNumber('duration'),
   }
 
-  if (offhand.checked()) {
-    config.char.off = {
-      min: getInputNumber('off_min'),
-      max: getInputNumber('off_max'),
-      speed: getInputNumber('off_speed'),
-      skill: getInputNumber('off_skill'),
-      crusader: getChecked('off_crusader'),
-    };
-  }
-
-  if (heroic.checked()) {
-    config.char.hswhen = {
-      rage: getInputNumber('hs_rage'),
-      btcd: getInputNumber('hs_bt_cd'),
-      wwcd: getInputNumber('hs_ww_cd'),
-    };
-  }
-
-  if (slam.checked()) {
-    config.char.slamwhen = {
-      rage: getInputNumber('slam_rage'),
-      delay: getInputNumber('slam_delay'),
-    };
+  for (a of abilities) {
+    config.char[a.name] = a.collect();
   }
 
   const worker = new Worker('sim.js');
@@ -89,7 +82,7 @@ const submit = new Submit(() => {
     for (const e of result) {
       output.print(e);
     }
-    if (result.length > 1 && getChecked('ping')) {
+    if (result.length > 1 && getInputChecked('ping')) {
       new Audio('https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3').play();
     }
   };

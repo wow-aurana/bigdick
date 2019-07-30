@@ -13,56 +13,127 @@
 </head>
 
 <body>
-
-  <p><a href="rtfm.html">RTFM<a>. Enter your character's stats...</p>
-  <span class="stat">Target level:</span><input type="number" id="targetlvl" min="1" max="63" value="63">
-  <br>
-  <span class="stat">Char level:</span><input type="number" id="charlvl" min="1" max="60" value="60">
-  <br>
-  <span class="stat">AP:</span><input type="number" id="ap" min="0" max="5000" value="1200">
-  <br>
-  <span class="stat">Hit on gear:</span><input type="number" id="hit" min="0" max="100" value="10"><span>%</span>
-  <br>
-  <span class="stat">Crit:</span><input type="number" id="crit" min="0" max="100" step="0.01" value="31.5"><span>% in Berserker Stance</span>
-  <br>
-  <br>
-  <span class="stat">Talent spec:</span><input style="width: 600px" id="talents" value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
-  <br>
-  <br>
-  <input type="checkbox" id="mainhand" checked disabled>
-  <span class="stat">Mainhand min:</span><input type="number" id="main_min" min="0" max="1000" value="81">
-  <span>max:</span><input type="number" id="main_max" min="0" max="1000" value="151">
-  <span>speed:</span><input type="number" id="main_speed" min="1" max="4" step="0.01" value="2.8">
-  <span>skill:</span><input type="number" id="main_skill" min="300" max="310" value="305">
-  <input type="checkbox" id="main_crusader" checked><span>Crusader</span>
-  <input type="checkbox" id="2hand"><span>Two-handed</span>
-  <br>
-  <input type="checkbox" id="offhand" checked>
-  <span class="stat offhand">Offhand min:</span><input type="number" id="off_min" min="0" max="1000" value="52">
-  <span class="offhand">max:</span><input type="number" id="off_max" min="0" max="1000" value="97">
-  <span class="offhand">speed:</span><input type="number" id="off_speed" min="1" max="4" step="0.01" value="1.8">
-  <span class="offhand">skill:</span><input type="number" id="off_skill" min="300" max="310" value="305">
-  <input type="checkbox" id="off_crusader" checked><span class="offhand">Crusader</span>
-  <br>
-  <input type="checkbox" id="hoj" checked>
-  <span class="stat">Hand of Justice</span>
-  <br>
-  <input type="checkbox" id="wftotem">
-  <span class="stat">Windfury totem</span>
-  <br>
-  <br>
-  <input type="checkbox" id="hero" checked>
-  <span class="hero">Heroic Strike when rage above</span><input type="number" id="hs_rage" min="13" max="100" value="40"><span class="hero">and Bloodthirst CD above</span><input type="number" id="hs_bt_cd" min="0" max="6" step="0.01" value="2"><span class="hero">seconds and Whirlwind CD above</span><input type="number" id="hs_ww_cd" min="0" max="10" step="0.01" value="3"><span class="hero">seconds</span>
-  <br>
-  <input type="checkbox" id="slam">
-  <span class="slam inactive">Cast Slam up to</span><input type="number" id="slam_delay" min="1" max="5000" value="200" disabled>
-  <span class="slam inactive">milliseconds after a main hand swing if rage above</span><input type="number" id="slam_rage" min="15" max="99" step="1" value="45" disabled>
-  <br>
-  <br>
-  <span class="stat">Sim duration (seconds):</span><input type="number" id="duration" min="10" value="10000000">
-  
-  <p>...then push button: <input type="submit" id="submit" value="Simulate">
-  <input type="checkbox" id="ping"><span class="stat">Ping when finished</span></p>
+  <form id="setup">
+    <p><a href="rtfm.html">RTFM<a>. Then enter your character's stats (with all buffs and talents)...</p>
+    <span class="stat">Target level:</span>
+    <input id="targetlvl" type="number" min="10" max="63" value="63">
+    <br>
+    <span class="stat">Char level:</span>
+    <input id="charlvl" type="number" min="10" max="60" value="60">
+    <br>
+    <span class="stat">AP:</span>
+    <input id="charap" type="number" min="0" max="5000" value="1200">
+    <br>
+    <span class="stat">Hit on gear:</span>
+    <input id="charhit" type="number" min="0" max="100" value="10">
+    <span>%</span>
+    <br>
+    <span class="stat">Crit:</span>
+    <input id="charcrit" type="number" min="0" max="100" step="0.01" value="31.5">
+    <span>% in Berserker Stance</span>
+    <br>
+    <br>
+    <span class="stat">Talent spec:</span>
+    <input id="talents" value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
+    <br>
+    <br>
+    <!-- Twohand -->
+    <input id="twohand" type="checkbox" checked>
+    <span class="twohand stat">Twohand min:</span>
+    <input class="twohand" name="min" type="number" min="0" max="1000" value="153">
+    <span class="twohand">max:</span>
+    <input class="twohand" name="max" type="number" min="0" max="1000" value="256">
+    <span class="twohand">speed:</span>
+    <input class="twohand" name="speed" type="number" min="1" max="4" step="0.1" value="3.8">
+    <span class="twohand">skill:</span>
+    <input class="twohand" name="skill" type="number" min="50" max="400" value="305">
+    <input class="twohand" name="crusader" type="checkbox" checked>
+    <span class="twohand">Crusader</span>
+    <br>
+    <!-- Main hand -->
+    <input id="mainhand" type="checkbox" checked>
+    <span class="mainhand stat">Mainhand min:</span>
+    <input class="mainhand" name="min" type="number" min="0" max="1000" value="81">
+    <span class="mainhand">max:</span>
+    <input class="mainhand" name="max" type="number" min="0" max="1000" value="151">
+    <span class="mainhand">speed:</span>
+    <input class="mainhand" name="speed" type="number" min="1" max="4" step="0.1" value="2.8">
+    <span class="mainhand">skill:</span>
+    <input class="mainhand" name="skill" type="number" min="50" max="400" value="305">
+    <input class="mainhand" name="crusader" type="checkbox" checked>
+    <span class="mainhand">Crusader</span>
+    <br>
+    <!-- Offhand -->
+    <input id="offhand" type="checkbox" checked>
+    <span class="offhand stat">Offhand min:</span>
+    <input class="offhand" name="min" type="number" min="0" max="1000" value="52">
+    <span class="offhand">max:</span>
+    <input class="offhand" name="max" type="number" min="0" max="1000" value="97">
+    <span class="offhand">speed:</span>
+    <input class="offhand" name="speed" type="number" min="1" max="4" step="0.1" value="1.8">
+    <span class="offhand">skill:</span>
+    <input class="offhand" name="skill" type="number" min="50" max="400" value="305">
+    <input class="offhand" name="crusader" type="checkbox" checked>
+    <span class="offhand">Crusader</span>
+    <br>
+    <input id="hoj" type="checkbox" checked>
+    <span class="stat">Hand of Justice</span>
+    <br>
+    <input id="wftotem" type="checkbox">
+    <span class="stat">Windfury totem</span>
+    <br>
+    <br>
+    <!-- Execute -->
+    <input id="execute" type="checkbox" checked>
+    <span class="execute">Execute when rage below</span>
+    <input class="execute" name="rage" type="number" min="10" max="100" value="25">
+    <span class="execute">or Bloodthirst and Whirlwind CDs above</span>
+    <input class="execute" name="btww" type="number" min="0" max="6" step="0.1" value="0.5">
+    <span class="execute">seconds</span>
+    <br>
+    <!-- Slam -->
+    <input id="slam" type="checkbox" checked>
+    <span class="slam">Slam up to</span>
+    <input class="slam" name="delay" type="number" min="1" max="5000" value="200">
+    <span class="slam">milliseconds after a main hand swing if rage above</span>
+    <input class="slam" name="rage" type="number" min="15" max="100" value="45">
+    <br>
+    <!-- Bloodthirst -->
+    <input id="bloodthirst" type="checkbox" checked>
+    <span class="bloodthirst">Bloodthirst when ready and rage above</span>
+    <input class="bloodthirst" name="rage" type="number" min="30" max="100" value="30">
+    <br>
+    <!-- Whirlwind -->
+    <input id="whirlwind" type="checkbox" checked>
+    <span class="whirlwind">Whirlwind when ready and rage above</span>
+    <input class="whirlwind" name="rage" type="number" min="25" max="100" value="25">
+    <span class="whirlwind">and Bloodthirst CD above</span>
+    <input class="whirlwind" name="bt" type="number" min="0" max="6" step="0.1" value="1.0">
+    <span class="whirlwind">seconds</span>
+    <br>
+    <!-- Heroic Strike -->
+    <input id="heroic" type="checkbox" checked>
+    <span class="heroic">Heroic Strike when rage above</span>
+    <input class="heroic" name="rage" type="number" min="12" max="100" value="40">
+    <span class="heroic">and Bloodthirst and Whirlwind CDs above</span>
+    <input class="heroic" name="btww" type="number" min="0" max="6" step="0.1" value="2.0">
+    <span class="heroic">seconds</span>
+    <br>
+    <!-- Hamstring -->
+    <input id="hamstring" type="checkbox" checked>
+    <span class="hamstring">Hamstring when rage above</span>
+    <input class="hamstring" name="rage" type="number" min="10" max="100" value="40">
+    <span class="hamstring">and Bloodthirst and Whirlwind CDs above</span>
+    <input class="hamstring" name="btww" type="number" min="0" max="6" step="0.1" value="1.5">
+    <span class="hamstring">seconds</span>
+    <br>
+    <br>
+    <span class="stat">Sim duration (seconds):</span>
+    <input id="duration" type="number" min="10" value="10000000">
+    
+    <p>...then push button: <input id="submit" type="submit" value="Simulate">
+    <input type="checkbox" id="ping"><span class="stat">Ping when finished</span></p>
+  </form>
  
   <p>Results:</p>
   <p id="output"></p>

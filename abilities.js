@@ -1,15 +1,15 @@
 class Ability {
-  constructor(char, rage, cooldown, name) {
+  constructor(char, rage, cooldown, usewhen, name) {
     this.log = new SwingLog(name);
 
     this.char = char;
-    this.cooldown = new Cooldown(cooldown, name);
     this.cost = rage;
+    this.cooldown = new Cooldown(cooldown, name);
+    this.usewhen = usewhen;
 
     this.table = {};
     this.crit = 0;
     this.refundRage = true;
-    this.onGcd = true;
   }
 
   tick(seconds) { this.cooldown.tick(seconds); }
@@ -50,8 +50,13 @@ class Ability {
   timeUntil() {
     return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil());
   }
-  
-  canUse() { return this.char.rage.has(this.cost); }
+
+  checkUserConditions() { return true; }
+
+  canUse() {
+    if (!this.char.rage.has(this.cost)) return false;
+    return this.checkUserConditions();
+  }
   
   swing() {
     this.log.swings += 1;
@@ -83,37 +88,47 @@ class Ability {
 
   handle() {
     this.cooldown.use();
-    this.onGcd && this.char.gcd.use();
+    this.char.gcd.use();
     this.swing();
   }
 }
 
-class Bloodthirst extends Ability {
-  constructor(char) {
-    super(char, 30, 6, 'Bloodthirst');
+// Execute
+// TODO refund rage properly
+class Execute extends Ability {
+  constructor(char, usewhen) {
+    super(char, char.executeCost, 0, usewhen, 'Execute');
+    this.prios = [];
   }
 
-  getDmg() { return this.char.getAp() * .45 * this.char.wpnspec; }
+  checkUserConditions() {
+    // Use when below this much rage, not above
+    if (!this.char.rage.has(this.usewhen.rage)) return true;
+    return this.char.checkBtWwCd(this.usewhen.btww);
+  }
+
+  getDmg() { 
+    return (600 + (this.char.rage.current - this.cost) * 15)
+           * this.char.wpnspec;
+  }
 }
 
+// Slam
 class Slam extends Ability {
-  constructor(char, slamWhen) {
-    super(char, 15, 0, 'Slam');
-    this.slamWhen = slamWhen;
+  constructor(char, usewhen) {
+    super(char, 15, 0, usewhen, 'Slam');
     this.casting = false;
-    this.opportunity = new Cooldown(this.slamWhen.delay / 1000, 'Slam now!');
+    this.opportunity = new Cooldown(this.usewhen.delay / 1000, 'Slam now!');
   }
   tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
 
-  canUse() {
+  checkUserConditions() {
     return !this.casting
            && this.opportunity.running()
-           && this.char.rage.has(m.max(this.cost, this.slamWhen.rage));
+           && this.char.rage.has(this.usewhen.rage);
   }
 
-  getDmg() {
-    return this.char.main.getDmg() + 87 * this.char.wpnspec;
-  }
+  getDmg() { return this.char.main.getDmg() + 87 * this.char.wpnspec; }
 
   swing() {
     console.assert(this.casting, 'Trying to swing slam when not casting');
@@ -126,36 +141,69 @@ class Slam extends Ability {
 
   handle() {
     this.cooldown.use();
-    this.onGcd && this.char.gcd.use();
+    this.char.gcd.use();
     this.casting = true;
     this.char.slamSwing.use();
   }
 }
 
+// Bloodthirst
+class Bloodthirst extends Ability {
+  constructor(char, usewhen) {
+    super(char, 30, 6, usewhen, 'Bloodthirst');
+  }
+
+  checkUserConditions() { return this.char.rage.has(this.usewhen.rage); }
+  getDmg() { return this.char.getAp() * .45 * this.char.wpnspec; }
+}
+
+// Whirlwind
 class Whirlwind extends Ability {
-  constructor(char) {
-    super(char, 25, 10, 'Whirlwind');
+  constructor(char, usewhen) {
+    super(char, 25, 10, usewhen, 'Whirlwind');
     this.refundRage = false;
   }
 
+  checkUserConditions() {
+    if (!this.char.rage.has(this.usewhen.rage)) return false;
+    return this.char.checkBtCd(this.usewhen.bt);
+  }
+
   getDmg() {
-    // TODO dagger
     const normalization = this.char.stats.twohand ? 3.4 : 2.4;
-    const dmg =
-        this.char.main.avgDmg + this.char.getAp() / 14 * normalization;  
+    const dmg = this.char.main.avgDmg + this.char.getAp() / 14 * normalization;  
     return dmg * this.char.wpnspec;
   }
 }
 
+// Heroic Strike
 class HeroicStrike extends Ability {
-  constructor(char) {
-    super(char, char.heroicCost, 0, 'Heroic Strike');
+  constructor(char, usewhen) {
+    super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
     // TODO confirm that HS does not refund rage on dodge/parry/miss
     this.refundRage = false;
-    this.onGcd = false;
   }
 
-  getDmg() {
-    return this.char.main.getDmg() + 138 * this.char.wpnspec;
+  checkUserConditions() {
+    if (!this.char.rage.has(this.usewhen.rage)) return false;
+    return this.char.checkBtWwCd(this.usewhen.btww);
   }
+
+  getDmg() { return this.char.main.getDmg() + 138 * this.char.wpnspec; }
+  timeUntil() { console.assert(false, 'How did HS get in the event queue?'); }
+  handle() { console.assert(false, 'How did HS get in the event queue?'); }
+}
+
+// Hamstring
+class Hamstring extends Ability {
+  constructor(char, usewhen) {
+    super(char, 30, 0, usewhen, 'Hamstring');
+  }
+
+  checkUserConditions() {
+    if (!this.char.rage.has(this.usewhen.rage)) return false;
+    return this.char.checkBtWwCd(this.usewhen.btww);
+  }
+
+  getDmg() { return 45 * this.char.wpnspec; }
 }

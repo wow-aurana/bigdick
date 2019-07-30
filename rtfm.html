@@ -22,8 +22,11 @@
       All weapon damage is averaged, there is no point in wasting time RNGing it.
     </li>
     <li>
-      The code makes a number of assumptions that are not verified yet:
+      The code makes a number of assumptions that are not necessarily verified yet:
       <ul>
+        <li>
+          Rage is a floating point number, rage gains and losses are not rounded to whole numbers
+        </li>
         <li>
           Extra swings like Hand of Justice and Windfury totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows
         </li>
@@ -31,7 +34,10 @@
           Extra swings like Hand of Justice and Windfury totem do *not* consume Flurry charges
         </li>
         <li>
-          All procs, including extra attacks always happen before the actual event that triggered them. In particular, an attack will profit form the attack power buff of a crusader proc that it itself caused
+          The attack power buff from Windfury Totem does not apply to other swings that happen a short time after
+        </li>
+        <li>
+          All procs, including extra attacks always happen before the actual event that triggered them. In particular, an attack will profit form the attack power buff of a Crusader proc that it itself caused
         </li>
         <li>
           Extra attack procs cannot proc each other, although they can all proc on the same event
@@ -66,7 +72,7 @@
           Basic <a target="_blank" href="https://wowwiki.fandom.com/wiki/Rage#Rage_conversion_value">rage mechanics</a> (need to double check the numbers)
         </li>
         <li>
-          Heroic Strike
+          Most commonly used damage Abilites
         </li>
         <li>
           Two-hand weapons
@@ -89,13 +95,10 @@
       Lots of things are still missing. In particular:
       <ul>
         <li>
-          Custom rotation, Hamstring spam, Slam, Overpower, Execute etc.
-        </li>
-        <li>
           Some relevant procs (Thrash Blade, Flurry Axe, Lifestealing, Demonslaying...)
         </li>
         <li>
-          Deep Wounds and Deathwish
+          Overpower, Deep Wounds and Deathwish
         </li>
         <li>
           Arms and Prot specs
@@ -111,6 +114,12 @@
         </li>
         <li>
           Daggers
+        </li>
+        <li>
+          Execute does not yet refund rage on misses
+        </li>
+        <li>
+          Blessing of Kings (relevant for Crusader proc)
         </li>
         <li>
           ...
@@ -156,6 +165,6 @@
       Q: Has anyone actually asked you any of these questions?
       <br>A: No.
     </p>
-    <p>v 0.1</p>
+    <p>v 0.2</p>
   </body>
 </html>

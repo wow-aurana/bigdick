@@ -11,7 +11,7 @@ function reportProgress(progress) {
 
 function runSimulation(cfg) {
   const duration = cfg.duration;
-  
+
   const char = new Character(cfg.char);
   char.setTarget(cfg.target);
 
@@ -44,30 +44,35 @@ function runSimulation(cfg) {
   let whiteDmg = char.main.log.dmg;
   if (char.off) whiteDmg += char.off.log.dmg; 
   result.push('DPS: ' + (dmg / duration).toFixed(1));
-  result.push('White damage: ' + (whiteDmg * 100 / dmg).toFixed(1) + '%'
-             + ', Bloodthirst: '
-             + (char.bloodthirst.log.dmg * 100 / dmg).toFixed(1) + '%'
-             + ', Whirlwind: '
-             + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%');
-  if (char.heroic) result[result.length - 1]
-             += (', Heroic Strike: '
-             + (char.heroic.log.dmg * 100 / dmg).toFixed(1) + '%');
-  if (char.slam) result[result.length - 1]
-             += (', Slam: '
-             + (char.slam.log.dmg * 100 / dmg).toFixed(1) + '%');
+  let percentages = '';
+  for (const source of dmgSources) {
+    if (source != char.main) percentages += ', ';
+    percentages += source.log.name + ': '
+                   + (source.log.dmg * 100 / dmg).toFixed(1) + '%';
+  }
+  result.push(percentages);
+  // result.push(
+  //            + ', Whirlwind: '
+  //            + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%');
+  // if (char.heroic) result[result.length - 1]
+  //            += (', Heroic Strike: '
+  //            + (char.heroic.log.dmg * 100 / dmg).toFixed(1) + '%');
+  // if (char.slam) result[result.length - 1]
+  //            += (', Slam: '
+  //            + (char.slam.log.dmg * 100 / dmg).toFixed(1) + '%');
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
              + (duration / (char.main.log.swings
                            + (char.heroic ? char.heroic.log.swings
                                          : 0))).toFixed(3));
-  if (char.off) result.push('Offhand average swing time: '
+  char.off && result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3) + 's');
-  result.push('Avg. time between Bloodthirsts: '
+  char.bloodthirst && result.push('Avg. time between Bloodthirsts: '
              + (duration / char.bloodthirst.log.swings).toFixed(3) + 's');
-  result.push('Avg. time between Whirlwinds: '
+  char.whirlwind && result.push('Avg. time between Whirlwinds: '
              + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
-  if (char.heroic) result.push('Avg. time between Heroic Strikes: '
+  char.heroic && result.push('Avg. time between Heroic Strikes: '
              + (duration / char.heroic.log.swings).toFixed(3) + 's');
   result.push('Avg. rage gain per white hit: '
              + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)
@@ -79,7 +84,7 @@ function runSimulation(cfg) {
              + (char.main.crusader.count / (duration / 60)).toFixed(2)
              + ', uptime: '
              + (char.main.crusader.uptime * 100 / duration).toFixed(1) + '%');
-  if (char.off) char.off.crusader && result.push('Offhand crusader procs: '
+  char.off && char.off.crusader && result.push('Offhand crusader procs: '
              + char.off.crusader.count
              + ', effective ppm: '
              + (char.off.crusader.count / (duration / 60)).toFixed(2)

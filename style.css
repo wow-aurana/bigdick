@@ -3,10 +3,14 @@ body {
 }
 
 span {
-  margin: 0 4px 0 0;
+  /*margin: 0 4px 0 0;*/
   display: inline-block;
   font-size: 16px;
   margin-bottom: 3px;
+}
+
+input:invalid {
+  background-color: pink;
 }
 
 .stat {
@@ -49,10 +53,9 @@ input[type=number]::-webkit-outer-spin-button {
 
 #targetlvl,
 #charlvl,
-#hit,
-#crit,
-#slam_delay,
-#ap {
+#charhit,
+#charcrit,
+#charap {
   width: 40px;
   text-align: right;
 
@@ -60,4 +63,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 #duration {
   width: 140px;
+}
+
+#talents {
+  width: 600px;
 }
