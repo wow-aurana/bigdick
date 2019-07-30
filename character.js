@@ -71,7 +71,7 @@ class Character {
         (cutoff) => this.bloodthirst.cooldown.timeUntil() > cutoff :
         () => true;
     this.checkWwCd = this.whirlwind ?
-        (cutoff) => this.bloodthirst.cooldown.timeUntil() > cutoff :
+        (cutoff) => this.whirlwind.cooldown.timeUntil() > cutoff :
         () => true;
     this.checkBtWwCd =
         (cutoff) => this.checkBtCd(cutoff) && this.checkWwCd(cutoff);
