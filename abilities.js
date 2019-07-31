@@ -9,7 +9,6 @@ class Ability {
 
     this.table = {};
     this.crit = 0;
-    this.refundRage = true;
   }
 
   tick(seconds) { this.cooldown.tick(seconds); }
@@ -52,6 +51,10 @@ class Ability {
   }
 
   checkUserConditions() { return true; }
+  onMiss() { this.char.rage.use(this.cost); }
+  // Assuming rage refunding is 84%
+  onDodge() { this.char.rage.use(this.cost * .16); }
+  onHit() { this.char.rage.use(this.cost); }
 
   canUse() {
     if (!this.char.rage.has(this.cost)) return false;
@@ -60,28 +63,29 @@ class Ability {
   
   swing() {
     this.log.swings += 1;
-    this.char.rage.use(this.cost);
 
     // Yellow attacks are on a 2 roll system
     const firstRoll = m.random() * 100;
     if (firstRoll < this.table.miss) {
       this.log.misses += 1;
+      this.onMiss();
     } else if (firstRoll < this.table.dodge) {
       this.log.dodges += 1;
-      // TODO figure out exact rage refunds
-      if (this.refundRage) this.char.rage.gain(this.cost * .84);
+      this.onDodge();
     } else {
+      const dmg = this.getDmg();
+      this.onHit();
       const secondRoll = m.random() * 100;
       if (secondRoll < this.table.crit) {
         this.log.crits += 1;
         this.char.main.proc();
-        this.log.dmg += this.getDmg() * this.char.yellowCritMul;
+        this.log.dmg += dmg * this.char.yellowCritMul;
         this.char.flurry.refresh();
 
       } else {  // hit
         this.log.hits += 1;
         this.char.main.proc();
-        this.log.dmg += this.getDmg();
+        this.log.dmg += dmg;
       }
     }
   }
@@ -98,8 +102,11 @@ class Ability {
 class Execute extends Ability {
   constructor(char, usewhen) {
     super(char, char.executeCost, 0, usewhen, 'Execute');
-    this.prios = [];
   }
+
+  onMiss() { this.char.rage.use(this.char.rage.current * .16); }
+  onDodge() { this.char.rage.use(this.char.rage.current * .16); }
+  onHit() { this.char.rage.use(this.char.rage.current); }
 
   checkUserConditions() {
     // Use when below this much rage, not above
@@ -161,13 +168,14 @@ class Bloodthirst extends Ability {
 class Whirlwind extends Ability {
   constructor(char, usewhen) {
     super(char, 25, 10, usewhen, 'Whirlwind');
-    this.refundRage = false;
   }
 
   checkUserConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
     return this.char.checkBtCd(this.usewhen.bt);
   }
+
+  onDodge() { this.char.rage.use(this.cost); }
 
   getDmg() {
     const normalization = this.char.stats.twohand ? 3.3 : 2.4;
@@ -180,9 +188,10 @@ class Whirlwind extends Ability {
 class HeroicStrike extends Ability {
   constructor(char, usewhen) {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
-    // TODO confirm that HS does not refund rage on dodge/parry/miss
-    this.refundRage = false;
   }
+
+  // TODO confirm that HS does not refund rage on dodge/parry/miss
+  onDodge() { this.char.rage.use(this.cost); }
 
   checkUserConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;

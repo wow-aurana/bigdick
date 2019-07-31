@@ -66,7 +66,6 @@ function runSimulation(cfg) {
              + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
   char.heroic && result.push('Avg. time between Heroic Strikes: '
              + (duration / char.heroic.log.swings).toFixed(3) + 's');
-  debugger;
   result.push('Avg. rage gain per white hit: '
              + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)
              + ', per second: '
