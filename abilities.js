@@ -170,7 +170,7 @@ class Whirlwind extends Ability {
   }
 
   getDmg() {
-    const normalization = this.char.stats.twohand ? 3.4 : 2.4;
+    const normalization = this.char.stats.twohand ? 3.3 : 2.4;
     const dmg = this.char.main.avgDmg + this.char.getAp() / 14 * normalization;  
     return dmg * this.char.wpnspec;
   }

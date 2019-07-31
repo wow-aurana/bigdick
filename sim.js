@@ -51,21 +51,13 @@ function runSimulation(cfg) {
                    + (source.log.dmg * 100 / dmg).toFixed(1) + '%';
   }
   result.push(percentages);
-  // result.push(
-  //            + ', Whirlwind: '
-  //            + (char.whirlwind.log.dmg * 100 / dmg).toFixed(1) + '%');
-  // if (char.heroic) result[result.length - 1]
-  //            += (', Heroic Strike: '
-  //            + (char.heroic.log.dmg * 100 / dmg).toFixed(1) + '%');
-  // if (char.slam) result[result.length - 1]
-  //            += (', Slam: '
-  //            + (char.slam.log.dmg * 100 / dmg).toFixed(1) + '%');
+
   result.push('Flurry uptime: '
              + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
   result.push('Mainhand average swing time: '
              + (duration / (char.main.log.swings
                            + (char.heroic ? char.heroic.log.swings
-                                         : 0))).toFixed(3));
+                                          : 0))).toFixed(3));
   char.off && result.push('Offhand average swing time: '
              + (duration / char.off.log.swings).toFixed(3) + 's');
   char.bloodthirst && result.push('Avg. time between Bloodthirsts: '
@@ -74,6 +66,7 @@ function runSimulation(cfg) {
              + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
   char.heroic && result.push('Avg. time between Heroic Strikes: '
              + (duration / char.heroic.log.swings).toFixed(3) + 's');
+  debugger;
   result.push('Avg. rage gain per white hit: '
              + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)
              + ', per second: '

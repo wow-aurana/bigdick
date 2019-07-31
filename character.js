@@ -62,6 +62,7 @@ class Character {
     this.events = [...this.abilities].concat(this.autos).concat([
       this.anger,
       this.slam,
+      this.slamSwing,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([this.gcd, this.flurry]);

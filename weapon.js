@@ -93,6 +93,7 @@ class Weapon {
   }
 
   swing(extraSwing = false, extraAp = 0) {
+    this.char.flurry.useCharge();
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
 
@@ -146,9 +147,5 @@ class Weapon {
     }
   }
 
-  handle() {
-    // If swing procs use flurry charges, this belongs in swing() instead.
-    this.char.flurry.useCharge();
-    this.swing();
-  }
+  handle() { this.swing(); }
 }
