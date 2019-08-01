@@ -24,6 +24,7 @@ const abilities = [
   new Checkbox('whirlwind'),
   new Checkbox('heroic'),
   new Checkbox('hamstring'),
+  new Checkbox('lag'),
   mainhand,
   offhand,
   twohand,

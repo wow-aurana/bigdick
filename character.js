@@ -33,6 +33,9 @@ class Character {
     };
 
     // Abilites
+    this.brainlag = (char.lag && char.lag.delay / 1000) || 0;
+    this.delay = 0;
+
     this.execute = create(Execute, char.execute);
     
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
@@ -110,8 +113,9 @@ class Character {
   }
 
   getNextEvent() {
-    // if (this.slam && this.slam.casting)
-    //   debugger;
+    // Reroll brain lag
+    this.delay = m.random() * this.brainlag;
+
     const nextEvent = this.events.reduce((ret, e) => {
       return (e.canUse() && e.timeUntil() < ret.timeUntil()) ? e : ret;
     }, this.main);

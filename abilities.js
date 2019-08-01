@@ -47,7 +47,8 @@ class Ability {
   }
 
   timeUntil() {
-    return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil());
+    return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil()) +
+           this.char.delay;
   }
 
   checkUserConditions() { return true; }
