@@ -207,7 +207,8 @@ class HeroicStrike extends Ability {
 // Hamstring
 class Hamstring extends Ability {
   constructor(char, usewhen) {
-    super(char, 30, 0, usewhen, 'Hamstring');
+    const cost = usewhen.gloves ? 7 : 10;
+    super(char, cost, 0, usewhen, 'Hamstring');
   }
 
   checkUserConditions() {
