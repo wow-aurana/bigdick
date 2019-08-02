@@ -60,7 +60,7 @@ getElement('setup').addEventListener('submit', (e) => {
     },
     target: {
       level: getInputNumber('targetlvl'),
-      armor: 4000,
+      armor: getEffectiveArmor(),
     },
     duration: getInputNumber('duration'),
   }

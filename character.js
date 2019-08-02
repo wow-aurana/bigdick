@@ -5,6 +5,9 @@ class Character {
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
     
+    // Target armor mitigation
+    this.armorDmgMul = 1;
+
     // Talents
     const talents = parseTalents(char.talents);
     this.heroicCost = 15 - talents.improvedHS;
@@ -92,6 +95,19 @@ class Character {
   }
 
   setTarget(target) {
+    // TODO double check armor formula from contemporary source.
+    if (target.armor > 0) {
+      let mitigation = 0;
+      const lvlDiff = target.level - this.level;
+      if (lvlDiff > 0) {
+        mitigation = target.armor / (target.armor + 400 + 85 * this.level);
+      } else {
+        mitigation = target.armor / (target.armor + 400 
+                                     + 85 * (this.level + 4.5 * (1 + lvlDiff)));
+      }
+      this.armorDmgMul = 1 - mitigation;
+    }
+
     for (const swing of this.abilities.concat(this.autos)) {
       swing.setTarget(target);
     }

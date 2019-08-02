@@ -74,7 +74,7 @@ class Ability {
       this.log.dodges += 1;
       this.onDodge();
     } else {
-      const dmg = this.getDmg();
+      const dmg = this.getDmg() * this.char.armorDmgMul;
       this.onHit();
       const secondRoll = m.random() * 100;
       if (secondRoll < this.table.crit) {

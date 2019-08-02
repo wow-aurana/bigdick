@@ -3,6 +3,15 @@ function getInputString(id) { return getElement(id).value; }
 function getInputNumber(id) { return parseFloat(getElement(id).value); }
 function getInputChecked(id) { return getElement(id).checked; }
 
+function getEffectiveArmor() {
+  const base = getInputNumber('armor');
+  const sunder = getInputChecked('sunder') ? 5 * 450 : 0;
+  const faerie = getInputChecked('faerie') ? 505 : 0;
+  const curse = getInputChecked('curse') ? 640 : 0;
+  const annihilator = getInputChecked('annihilator') ? 600 : 0;
+  return base - sunder - faerie - curse - annihilator;
+}
+
 class Checkbox {
   constructor(id) {
     this.el = getElement(id);

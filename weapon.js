@@ -114,34 +114,34 @@ class Weapon {
     // const hsBug = (!this.isMainhand && this.char.heroicQueued)
     //               ? m.min(19, this.table.miss) : 0;
     // roll += hsBug;
+
+    let dmg = this.getDmg(extraAp) * this.char.armorDmgMul;
     if (roll < this.table.miss) {
       this.log.misses += 1;
 
     } else if (roll < this.table.dodge) {
       this.log.dodges += 1;
       // According to Vilius on Fight Club, dodges give 75% rage.
-      const dmg = this.getDmg(extraAp) * .75;
-      this.char.rage.gainFromSwing(dmg);
+      this.char.rage.gainFromSwing(dmg * .75);
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
-      this.proc(extraSwing, extraAp);
-      const dmg = this.getDmg(extraAp) * this.glanceMul;
+      this.proc(extraSwing);
+      dmg *= this.glanceMul;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
-      this.proc(extraSwing, extraAp);
-      const dmg = this.getDmg(extraAp) * 2;
+      this.proc(extraSwing);
+      dmg *= 2;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
 
     } else {  // hit
       this.log.hits += 1;
-      this.proc(extraSwing, extraAp);
-      const dmg = this.getDmg(extraAp);
+      this.proc(extraSwing);
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
     }
