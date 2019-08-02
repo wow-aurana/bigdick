@@ -34,6 +34,15 @@ abilities[0].check(false);  // Execute
 abilities[1].check(false);  // Slam
 abilities[5].check(false);  // Hamstring
 
+// Add auto-select-all to inputs
+for (const el of getElement('setup').elements) {
+  if (el.type == 'text' || el.type == 'number') {
+    el.onfocus = (e) => {
+      if (document.activeElement == e.target) e.target.select();
+    };
+  }
+}
+
 getElement('setup').addEventListener('submit', (e) => {
   if (e.preventDefault) e.preventDefault();
 
