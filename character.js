@@ -95,16 +95,8 @@ class Character {
   }
 
   setTarget(target) {
-    // TODO double check armor formula from contemporary source.
     if (target.armor > 0) {
-      let mitigation = 0;
-      const lvlDiff = target.level - this.level;
-      if (lvlDiff > 0) {
-        mitigation = target.armor / (target.armor + 400 + 85 * this.level);
-      } else {
-        mitigation = target.armor / (target.armor + 400 
-                                     + 85 * (this.level + 4.5 * (1 + lvlDiff)));
-      }
+      const mitigation = target.armor / (target.armor + 400 + 85 * this.level);
       this.armorDmgMul = 1 - mitigation;
     }
 
