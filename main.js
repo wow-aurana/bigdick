@@ -49,6 +49,7 @@ getElement('setup').addEventListener('submit', (e) => {
     char: {
       level: getInputNumber('charlvl'),
       talents: talentUrl,
+      bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
       wftotem: getInputChecked('wftotem'),
       stats: {

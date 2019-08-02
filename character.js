@@ -20,6 +20,7 @@ class Character {
 
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
+    this.blessingOfKings = char.bok;
     this.windfuryTotem = char.wftotem;
     this.flurry = new Flurry();
     this.main = new Weapon(this, char.twohand || char.mainhand, 'Mainhand');
@@ -82,11 +83,12 @@ class Character {
   }
 
   getAp() {
-    let ap = this.stats.ap;
-    // TODO Blessing of Kings
-    if (this.main.crusader && this.main.crusader.running()) ap += 200;
-    if (this.off && this.off.crusader && this.off.crusader.running()) ap += 200;
-    return ap;
+    let procStr = 0
+    for (const weapon of this.autos) {
+      if (weapon.crusader && weapon.crusader.running()) procStr += 100;
+    }
+    if (this.blessingOfKings) procStr *= 1.1;
+    return this.stats.ap + procStr * 2;
   }
 
   setTarget(target) {
