@@ -40,6 +40,8 @@ class Character {
     this.brainlag = (char.lag && char.lag.delay / 1000) || 0;
     this.delay = 0;
 
+    this.bloodrage = new Bloodrage(this.rage);
+
     this.execute = create(Execute, char.execute);
     
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
@@ -70,6 +72,8 @@ class Character {
       this.anger,
       this.slam,
       this.slamSwing,
+      this.bloodrage,
+      this.bloodrage.ragetick,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([this.gcd, this.flurry]);

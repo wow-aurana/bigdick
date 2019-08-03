@@ -118,6 +118,29 @@ class AngerManagement extends Cooldown {
   handle() { this.use(); this.rage.gain(1); }
 }
 
+class BloodrageTick extends Cooldown {
+  constructor(rage) {
+    super(1, 'Bloodrage tick');
+    this.rage = rage;
+    this.charges = 0;
+  }
+
+  start() { this.charges = 10; this.use(); }
+  canUse() { return this.charges > 0; }
+  handle() { this.use(); this.rage.gain(1); this.charges -= 1; }
+}
+
+class Bloodrage extends Cooldown {
+  constructor(rage) {
+    super(60, 'Bloodrage');
+    this.rage = rage;
+    this.ragetick = new BloodrageTick(rage);
+  }
+
+  canUse() { return true; }
+  handle() { this.use(); this.rage.gain(10); this.ragetick.start(); }
+}
+
 class Aura {
   constructor(duration, name = 'cooldown') {
     this.duration = duration;
