@@ -41,8 +41,12 @@ input {
 
 input[type=number] {
   -moz-appearance: textfield;
-  text-align: left;
+  text-align: right;
   width: 26px;
+}
+
+input[name="delay"] {
+  width: 36px;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -58,12 +62,11 @@ input[type=number]::-webkit-outer-spin-button {
 #charcrit,
 #charap {
   width: 40px;
-  text-align: right;
-
 }
 
 #duration {
   width: 140px;
+  text-align: left;
 }
 
 #talents {

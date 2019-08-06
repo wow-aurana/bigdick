@@ -10,6 +10,7 @@ function reportProgress(progress) {
 }
 
 function runSimulation(cfg) {
+  const startTime = new Date().getTime();
   const duration = cfg.duration;
 
   const char = new Character(cfg.char);
@@ -86,6 +87,8 @@ function runSimulation(cfg) {
     result.push(source.log.string());
   }
 
+  const endTime = new Date().getTime();
+  result.push('(Finished in ' + (endTime - startTime) / 1000 + ' seconds)');
   postMessage(result);
 }
 
