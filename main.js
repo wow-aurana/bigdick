@@ -85,7 +85,7 @@ function collectInputs() {
   return config;
 }
 
-const workers = {};
+let workers = {};
 
 function createWorker(cfg, onFinished) {
   const worker = new SimWorker(cfg);
@@ -104,8 +104,9 @@ getElement('setup').addEventListener('submit', (e) => {
   if (e.preventDefault) e.preventDefault();
 
   // Remove workers from previous run
-  while (workers.length) workers.pop();
+  workers = {};
 
+  const checkboxes = apep.collect();
   const onWorkersFinished = apep.checked() ? () => {
     const wrks = Object.values(workers);
     // Wait until all workers finished
@@ -129,7 +130,8 @@ getElement('setup').addEventListener('submit', (e) => {
     };
     reportEp(workers.hit, '1% hit');
     reportEp(workers.crit, '1% crit');
-    reportEp(workers.skill, '1 weapon skill');
+    reportEp(workers.mskill, '' + checkboxes.mskillstep + ' mainhand skill');
+    reportEp(workers.oskill, '' + checkboxes.oskillstep + ' offhand skill');
 
     const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
     output.print('(Finished in ' + maxTime + ' seconds)');
@@ -144,7 +146,6 @@ getElement('setup').addEventListener('submit', (e) => {
   const cfg = collectInputs();
   workers.baseline = createWorker(cfg, onWorkersFinished);
   if (apep.checked()) {
-    const checkboxes = apep.collect();
 
     const apCfg = collectInputs();
     apCfg.char.stats.ap += 50;
@@ -162,12 +163,19 @@ getElement('setup').addEventListener('submit', (e) => {
       workers.crit = createWorker(critCfg, onWorkersFinished);
     }
 
-    if (checkboxes.skill) {
+    if (checkboxes.mskill) {
       const skillCfg = collectInputs();
-      if (skillCfg.char.twohand) skillCfg.char.twohand.skill += 1;
-      if (skillCfg.char.mainhand) skillCfg.char.mainhand.skill += 1;
-      if (skillCfg.char.offhand) skillCfg.char.offhand.skill += 1;
-      workers.skill = createWorker(skillCfg, onWorkersFinished);
+      const step = checkboxes.mskillstep;
+      if (skillCfg.char.twohand) skillCfg.char.twohand.skill += step;
+      if (skillCfg.char.mainhand) skillCfg.char.mainhand.skill += step;
+      workers.mskill = createWorker(skillCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.oskill) {
+      const skillCfg = collectInputs();
+      const step = checkboxes.oskillstep;
+      if (skillCfg.char.offhand) skillCfg.char.offhand.skill += step;
+      workers.oskill = createWorker(skillCfg, onWorkersFinished);
     }
   }
 

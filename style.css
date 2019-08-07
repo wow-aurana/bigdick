@@ -49,6 +49,11 @@ input[name="delay"] {
   width: 36px;
 }
 
+input[name="mskillstep"],
+input[name="oskillstep"] {
+  width: 10px;
+}
+
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
