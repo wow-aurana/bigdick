@@ -1,9 +1,11 @@
 class SimWorker {
-  constructor(cfg, msgCb = () => {}) {
+  constructor(cfg) {
     this.cfg = cfg;
-    this.msgCb = msgCb;
     this.result = { progress: 0 };
     this.worker = new Worker('sim.js');
+
+    this.onProgress = () => {};
+    this.onFinished = () => {};
 
     this.worker.onerror = (e) => {
       console.log('Worker error:');
@@ -17,13 +19,23 @@ class SimWorker {
 
     this.worker.onmessage = (e) => {
       this.result = e.data;
-      this.msgCb();
+      !!this.result.summary ? this.onFinished() : this.onProgress();
     };
   }
 
   finished() { return !!this.result.summary; }
   progress() { return this.result.progress; }
   start() { this.worker.postMessage(this.cfg); }
+
+  getDps() {
+    console.assert(this.result.summary);
+    return (this.result.summary.dmg / this.result.summary.duration);
+  }
+
+  runtime() {
+    console.assert(this.result.summary);
+    return this.result.summary.runtime;
+  }
 
   report() {
     const summary = this.result.summary;

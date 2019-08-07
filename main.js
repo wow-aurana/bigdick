@@ -18,22 +18,28 @@ mainhand.clickCb = (enabled) => {
   offhand.check(enabled, false);
 };
 
-const abilities = [
-  new Checkbox('execute'),
-  new Checkbox('slam'),
-  new Checkbox('bloodthirst'),
-  new Checkbox('whirlwind'),
-  new Checkbox('heroic'),
-  new Checkbox('hamstring'),
-  new Checkbox('lag'),
+const abilities = {
+  execute: new Checkbox('execute'),
+  slam: new Checkbox('slam'),
+  bloodthirst: new Checkbox('bloodthirst'),
+  whirlwind: new Checkbox('whirlwind'),
+  heroic: new Checkbox('heroic'),
+  hamstring: new Checkbox('hamstring'),
+  brainlag: new Checkbox('lag'),
+  twohand,
   mainhand,
   offhand,
-  twohand,
-];
+};
 
-abilities[0].check(false);  // Execute
-abilities[1].check(false);  // Slam
-abilities[5].check(false);  // Hamstring
+// Some abilities disabled by default
+abilities.execute.check(false);
+abilities.slam.check(false);
+abilities.hamstring.check(false);
+abilities.brainlag.check(false);
+
+// EP calculations disabled by default.
+const apep = new Checkbox('apep');
+apep.check(false);
 
 // Add auto-select-all to inputs
 for (const el of getElement('setup').elements) {
@@ -73,36 +79,97 @@ function collectInputs() {
     duration: getInputNumber('duration'),
   }
 
-  for (a of abilities) {
+  for (a of Object.values(abilities)) {
     config.char[a.name] = a.collect();
   }
   return config;
 }
 
+const workers = {};
+
+function createWorker(cfg, onFinished) {
+  const worker = new SimWorker(cfg);
+  worker.onProgress = () => {
+    output.clear();
+    const wrks = Object.values(workers);
+    const progressAll = wrks.reduce((a, w) => a + w.progress(), 0);
+    output.print('' + (progressAll / wrks.length).toFixed(0) + '% complete');
+  };
+  worker.onFinished = onFinished;
+  return worker;
+}
+
+// Main 'submit' button hook
 getElement('setup').addEventListener('submit', (e) => {
   if (e.preventDefault) e.preventDefault();
 
-  const workers = [];
-  const cfg = collectInputs();
-  workers.push(new SimWorker(cfg, () => {
+  // Remove workers from previous run
+  while (workers.length) workers.pop();
+
+  const onWorkersFinished = apep.checked() ? () => {
+    const wrks = Object.values(workers);
+    // Wait until all workers finished
+    for (worker of wrks) { if (!worker.finished()) return; }
+
     output.clear();
 
-    const complete = workers.reduce((a, w) => a && w.finished(), true);
-    if (complete) {
-      if (getInputChecked('ping')) new Audio(audioURL).play();
+    const baseDps = workers.baseline.getDps();
+    output.print('Base DPS: ' + baseDps.toFixed(2));
+    const apDps = workers.ap.getDps();
+    output.print('50 AP improves DPS by ' + (apDps - baseDps).toFixed(2));
+    const apValue = (apDps - baseDps) / 50;
 
-      for (const worker of workers) {
-        const report = worker.report();
-        for (const line of report) {
-          output.print(line);
-        }
-      }
-    } else {
-      const progress =
-          workers.reduce((a, w) => a + w.progress(), 0) / workers.length;
-      output.print('' + progress.toFixed(0) + '% complete');
+    const reportEp = (worker, label) => {
+      if (!worker) return;
+      const dps = worker.getDps();
+      const apep = (dps - baseDps) / apValue;
+
+      output.print('' + label + ' improves DPS by ' + (dps - baseDps).toFixed(2)
+                   + ', APEP of ' + label + ' is ' + apep.toFixed(3));
+    };
+    reportEp(workers.hit, '1% hit');
+    reportEp(workers.crit, '1% crit');
+    reportEp(workers.skill, '1 weapon skill');
+
+    const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
+    output.print('(Finished in ' + maxTime + ' seconds)');
+  } : () => {
+    output.clear();
+    const report = workers.baseline.report();
+    for (const line of report) {
+      output.print(line);
     }
-  }));
+  };
 
-  for (const worker of workers) { worker.start(); }
+  const cfg = collectInputs();
+  workers.baseline = createWorker(cfg, onWorkersFinished);
+  if (apep.checked()) {
+    const checkboxes = apep.collect();
+
+    const apCfg = collectInputs();
+    apCfg.char.stats.ap += 50;
+    workers.ap = createWorker(apCfg, onWorkersFinished);
+
+    if (checkboxes.hit) {
+      const hitCfg = collectInputs();
+      hitCfg.char.stats.hit += 1;
+      workers.hit = createWorker(hitCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.crit) {
+      const critCfg = collectInputs();
+      critCfg.char.stats.crit += 1;
+      workers.crit = createWorker(critCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.skill) {
+      const skillCfg = collectInputs();
+      if (skillCfg.char.twohand) skillCfg.char.twohand.skill += 1;
+      if (skillCfg.char.mainhand) skillCfg.char.mainhand.skill += 1;
+      if (skillCfg.char.offhand) skillCfg.char.offhand.skill += 1;
+      workers.skill = createWorker(skillCfg, onWorkersFinished);
+    }
+  }
+
+  for (const worker of Object.values(workers)) { worker.start(); }
 });
