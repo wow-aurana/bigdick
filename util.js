@@ -13,31 +13,13 @@ class SwingLog {
     this.crits = 0;
     this.glances = 0;
   }
-
-  string() {
-    const swings = m.max(this.swings, 1);
-    const toPercent = (count) => {
-      return '' + (count / swings * 100).toFixed(2) + '%';
-    };
-    let ret = '' + this.name + ' damage per hit: ' + m.round(this.dmg / swings)
-              + ', swings: ' + this.swings
-              + ', hits: ' + toPercent(this.hits)
-              + ', crits: ' + toPercent(this.crits)
-              + ', misses: ' + toPercent(this.misses)
-              + ', dodges: ' + toPercent(this.dodges);
-    if (this.glances > 0) {
-      ret += ', glances: ' + toPercent(this.glances);
-    }
-    return ret;
-  }
 }
 
 class Rage {
   constructor(lvl) {
-    this.gained = 0;
     this.current = 0;
-    this.gainedFromSwings = 0;
-    this.swingCount = 0;
+    this.log = { gained: 0, fromSwings: 0, swings: 0, };
+
     // See https://wowwiki.fandom.com/wiki/Rage#Rage_conversion_value
     this.constant = 0.0091107836 * lvl * lvl + 3.225598133 * lvl + 4.2652911;
   }
@@ -46,16 +28,16 @@ class Rage {
 
   gain(amount) {
     const gain = m.min(amount, 100 - this.current);
-    this.gained += gain;
+    this.log.gained += gain;
     this.current = this.current + gain;
   }
 
   gainFromSwing(dmg) {
-    this.swingCount += 1;
+    this.log.swings += 1;
     const amount = dmg / this.constant * 7.5
     const gain = m.min(amount, 100 - this.current);
-    this.gainedFromSwings += gain;
-    this.gained += gain;
+    this.log.fromSwings += gain;
+    this.log.gained += gain;
     this.current = this.current + gain;
   }
 
@@ -146,14 +128,13 @@ class Aura {
     this.duration = duration;
     this.name = name;
     this.timer = 0;
-    this.count = 0;
-    this.uptime = 0;
+    this.log = { count: 0, uptime: 0, };
   }
   
   running() { return this.timer > 0; }
   tick(seconds) {
-    this.uptime += m.min(seconds, this.timer);
+    this.log.uptime += m.min(seconds, this.timer);
     this.timer = m.max(0, this.timer - seconds);
   }
-  gain() { this.timer = this.duration; this.count += 1; }
+  gain() { this.timer = this.duration; this.log.count += 1; }
 }

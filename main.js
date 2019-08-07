@@ -1,3 +1,4 @@
+const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3';
 
 const output = new Output();
 
@@ -43,9 +44,7 @@ for (const el of getElement('setup').elements) {
   }
 }
 
-getElement('setup').addEventListener('submit', (e) => {
-  if (e.preventDefault) e.preventDefault();
-
+function collectInputs() {
   const talentSource = 'classic.wowhead.com/talent-calc/warrior/';
   const talentUrl = getInputString('talents');
   if (talentUrl.indexOf(talentSource) < 0) {
@@ -77,25 +76,33 @@ getElement('setup').addEventListener('submit', (e) => {
   for (a of abilities) {
     config.char[a.name] = a.collect();
   }
+  return config;
+}
 
-  const worker = new Worker('sim.js');
-  worker.onerror = function(e) {
-    console.log('Worker error:');
-    console.log(e);
-  }
-  worker.onmessageerror = function(e) {
-    console.log('Worker error:');
-    console.log(e);
-  }
-  worker.onmessage = function(e) {
+getElement('setup').addEventListener('submit', (e) => {
+  if (e.preventDefault) e.preventDefault();
+
+  const workers = [];
+  const cfg = collectInputs();
+  workers.push(new SimWorker(cfg, () => {
     output.clear();
-    const result = e.data;
-    for (const e of result) {
-      output.print(e);
+
+    const complete = workers.reduce((a, w) => a && w.finished(), true);
+    if (complete) {
+      if (getInputChecked('ping')) new Audio(audioURL).play();
+
+      for (const worker of workers) {
+        const report = worker.report();
+        for (const line of report) {
+          output.print(line);
+        }
+      }
+    } else {
+      const progress =
+          workers.reduce((a, w) => a + w.progress(), 0) / workers.length;
+      output.print('' + progress.toFixed(0) + '% complete');
     }
-    if (result.length > 1 && getInputChecked('ping')) {
-      new Audio('https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3').play();
-    }
-  };
-  worker.postMessage(config);
+  }));
+
+  for (const worker of workers) { worker.start(); }
 });

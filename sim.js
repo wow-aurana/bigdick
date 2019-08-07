@@ -6,7 +6,23 @@ importScripts('character.js');
 
 
 function reportProgress(progress) {
-  postMessage(['' + progress + '% complete.']);
+  postMessage({ progress });
+}
+
+function compileResults(char, duration) {
+  const res = { duration };
+
+  const dmgSources = [...char.autos].concat(char.abilities);
+  if (char.heroic) dmgSources.push(char.heroic);
+  res.dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
+  res.sources = dmgSources.map((s) => s.log);
+  // TODO clean up procs
+  res.crusader = {};
+  if (char.main.crusader) res.crusader.main = char.main.crusader.log;
+  if (char.off && char.off.crusader) res.crusader.off = char.off.crusader.log;
+  res.flurry = char.flurry.uptime;
+  res.rage = char.rage.log;
+  return res;
 }
 
 function runSimulation(cfg) {
@@ -38,58 +54,10 @@ function runSimulation(cfg) {
     char.heroicQueued |= char.shouldHeroicStrike();
   }
 
-  let result = [];
-  const dmgSources = [...char.autos].concat(char.abilities);
-  if (char.heroic) dmgSources.push(char.heroic);
-  const dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
-  let whiteDmg = char.main.log.dmg;
-  if (char.off) whiteDmg += char.off.log.dmg; 
-  result.push('DPS: ' + (dmg / duration).toFixed(1));
-  let percentages = '';
-  for (const source of dmgSources) {
-    if (source != char.main) percentages += ', ';
-    percentages += source.log.name + ': '
-                   + (source.log.dmg * 100 / dmg).toFixed(1) + '%';
-  }
-  result.push(percentages);
-
-  result.push('Flurry uptime: '
-             + (char.flurry.uptime * 100 / duration).toFixed(3) + '%');
-  result.push('Mainhand average swing time: '
-             + (duration / (char.main.log.swings
-                           + (char.heroic ? char.heroic.log.swings
-                                          : 0))).toFixed(3));
-  char.off && result.push('Offhand average swing time: '
-             + (duration / char.off.log.swings).toFixed(3) + 's');
-  char.bloodthirst && result.push('Avg. time between Bloodthirsts: '
-             + (duration / char.bloodthirst.log.swings).toFixed(3) + 's');
-  char.whirlwind && result.push('Avg. time between Whirlwinds: '
-             + (duration / char.whirlwind.log.swings).toFixed(3) + 's');
-  char.heroic && result.push('Avg. time between Heroic Strikes: '
-             + (duration / char.heroic.log.swings).toFixed(3) + 's');
-  result.push('Avg. rage gain per white hit: '
-             + (char.rage.gainedFromSwings / char.rage.swingCount).toFixed(2)
-             + ', per second: '
-             + (char.rage.gained / duration).toFixed(3));
-  char.main.crusader && result.push('Mainhand crusader procs: '
-             + char.main.crusader.count
-             + ', effective ppm: '
-             + (char.main.crusader.count / (duration / 60)).toFixed(2)
-             + ', uptime: '
-             + (char.main.crusader.uptime * 100 / duration).toFixed(1) + '%');
-  char.off && char.off.crusader && result.push('Offhand crusader procs: '
-             + char.off.crusader.count
-             + ', effective ppm: '
-             + (char.off.crusader.count / (duration / 60)).toFixed(2)
-             + ', uptime: '
-             + (char.off.crusader.uptime * 100 / duration).toFixed(1) + '%');
-  for (const source of dmgSources) {
-    result.push(source.log.string());
-  }
-
+  const results = compileResults(char, duration);
   const endTime = new Date().getTime();
-  result.push('(Finished in ' + (endTime - startTime) / 1000 + ' seconds)');
-  postMessage(result);
+  results.runtime = ((endTime - startTime) / 1000).toFixed(1);
+  postMessage({progress: 100, summary: results });
 }
 
 onmessage = function(e) {
