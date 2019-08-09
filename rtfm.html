@@ -28,7 +28,7 @@
           Rage is a floating point number, rage gains and losses are not rounded to whole numbers
         </li>
         <li>
-          Extra swings like Hand of Justice and Windfury totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows
+          Extra swings like Hand of Justice and Windfury Totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows
         </li>
         <li>
           Extra swings like Hand of Justice and Windfury totem *do* consume Flurry charges
@@ -40,7 +40,7 @@
           All procs, including extra attacks always happen before the actual event that triggered them. In particular, an attack will profit form the attack power buff of a Crusader proc that it itself caused
         </li>
         <li>
-          Extra attack procs cannot proc each other, although they can all proc on the same event
+          Extra attack procs cannot proc each other, although they can all proc on the same swing
         </li>
         <li>
           Dodged and parried white swings generate 75% of the rage that a normal hit would have
@@ -52,10 +52,10 @@
           Slam rage costs are checked at the start of the cast, but the rage is subtracted at the end of the cast
         </li>
         <li>
-          All abilities except Heroic strike and Whirlwind refund 84% of their rage costs if they are dodged/parried but not when they miss.
+          All abilities except Whirlwind refund 80% of their rage costs if they are dodged/parried/miss
         </li>
         <li>
-          Execute refunds 84% of its total cost on a miss (no other ability refunds rage on a miss)
+          Execute refunds 84% of its total cost rather than 80% (needs testing)
         </li>
       </ul>
     </li>
@@ -92,13 +92,16 @@
         <li>
           Basic logging and results
         </li>
+        <li>
+          APEP calculations for the common stats (may add others, e.g. weapon speed and dps).
+        </li>
       </ul>
     </li>
     <li>
       Lots of things are still missing. In particular:
       <ul>
         <li>
-          Some relevant procs (Thrash Blade, Flurry Axe, Lifestealing, Demonslaying...)
+          Some relevant procs (Bonereaver's Edge, Thrash Blade, Flurry Axe, Lifestealing, Demonslaying...)
         </li>
         <li>
           Overpower, Deep Wounds, and Deathwish
@@ -110,16 +113,10 @@
           Attacking from the front
         </li>
         <li>
-          Armor and armor reduction (<a target="_blank" href="https://classicdb.ch/?item=17076">Bonereaver's Edge</a>, <a  target="_blank" href="https://classicdb.ch/?item=12798">Annihilator</a> etc.)
-        </li>
-        <li>
           Heroic Strike rank IX from Dire Maul
         </li>
         <li>
           Daggers
-        </li>
-        <li>
-          Blessing of Kings (relevant for Crusader proc)
         </li>
         <li>
           ...
@@ -135,11 +132,11 @@
     </p>
     <p>
       Q: What do I do with it?
-      <br>A: Simulate your DPS. (I may at some point add EP calculations.)
+      <br>A: Simulate your DPS.
     </p>
     <p>
       Q: How do I use it?
-      <br>A: Enter the stats of your character, hit 'Simulate' and wait for results.
+      <br>A: Enter the stats of your character, with all buffs. Then hit 'Simulate' and wait for results.
     </p>
     <p>
       Q: Why did you write it?
@@ -165,6 +162,6 @@
       Q: Has anyone actually asked you any of these questions?
       <br>A: No.
     </p>
-    <p>v 0.2</p>
+    <p>v 0.3</p>
   </body>
 </html>

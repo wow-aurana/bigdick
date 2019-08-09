@@ -52,9 +52,9 @@ class Ability {
   }
 
   checkUserConditions() { return true; }
-  onMiss() { this.char.rage.use(this.cost); }
-  // Assuming rage refunding is 84%
-  onDodge() { this.char.rage.use(this.cost * .16); }
+  // Assuming rage refunding is 80%
+  onMiss() { this.char.rage.use(this.cost * .2); }
+  onDodge() { this.char.rage.use(this.cost * .2); }
   onHit() { this.char.rage.use(this.cost); }
 
   canUse() {
@@ -99,12 +99,12 @@ class Ability {
 }
 
 // Execute
-// TODO refund rage properly
 class Execute extends Ability {
   constructor(char, usewhen) {
     super(char, char.executeCost, 0, usewhen, 'Execute');
   }
 
+  // TODO verify that rage is refunded correctly
   onMiss() { this.char.rage.use(this.char.rage.current * .16); }
   onDodge() { this.char.rage.use(this.char.rage.current * .16); }
   onHit() { this.char.rage.use(this.char.rage.current); }
@@ -176,6 +176,7 @@ class Whirlwind extends Ability {
     return this.char.checkBtCd(this.usewhen.bt);
   }
 
+  onMiss() { this.char.rage.use(this.cost); }
   onDodge() { this.char.rage.use(this.cost); }
 
   getDmg() {
@@ -190,9 +191,6 @@ class HeroicStrike extends Ability {
   constructor(char, usewhen) {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
   }
-
-  // TODO confirm that HS does not refund rage on dodge/parry/miss
-  onDodge() { this.char.rage.use(this.cost); }
 
   checkUserConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
