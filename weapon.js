@@ -83,7 +83,6 @@ class Weapon {
   }
   
   proc(extraSwing) {
-    if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
     if (this.crusader) {
       const roll = m.random() * 60;
       if (roll < this.stats.speed) this.crusader.gain();
@@ -130,6 +129,7 @@ class Weapon {
       dmg *= this.glanceMul;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
@@ -138,12 +138,14 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
 
     } else {  // hit
       this.log.hits += 1;
       this.proc(extraSwing);
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
     }
   }
 
