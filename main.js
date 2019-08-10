@@ -19,6 +19,7 @@ mainhand.clickCb = (enabled) => {
 };
 
 const abilities = {
+  aponuse: new Checkbox('aponuse'),
   execute: new Checkbox('execute'),
   slam: new Checkbox('slam'),
   bloodthirst: new Checkbox('bloodthirst'),
@@ -32,6 +33,7 @@ const abilities = {
 };
 
 // Some abilities disabled by default
+abilities.aponuse.check(false);
 abilities.execute.check(false);
 abilities.slam.check(false);
 abilities.hamstring.check(false);

@@ -32,6 +32,9 @@ class Character {
     // First offhand swing delayed by 200ms (according to some guy on Discord)
     if (this.off) this.off.cooldown.timer = .2;
 
+    // AP on use (Blood Fury, trinkets etc.)
+    this.apOnUse = !!char.aponuse ? new ApOnUse(char.aponuse) : null;
+
     const create = (classptr, usewhen) => {
       return usewhen ? new classptr(this, usewhen) : null;
     };
@@ -74,15 +77,16 @@ class Character {
       this.slamSwing,
       this.bloodrage,
       this.bloodrage.ragetick,
+      this.apOnUse,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([this.gcd, this.flurry]);
 
     // helper methods
-    this.checkBtCd = this.bloodthirst ?
+    this.checkBtCd = !!this.bloodthirst ?
         (cutoff) => this.bloodthirst.cooldown.timeUntil() > cutoff :
         () => true;
-    this.checkWwCd = this.whirlwind ?
+    this.checkWwCd = !!this.whirlwind ?
         (cutoff) => this.whirlwind.cooldown.timeUntil() > cutoff :
         () => true;
     this.checkBtWwCd =
@@ -90,12 +94,14 @@ class Character {
   }
 
   getAp() {
-    let procStr = 0
+    const apOnUse = !!this.apOnUse ? this.apOnUse.getAp() : 0;
+    let procStr = 0;
     for (const weapon of this.autos) {
       if (weapon.crusader && weapon.crusader.running()) procStr += 100;
     }
     if (this.blessingOfKings) procStr *= 1.1;
-    return this.stats.ap + procStr * 2;
+    if (this.blessingOfKings) procStr *= 1.1;
+    return this.stats.ap + apOnUse + procStr * 2;
   }
 
   setTarget(target) {

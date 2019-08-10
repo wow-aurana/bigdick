@@ -80,6 +80,18 @@ class Cooldown {
   reset() { this.timer = 0; }
 }
 
+class ApOnUse extends Cooldown {
+  constructor(cfg) {
+    super(cfg.cooldown, 'AP on use');
+    this.ap = cfg.ap;
+    this.uptime = cfg.uptime;
+  }
+
+  canUse() { return true; }
+  getAp() { return (this.duration - this.timer) < this.uptime ? this.ap : 0; }
+  handle() { this.use(); }
+}
+
 class SlamSwing extends Cooldown {
   constructor(slam, castTime) {
     super(castTime, 'Slam swing');
