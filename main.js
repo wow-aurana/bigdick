@@ -34,7 +34,6 @@ const abilities = {
 
 // Some abilities disabled by default
 abilities.aponuse.check(false);
-abilities.execute.check(false);
 abilities.slam.check(false);
 abilities.hamstring.check(false);
 abilities.brainlag.check(false);

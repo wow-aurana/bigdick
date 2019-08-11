@@ -13,7 +13,8 @@ class Weapon {
     
     const crusader = stats.crusader ? new Crusader(stats.speed) : null;
     const strproc = getStrengthProc(stats.speed, stats.proc);
-    this.strprocs = [ crusader, strproc].filter((e) => !!e);
+    this.strprocs = [crusader, strproc].filter((e) => !!e);
+    this.extraAttacks = getExtraAttacks(stats.proc);
   }
 
   tick(seconds) {
@@ -87,6 +88,13 @@ class Weapon {
     for (const proc of this.strprocs) { proc.proc(); }
     if (!extraSwing) this.char.procHoJ();
     if (!extraSwing) this.char.procWindfury();
+    // Weapon procs
+    if (!extraSwing && (m.random() * 60 < this.stats.speed)) {
+      for (let i = 0; i < this.extraAttacks; ++i) {
+        this.char.main.cooldown.reset();
+        this.char.main.swing(true);
+      }
+    }
   }
 
   swing(extraSwing = false, extraAp = 0) {

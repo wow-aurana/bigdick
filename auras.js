@@ -51,3 +51,9 @@ function getStrengthProc(speed, id) {
   }
   return null;
 }
+
+function getExtraAttacks(id) {
+  if (id == 'TB' || id == 'FA') return 1;
+  if (id == 'IF') return 2;
+  return 0;
+}

@@ -53,7 +53,7 @@ class Checkbox {
       } else if (el.type == 'number') {
         result[el.name] = parseFloat(el.value);
       } else if (el.type == 'radio' && el.checked) {
-        result[el.name] = el.value;
+        result['proc'] = el.value;
       }
     }
     return result; 
