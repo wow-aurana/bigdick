@@ -48,19 +48,6 @@ class Rage {
   }
 }
 
-class Flurry {
-  constructor() {
-    this.charges = 0;
-    this.uptime = 0;
-  }
-
-  hasCharges() { return this.charges > 0; }
-  useCharge() { this.charges = m.max(this.charges - 1, 0); }
-  refresh() { this.charges = 3; }
-  reset() { this.charges = 0; }
-  tick(seconds) { if (this.hasCharges()) this.uptime += seconds; }
-}
-
 class Cooldown {
   constructor(duration, name = 'cooldown') {
     this.duration = duration;
@@ -135,20 +122,4 @@ class Bloodrage extends Cooldown {
 
   canUse() { return true; }
   handle() { this.use(); this.rage.gain(10); this.ragetick.start(); }
-}
-
-class Aura {
-  constructor(duration, name = 'cooldown') {
-    this.duration = duration;
-    this.name = name;
-    this.timer = 0;
-    this.log = { count: 0, uptime: 0, };
-  }
-  
-  running() { return this.timer > 0; }
-  tick(seconds) {
-    this.log.uptime += m.min(seconds, this.timer);
-    this.timer = m.max(0, this.timer - seconds);
-  }
-  gain() { this.timer = this.duration; this.log.count += 1; }
 }

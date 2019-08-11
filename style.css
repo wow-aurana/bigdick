@@ -78,3 +78,7 @@ input[type=number]::-webkit-outer-spin-button {
 #talents {
   width: 600px;
 }
+
+.indent {
+  margin-left: 24px;
+}

@@ -10,12 +10,15 @@ class Weapon {
     this.isMainhand = true;
     this.flurried = false;
     this.table = {};
-    this.crusader = stats.crusader ? new Aura(15, 'Crusader') : null;
+    
+    const crusader = stats.crusader ? new Crusader(stats.speed) : null;
+    const strproc = getStrengthProc(stats.speed, stats.proc);
+    this.strprocs = [ crusader, strproc].filter((e) => !!e);
   }
 
   tick(seconds) {
     this.cooldown.tick(seconds);
-    if (this.crusader) this.crusader.tick(seconds);
+    for (const proc of this.strprocs) { proc.tick(seconds); }
   }
 
   getDmg(extraAp = 0) {
@@ -81,10 +84,7 @@ class Weapon {
   }
   
   proc(extraSwing) {
-    if (this.crusader) {
-      const roll = m.random() * 60;
-      if (roll < this.stats.speed) this.crusader.gain();
-    }
+    for (const proc of this.strprocs) { proc.proc(); }
     if (!extraSwing) this.char.procHoJ();
     if (!extraSwing) this.char.procWindfury();
   }

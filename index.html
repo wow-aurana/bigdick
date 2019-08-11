@@ -63,6 +63,16 @@
     <input class="twohand" name="crusader" type="checkbox" checked>
     <span class="twohand">Crusader</span>
     <br>
+    <span class="twohand indent">Proc:</span>
+    <input class="twohand" name="proc" type="radio" value="none" checked>
+    <span class="twohand">None</span>
+    <input class="twohand" name="proc" type="radio" value="MS">
+    <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=13393">MS</a></span>
+    <input class="twohand" name="proc" type="radio" value="AC">
+    <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=12790">AC</a></span>
+    <input class="twohand" name="proc" type="radio" value="UTB">
+    <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=19334">UTB</a></span>
+    <br>
     <!-- Main hand -->
     <input id="mainhand" type="checkbox" checked>
     <span class="mainhand stat">Mainhand min:</span>
@@ -190,6 +200,7 @@
   <p>Results:</p>
   <p id="output"></p>
 
+  <script src="items.js"></script>
   <script src="dom.js"></script>
   <script src="simworker.js"></script>
   <script src="main.js"></script>

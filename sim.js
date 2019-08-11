@@ -1,4 +1,5 @@
 importScripts('util.js');
+importScripts('auras.js');
 importScripts('talents.js');
 importScripts('weapon.js');
 importScripts('abilities.js');
@@ -16,10 +17,10 @@ function compileResults(char) {
   if (char.heroic) dmgSources.push(char.heroic);
   res.dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
   res.sources = dmgSources.map((s) => s.log);
-  // TODO clean up procs
-  res.crusader = {};
-  if (char.main.crusader) res.crusader.main = char.main.crusader.log;
-  if (char.off && char.off.crusader) res.crusader.off = char.off.crusader.log;
+
+  res.procs = { main: char.main.strprocs.map((s) => s.log) };
+  res.procs.off = !!char.off ? char.off.strprocs.map((s) => s.log) : [];
+
   res.flurry = char.flurry.uptime;
   res.rage = char.rage.log;
   return res;

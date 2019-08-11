@@ -2,10 +2,10 @@ const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect
 
 const output = new Output();
 
-const twohand = new Checkbox('twohand');
+const twohand = new WeaponCheckbox('twohand');
 twohand.check(false);
-const mainhand = new Checkbox('mainhand');
-const offhand = new Checkbox('offhand');
+const mainhand = new WeaponCheckbox('mainhand');
+const offhand = new WeaponCheckbox('offhand');
 twohand.clickCb = (enabled) => {
   mainhand.check(!enabled, false);
   offhand.check(!enabled, false);

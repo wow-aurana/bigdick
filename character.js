@@ -5,7 +5,7 @@ class Character {
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
     this.canExecute = false;
-    
+
     // Target armor mitigation
     this.armorDmgMul = 1;
 
@@ -98,7 +98,9 @@ class Character {
     const apOnUse = !!this.apOnUse ? this.apOnUse.getAp() : 0;
     let procStr = 0;
     for (const weapon of this.autos) {
-      if (weapon.crusader && weapon.crusader.running()) procStr += 100;
+      for (const proc of weapon.strprocs) {
+        if (proc.running()) procStr += proc.amount;
+      }
     }
     if (this.blessingOfKings) procStr *= 1.1;
     if (this.blessingOfKings) procStr *= 1.1;

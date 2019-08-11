@@ -96,21 +96,20 @@ class SimWorker {
                + (summary.rage.fromSwings / summary.rage.swings).toFixed(2)
                + ', per second: '
                + (summary.rage.gained / duration).toFixed(2));
-    // TODO clean up procs
-    summary.crusader.main && report.push('Mainhand crusader procs per fight: '
-               + (summary.crusader.main.count / iterations).toFixed(2)
-               + ', effective ppm: '
-               + (summary.crusader.main.count / (duration / 60)).toFixed(2)
-               + ', uptime: '
-               + (summary.crusader.main.uptime * 100 / duration).toFixed(1)
-               + '%');
-    summary.crusader.off && report.push('Offhand crusader procs per fight: '
-               + (summary.crusader.off.count / iterations).toFixed(2)
-               + ', effective ppm: '
-               + (summary.crusader.off.count / (duration / 60)).toFixed(2)
-               + ', uptime: '
-               + (summary.crusader.off.uptime * 100 / duration).toFixed(1)
-               + '%');
+    
+    for (const proc of summary.procs.main) {
+      report.push('Mainhand ' + proc.name + ' procs per fight: '
+                  + (proc.count / iterations).toFixed(2) + ', effective ppm: '
+                  + (proc.count / (duration / 60)).toFixed(2) + ', uptime: '
+                  + (proc.uptime * 100 / duration).toFixed(1) + '%');
+    }
+
+    for (const proc of summary.procs.off) {
+      report.push('Offhand ' + proc.name + ' procs per fight: '
+                  + (proc.count / iterations).toFixed(2) + ', effective ppm: '
+                  + (proc.count / (duration / 60)).toFixed(2) + ', uptime: '
+                  + (proc.uptime * 100 / duration).toFixed(1) + '%');
+    }
 
     report.push('(Finished in ' + summary.runtime + ' seconds)');
     return report;

@@ -17,6 +17,11 @@ class Checkbox {
     this.el = getElement(id);
     this.name = id;
     this.clickCb = null;
+    this.children = Array.from(document.getElementsByClassName(this.name));
+    this.inputs = this.children.filter((el) => {
+      return (el.nodeName == 'INPUT');
+    });
+
     this.el.onclick = (ev) => {
       const checked = ev.target.checked;
       this.check(checked);
@@ -25,35 +30,63 @@ class Checkbox {
 
   check(enable, runCallback = true) {
     this.el.checked = enable;
-    for (const el of document.getElementsByClassName(this.name)) {
+    for (const el of this.children) {
       el.classList.toggle('inactive', !enable);
-      if (el.nodeName == 'INPUT') {
-        el.disabled = !enable;
-      } 
     }
+
+    for (const el of this.inputs) { el.disabled = !enable; } 
     if (this.clickCb && runCallback) this.clickCb(enable);
   }
 
   enable(enable) { this.el.disabled = !enable; }
-
   checked() { return this.el.checked; }
 
   collect() {
     if (!this.checked()) return null;
 
     const result = {};
-    for (const el of document.getElementsByClassName(this.name)) {
-      if (el.nodeName == 'INPUT') {
-        if (el.type == 'text') {
-          result[el.name] = el.value;
-        } else if (el.type == 'checkbox') {
-          result[el.name] = el.checked;
-        } else if (el.type == 'number') {
-          result[el.name] = parseFloat(el.value);
-        }
+    for (const el of this.inputs) {
+      if (el.type == 'text') {
+        result[el.name] = el.value;
+      } else if (el.type == 'checkbox') {
+        result[el.name] = el.checked;
+      } else if (el.type == 'number') {
+        result[el.name] = parseFloat(el.value);
+      } else if (el.type == 'radio' && el.checked) {
+        result[el.name] = el.value;
       }
     }
     return result; 
+  }
+}
+
+class WeaponCheckbox extends Checkbox {
+  constructor(id) { 
+    super(id);
+    for (const el of this.inputs) {
+      if (el.type == 'radio') {
+        el.onclick = () => setWeaponStats(this);
+      }
+    }    
+  }
+
+  getNumbers() {
+    let result = {};
+    for (const el of this.inputs) {
+      if (el.type == 'number') {
+        result[el.name] = el;
+      }
+    }
+    return result;
+  }
+
+  getProc() {
+    for (const el of this.inputs) {
+      if (el.type == 'radio' && el.checked) {
+        return el.value;
+      }
+    }
+    return 'none';
   }
 }
 
