@@ -65,12 +65,13 @@ input[type=number]::-webkit-outer-spin-button {
 #charlvl,
 #charhit,
 #charcrit,
+#duration,
 #charap {
-  width: 40px;
+  width: 36px;
 }
 
-#duration {
-  width: 140px;
+#iterations {
+  width: 90px;
   text-align: left;
 }
 

@@ -9,8 +9,8 @@ function reportProgress(progress) {
   postMessage({ progress });
 }
 
-function compileResults(char, duration) {
-  const res = { duration };
+function compileResults(char) {
+  const res = {};
 
   const dmgSources = [...char.autos].concat(char.abilities);
   if (char.heroic) dmgSources.push(char.heroic);
@@ -27,34 +27,40 @@ function compileResults(char, duration) {
 
 function runSimulation(cfg) {
   const startTime = new Date().getTime();
-  const duration = cfg.duration;
 
   const char = new Character(cfg.char);
   char.setTarget(cfg.target);
 
-  let timer = 0;
   let reportedProgress = 0;
 
-  while (timer < duration) {
-    const progress = Math.round(timer / duration * 100);
+  for (let i = 0; i < cfg.iterations; ++i) {
+    const progress = m.round(i / cfg.iterations * 100);
     if (progress > reportedProgress) {
       reportedProgress = progress;
       reportProgress(progress);
     }
 
-    const nextEvent = char.getNextEvent();
-    nextEventTimer = nextEvent.timeUntil();
-    console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
-    timer += nextEventTimer;
-    char.advanceTime(nextEventTimer);
+    let timer = 0;
+    while (timer < cfg.duration) {
+      char.canExecute = timer > (cfg.duration - cfg.execute);
+      const nextEvent = char.getNextEvent();
+      nextEventTimer = nextEvent.timeUntil();
+      console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
+      timer += nextEventTimer;
 
-    nextEvent.handle();
-    char.main.applyFlurry();
-    if (char.off) char.off.applyFlurry();
-    char.heroicQueued |= char.shouldHeroicStrike();
+      char.advanceTime(nextEventTimer);
+      if (timer > cfg.duration) break;
+
+      nextEvent.handle();
+      char.main.applyFlurry();
+      if (char.off) char.off.applyFlurry();
+      char.heroicQueued |= char.shouldHeroicStrike();
+    }
+
+    char.finishFight();
   }
 
-  const results = compileResults(char, duration);
+  const results = compileResults(char);
   const endTime = new Date().getTime();
   results.runtime = ((endTime - startTime) / 1000).toFixed(1);
   postMessage({progress: 100, summary: results });

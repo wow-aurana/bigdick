@@ -78,7 +78,9 @@ function collectInputs() {
       level: getInputNumber('targetlvl'),
       armor: getEffectiveArmor(),
     },
+    iterations: getInputNumber('iterations'),
     duration: getInputNumber('duration'),
+    execute: getInputNumber('executephase'),
   }
 
   for (a of Object.values(abilities)) {

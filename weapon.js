@@ -63,10 +63,8 @@ class Weapon {
     this.table.crit += this.table.glance;
   }
 
-  timeUntil() {
-    return this.cooldown.timeUntil();
-  }
-
+  timeUntil() { return this.cooldown.timeUntil(); }
+  reset() { return this.cooldown.reset(); }
   canUse() { return !(this.char.slam && this.char.slam.casting); }
 
   applyFlurry() {

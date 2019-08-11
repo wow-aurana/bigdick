@@ -112,7 +112,7 @@
     <!-- Execute -->
     <input id="execute" type="checkbox" checked>
     <span class="execute">Execute when rage below</span>
-    <input class="execute" name="rage" type="number" min="10" max="100" value="25">
+    <input class="execute" name="rage" type="number" min="10" max="100" value="30">
     <span class="execute">or Bloodthirst and Whirlwind CDs above</span>
     <input class="execute" name="btww" type="number" min="0" max="6" step="0.1" value="0.5">
     <span class="execute">seconds</span>
@@ -122,7 +122,7 @@
     <span class="slam">Slam up to</span>
     <input class="slam" name="delay" type="number" min="1" max="9000" value="200">
     <span class="slam">milliseconds after a main hand swing if rage above</span>
-    <input class="slam" name="rage" type="number" min="15" max="100" value="45">
+    <input class="slam" name="rage" type="number" min="15" max="100" value="70">
     <br>
     <!-- Bloodthirst -->
     <input id="bloodthirst" type="checkbox" checked>
@@ -162,8 +162,13 @@
     <span class="lag">milliseconds</span>
     <br>
     <br>
-    <span class="stat">Sim duration (seconds):</span>
-    <input id="duration" type="number" min="10" value="10000000">
+    <span>Sim duration:</span>
+    <input id="iterations" type="number" min="1" value="100000">
+    <span>times</span>
+    <input id="duration" type="number" min="10" min="3600" value="100">
+    <span>seconds (</span>
+    <input id="executephase" type="number" min="0" min="600" value="18">
+    <span>seconds Execute phase)</span>
     <br>
     <input id="apep" type="checkbox" checked>
     <span class="apep">calculate APEP for</span>

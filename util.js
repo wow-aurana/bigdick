@@ -53,9 +53,11 @@ class Flurry {
     this.charges = 0;
     this.uptime = 0;
   }
+
   hasCharges() { return this.charges > 0; }
   useCharge() { this.charges = m.max(this.charges - 1, 0); }
   refresh() { this.charges = 3; }
+  reset() { this.charges = 0; }
   tick(seconds) { if (this.hasCharges()) this.uptime += seconds; }
 }
 

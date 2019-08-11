@@ -11,6 +11,7 @@ class Ability {
     this.crit = 0;
   }
 
+  reset() { this.cooldown.reset(); }
   tick(seconds) { this.cooldown.tick(seconds); }
 
   getDmg() {
@@ -110,6 +111,7 @@ class Execute extends Ability {
   onHit() { this.char.rage.use(this.char.rage.current); }
 
   checkUserConditions() {
+    if (!this.char.canExecute) return false;
     // Use when below this much rage, not above
     if (!this.char.rage.has(this.usewhen.rage)) return true;
     return this.char.checkBtWwCd(this.usewhen.btww);
@@ -128,7 +130,9 @@ class Slam extends Ability {
     this.casting = false;
     this.opportunity = new Cooldown(this.usewhen.delay / 1000, 'Slam now!');
   }
+
   tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
+  reset() { super.reset(); this.casting = false; }
 
   checkUserConditions() {
     return !this.casting

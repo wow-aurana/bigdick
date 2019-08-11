@@ -4,6 +4,7 @@ class Character {
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
+    this.canExecute = false;
     
     // Target armor mitigation
     this.armorDmgMul = 1;
@@ -145,6 +146,15 @@ class Character {
   advanceTime(seconds) {
     for (const e of this.cooldowns) {
       e.tick(seconds);
+    }
+  }
+
+  finishFight() {
+    this.rage.current = 0;
+    this.canExecute = false;
+
+    for (const e of this.cooldowns) {
+      e.reset();
     }
   }
 }
