@@ -135,6 +135,8 @@ getElement('setup').addEventListener('submit', (e) => {
     // Wait until all workers finished
     for (worker of wrks) { if (!worker.finished()) return; }
 
+    if (getInputChecked('ping')) new Audio(audioURL).play();
+
     output.clear();
 
     const baseDps = workers.baseline.getDps();
@@ -159,6 +161,8 @@ getElement('setup').addEventListener('submit', (e) => {
     const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
     output.print('(Finished in ' + maxTime + ' seconds)');
   } : () => {
+    if (getInputChecked('ping')) new Audio(audioURL).play();
+
     output.clear();
     const report = workers.baseline.report();
     for (const line of report) {
