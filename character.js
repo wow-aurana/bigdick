@@ -27,7 +27,11 @@ class Character {
     this.blessingOfKings = char.bok;
     this.windfuryTotem = char.wftotem;
     this.flurry = new Flurry();
+    this.abilityApScaling = !!char.twohand ? 3.3
+                            : char.mainhand.dagger ? 1.7 : 2.4;
+
     this.main = new Weapon(this, char.twohand || char.mainhand, 'Mainhand');
+
     this.off = char.offhand ? new Weapon(this, char.offhand, 'Offhand') : null;
     if (this.off) this.off.isMainhand = false;
     // First offhand swing delayed by 200ms (according to some guy on Discord)
