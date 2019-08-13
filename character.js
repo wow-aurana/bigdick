@@ -103,7 +103,6 @@ class Character {
       }
     }
     if (this.blessingOfKings) procStr *= 1.1;
-    if (this.blessingOfKings) procStr *= 1.1;
     return this.stats.ap + apOnUse + procStr * 2;
   }
 
