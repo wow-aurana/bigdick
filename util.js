@@ -81,6 +81,17 @@ class ApOnUse extends Cooldown {
   handle() { this.use(); }
 }
 
+class RagePotion extends Cooldown {
+  constructor(rage) {
+    super(120, 'Mighty Rage Potion');
+    this.rage = rage;
+  }
+
+  canUse() { return true; }
+  getStr() { return (this.duration - this.timer) < 20 ? 60 : 0; }
+  handle() { this.use(); this.rage.gain(45 + m.random() * 30); }
+}
+
 class SlamSwing extends Cooldown {
   constructor(slam, castTime) {
     super(castTime, 'Slam swing');

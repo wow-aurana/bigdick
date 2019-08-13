@@ -52,7 +52,8 @@ class Ability {
            this.char.delay;
   }
 
-  checkUserConditions() { return true; }
+  checkConditions() { return true; }
+  checkExecuteConditions() { return false; }
   // Assuming rage refunding is 80%
   onMiss() { this.char.rage.use(this.cost * .2); }
   onDodge() { this.char.rage.use(this.cost * .2); }
@@ -60,7 +61,8 @@ class Ability {
 
   canUse() {
     if (!this.char.rage.has(this.cost)) return false;
-    return this.checkUserConditions();
+    if (this.char.canExecute) return this.checkExecuteConditions();
+    return this.checkConditions();
   }
   
   swing() {
@@ -105,22 +107,17 @@ class Execute extends Ability {
     super(char, char.executeCost, 0, usewhen, 'Execute');
   }
 
-  // TODO verify that rage is refunded correctly
-  onMiss() { this.char.rage.use(this.char.rage.current * .16); }
-  onDodge() { this.char.rage.use(this.char.rage.current * .16); }
-  onHit() { this.char.rage.use(this.char.rage.current); }
-
-  checkUserConditions() {
-    if (!this.char.canExecute) return false;
-    // Use when below this much rage, not above
-    if (!this.char.rage.has(this.usewhen.rage)) return true;
-    return this.char.checkBtWwCd(this.usewhen.btww);
-  }
-
   getDmg() { 
     return (600 + (this.char.rage.current - this.cost) * 15)
            * this.char.wpnspec;
   }
+
+  // TODO verify that rage is refunded correctly
+  onMiss() { this.char.rage.use(this.char.rage.current * .16); }
+  onDodge() { this.char.rage.use(this.char.rage.current * .16); }
+  onHit() { this.char.rage.use(this.char.rage.current); }
+  checkConditions() { return false; }
+  checkExecuteConditions() { return true; }
 }
 
 // Slam
@@ -131,16 +128,15 @@ class Slam extends Ability {
     this.opportunity = new Cooldown(this.usewhen.delay / 1000, 'Slam now!');
   }
 
-  tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
   reset() { super.reset(); this.casting = false; }
+  tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
+  getDmg() { return this.char.main.getDmg() + 87 * this.char.wpnspec; }
 
-  checkUserConditions() {
+  checkConditions() {
     return !this.casting
            && this.opportunity.running()
            && this.char.rage.has(this.usewhen.rage);
   }
-
-  getDmg() { return this.char.main.getDmg() + 87 * this.char.wpnspec; }
 
   swing() {
     console.assert(this.casting, 'Trying to swing slam when not casting');
@@ -165,8 +161,14 @@ class Bloodthirst extends Ability {
     super(char, 30, 6, usewhen, 'Bloodthirst');
   }
 
-  checkUserConditions() { return this.char.rage.has(this.usewhen.rage); }
   getDmg() { return this.char.getAp() * .45 * this.char.wpnspec; }
+  checkConditions() { return this.char.rage.has(this.usewhen.rage); }
+  
+  checkExecuteConditions() {
+    if (!this.usewhen.execute) return false;
+    if (!this.char.rage.has(this.usewhen.execute.rage)) return false;
+    return (this.char.getAp() > this.usewhen.execute.ap);
+  }
 }
 
 // Whirlwind
@@ -175,19 +177,25 @@ class Whirlwind extends Ability {
     super(char, 25, 10, usewhen, 'Whirlwind');
   }
 
-  checkUserConditions() {
-    if (!this.char.rage.has(this.usewhen.rage)) return false;
-    return this.char.checkBtCd(this.usewhen.bt);
-  }
-
-  onMiss() { this.char.rage.use(this.cost); }
-  onDodge() { this.char.rage.use(this.cost); }
-
   getDmg() {
     const normalization = this.char.stats.twohand ? 3.3 : 2.4;
     const dmg = this.char.main.avgDmg + this.char.getAp() / 14 * normalization;  
     return dmg * this.char.wpnspec;
   }
+
+  checkConditions() {
+    if (!this.char.rage.has(this.usewhen.rage)) return false;
+    return this.char.checkBtCd(this.usewhen.bt);
+  }
+
+  checkExecuteConditions() {
+    if (!this.usewhen.execute) return false;
+    if (!this.char.rage.has(this.usewhen.execute.rage)) return false;
+    return (this.char.getAp() > this.usewhen.execute.ap);
+  }
+
+  onMiss() { this.char.rage.use(this.cost); }
+  onDodge() { this.char.rage.use(this.cost); }
 }
 
 // Heroic Strike
@@ -196,12 +204,13 @@ class HeroicStrike extends Ability {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
   }
 
-  checkUserConditions() {
+  getDmg() { return this.char.main.getDmg() + 138 * this.char.wpnspec; }
+
+  checkConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
     return this.char.checkBtWwCd(this.usewhen.btww);
   }
 
-  getDmg() { return this.char.main.getDmg() + 138 * this.char.wpnspec; }
   timeUntil() { console.assert(false, 'How did HS get in the event queue?'); }
   handle() { console.assert(false, 'How did HS get in the event queue?'); }
 }
@@ -213,10 +222,10 @@ class Hamstring extends Ability {
     super(char, cost, 0, usewhen, 'Hamstring');
   }
 
-  checkUserConditions() {
+  getDmg() { return 45 * this.char.wpnspec; }
+
+  checkConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
     return this.char.checkBtWwCd(this.usewhen.btww);
   }
-
-  getDmg() { return 45 * this.char.wpnspec; }
 }

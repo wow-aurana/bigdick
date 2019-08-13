@@ -35,6 +35,8 @@ class Character {
 
     // AP on use (Blood Fury, trinkets etc.)
     this.apOnUse = !!char.aponuse ? new ApOnUse(char.aponuse) : null;
+    // Mighty Rage Potion
+    this.ragePotion = !!char.ragepotion ? new RagePotion(this.rage) : null;
 
     const create = (classptr, usewhen) => {
       return usewhen ? new classptr(this, usewhen) : null;
@@ -46,7 +48,7 @@ class Character {
 
     this.bloodrage = new Bloodrage(this.rage);
 
-    this.execute = create(Execute, char.execute);
+    this.execute = create(Execute, {});
     
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
 
@@ -60,7 +62,7 @@ class Character {
 
     this.hamstring = create(Hamstring, char.hamstring);
 
-    // Setup
+    // Setup abilities in the correct priority order
     const exists = (e) => !!e;
     this.abilities = [
       this.execute,
@@ -74,7 +76,7 @@ class Character {
 
     this.events = [...this.abilities].concat(this.autos).concat([
       this.anger,
-      this.slam,
+      this.ragePotion,
       this.slamSwing,
       this.bloodrage,
       this.bloodrage.ragetick,
@@ -102,6 +104,7 @@ class Character {
         if (proc.running()) procStr += proc.amount;
       }
     }
+    if (this.ragePotion) procStr += this.ragePotion.getStr();
     if (this.blessingOfKings) procStr *= 1.1;
     return this.stats.ap + apOnUse + procStr * 2;
   }
@@ -139,7 +142,7 @@ class Character {
     this.delay = m.random() * this.brainlag;
 
     const nextEvent = this.events.reduce((ret, e) => {
-      return (e.canUse() && e.timeUntil() < ret.timeUntil()) ? e : ret;
+      return (e.canUse() && e.timeUntil() <= ret.timeUntil()) ? e : ret;
     }, this.main);
     return nextEvent;
   }

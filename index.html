@@ -15,7 +15,8 @@
 
 <body>
   <form id="setup">
-    <p><a href="rtfm.html">RTFM<a>. Then enter your character's stats (with all buffs and talents)...</p>
+    <p>First <a href="rtfm.html">RTFM<a>. Then fill out the form...</p>
+    <h4>Stats/Talents</h4>
     <span class="stat">Target level:</span>
     <input id="targetlvl" type="number" min="10" max="63" value="63">
     <br>
@@ -45,12 +46,10 @@
     <input id="charcrit" type="number" min="0" max="100" step="0.01" value="31.5">
     <span>% in Berserker Stance</span>
     <br>
-    <br>
     <span class="stat">Talent spec:</span>
     <input id="talents" value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
-    <br>
-    <br>
-    <!-- Twohand -->
+    <h4>Gear</h4>
+    <p>  <!-- Twohand -->
     <input id="twohand" type="checkbox" checked>
     <span class="twohand stat">Twohand min:</span>
     <input class="twohand" name="min" type="number" min="0" max="1000" value="153">
@@ -63,17 +62,16 @@
     <input class="twohand" name="crusader" type="checkbox" checked>
     <span class="twohand">Crusader</span>
     <br>
-    <span class="twohand indent">Proc:</span>
-    <input class="twohand" name="thproc" type="radio" value="none" checked>
-    <span class="twohand">None</span>
+    <input class="twohand indent" name="thproc" type="radio" value="none" checked>
+    <span class="twohand">No proc</span>
     <input class="twohand" name="thproc" type="radio" value="MS">
     <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=13393">MS</a></span>
     <input class="twohand" name="thproc" type="radio" value="AC">
     <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=12790">AC</a></span>
     <input class="twohand" name="thproc" type="radio" value="UTB">
     <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=19334">UTB</a></span>
-    <br>
-    <!-- Main hand -->
+    </p>
+    <p>  <!-- Main hand -->
     <input id="mainhand" type="checkbox" checked>
     <span class="mainhand stat">Mainhand min:</span>
     <input class="mainhand" name="min" type="number" min="0" max="1000" value="81">
@@ -86,16 +84,15 @@
     <input class="mainhand" name="crusader" type="checkbox" checked>
     <span class="mainhand">Crusader</span>
     <br>
-    <span class="mainhand indent">Proc:</span>
-    <input class="mainhand" name="mhproc" type="radio" value="none" checked>
-    <span class="mainhand">None</span>
+    <input class="mainhand indent" name="mhproc" type="radio" value="none" checked>
+    <span class="mainhand">No proc</span>
     <input class="mainhand" name="mhproc" type="radio" value="TB">
     <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=17705">TB</a></span>
     <input class="mainhand" name="mhproc" type="radio" value="FA">
     <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=871">FA</a></span>
     <input class="mainhand" name="mhproc" type="radio" value="IF">
     <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=11684">IF</a></span>
-    <br>
+    </p><p>
     <!-- Offhand -->
     <input id="offhand" type="checkbox" checked>
     <span class="offhand stat">Offhand min:</span>
@@ -109,22 +106,24 @@
     <input class="offhand" name="crusader" type="checkbox" checked>
     <span class="offhand">Crusader</span>
     <br>
-    <span class="offhand indent">Proc:</span>
-    <input class="offhand" name="ohproc" type="radio" value="none" checked>
-    <span class="offhand">None</span>
+    <input class="offhand indent" name="ohproc" type="radio" value="none" checked>
+    <span class="offhand">No proc</span>
     <input class="offhand" name="ohproc" type="radio" value="TB">
     <span class="offhand"><a target="_blank" href="https://classicdb.ch/?item=17705">TB</a></span>
     <input class="offhand" name="ohproc" type="radio" value="FA">
     <span class="offhand"><a target="_blank" href="https://classicdb.ch/?item=871">FA</a></span>
-    <br>
+    </p>
+    <input id="hoj" type="checkbox" checked>
+    <span class="hoj">Hand of Justice</span>
+    <h4>Buffs/Consumables</h4>
     <input id="bok" type="checkbox" checked>
     <span class="bok">Blessing of Kings (for STR procs)</span>
     <br>
-    <input id="hoj" type="checkbox" checked>
-    <span class="stat">Hand of Justice</span>
+    <input id="wftotem" type="checkbox" checked>
+    <span class="wftotem">Windfury totem</span>
     <br>
-    <input id="wftotem" type="checkbox">
-    <span class="stat">Windfury totem</span>
+    <input id="ragepotion" type="checkbox" checked>
+    <span class="ragepotion">Mighty Rage Potion</span>
     <br>
     <!-- Trinket -->
     <input id="aponuse" type="checkbox" checked>
@@ -135,16 +134,7 @@
     <span class="aponuse">seconds every</span>
     <input class="aponuse" name="cooldown" type="number" min="0" max="600" value="120">
     <span class="aponuse">seconds</span>
-    <br>
-    <br>
-    <!-- Execute -->
-    <input id="execute" type="checkbox" checked>
-    <span class="execute">Execute when rage below</span>
-    <input class="execute" name="rage" type="number" min="10" max="100" value="30">
-    <span class="execute">or Bloodthirst and Whirlwind CDs above</span>
-    <input class="execute" name="btww" type="number" min="0" max="6" step="0.1" value="0.5">
-    <span class="execute">seconds</span>
-    <br>
+    <h4>Abilities</h4>
     <!-- Slam -->
     <input id="slam" type="checkbox" checked>
     <span class="slam">Slam up to</span>
@@ -188,9 +178,23 @@
     <span class="lag">Brain lag. Randomly delay all abilities by up to</span>
     <input class="lag" name="delay" type="number" min="0" max="2000" value="200">
     <span class="lag">milliseconds</span>
+    <h4>Execute phase</h4>
+    <!-- Bloodthirst -->
+    <input id="executebt" type="checkbox" checked>
+    <span class="executebt">Bloodthirst when ready and rage above</span>
+    <input class="executebt" name="rage" type="number" min="30" max="100" value="30">
+    <span class="executebt">and attack power above</span>
+    <input class="executebt" name="ap" type="number" min="0" max="5000" value="2000">
     <br>
+    <!-- Whirlwind -->
+    <input id="executeww" type="checkbox" checked>
+    <span class="executeww">Whirlwind when ready and rage above</span>
+    <input class="executeww" name="rage" type="number" min="25" max="100" value="65">
+    <span class="executeww">and attack power above</span>
+    <input class="executeww" name="ap" type="number" min="0" max="5000" value="2000">
     <br>
-    <span>Sim duration:</span>
+    <h4>Simulation</h4>
+    <span>Fight</span>
     <input id="iterations" type="number" min="1" value="100000">
     <span>times</span>
     <input id="duration" type="number" min="10" min="3600" value="100">
@@ -211,11 +215,11 @@
     <input class="apep" name="oskillstep" type="number" min="1" max="9" value="3">
     <span class="apep">offhand skill </span>
     
-    <p>...then push button: <input id="submit" type="submit" value="Simulate">
+    <p><input id="submit" type="submit" value="Simulate">
     <input type="checkbox" id="ping"><span class="stat">Ping when finished</span></p>
   </form>
  
-  <p>Results:</p>
+  <h4>Results:</h4>
   <p id="output"></p>
 
   <script src="items.js"></script>

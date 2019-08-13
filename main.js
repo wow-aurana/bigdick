@@ -18,9 +18,11 @@ mainhand.clickCb = (enabled) => {
   offhand.check(enabled, false);
 };
 
+const executebt = new Checkbox('executebt');
+const executeww = new Checkbox('executeww');
+
 const abilities = {
   aponuse: new Checkbox('aponuse'),
-  execute: new Checkbox('execute'),
   slam: new Checkbox('slam'),
   bloodthirst: new Checkbox('bloodthirst'),
   whirlwind: new Checkbox('whirlwind'),
@@ -32,11 +34,24 @@ const abilities = {
   offhand,
 };
 
+abilities.bloodthirst.clickCb = (enabled) => {
+  if (!enabled) executebt.check(enabled);
+  executebt.enable(enabled);
+};
+
+abilities.whirlwind.clickCb = (enabled) => {
+  if (!enabled) executeww.check(enabled);
+  executeww.enable(enabled);
+};
+
 // Some abilities disabled by default
 abilities.aponuse.check(false);
 abilities.slam.check(false);
 abilities.hamstring.check(false);
 abilities.brainlag.check(false);
+executeww.check(false);
+new Checkbox('wftotem').check(false);
+new Checkbox('ragepotion').check(false);
 
 // EP calculations disabled by default.
 const apep = new Checkbox('apep');
@@ -66,6 +81,7 @@ function collectInputs() {
       talents: talentUrl,
       bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
+      ragepotion: getInputChecked('ragepotion'),
       wftotem: getInputChecked('wftotem'),
       stats: {
         ap: getInputNumber('charap'),
@@ -85,6 +101,10 @@ function collectInputs() {
   for (a of Object.values(abilities)) {
     config.char[a.name] = a.collect();
   }
+  if (executebt.checked())
+    config.char.bloodthirst.execute = executebt.collect();
+  if (executeww.checked())
+    config.char.whirlwind.execute = executeww.collect();
   return config;
 }
 

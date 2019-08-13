@@ -1,12 +1,20 @@
 body {
   font-family: 'Roboto';
+  font-size: 15px;
+}
+
+h4 {
+  margin-block-start: 10px;
+  margin-block-end: 4px;
+}
+p {
+  margin-block-start: 0px;
+  margin-block-end: 4px;
 }
 
 span {
-  /*margin: 0 4px 0 0;*/
   display: inline-block;
-  font-size: 16px;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
 }
 
 input:invalid {
@@ -45,6 +53,13 @@ input[type=number] {
   width: 26px;
 }
 
+input[type=checkbox],
+input[type=radio] {
+  margin: 1px 0 0 4px;
+}
+
+input[name="ap"].executebt,
+input[name="ap"].executeww,
 input[name="delay"] {
   width: 36px;
 }
@@ -79,6 +94,6 @@ input[type=number]::-webkit-outer-spin-button {
   width: 600px;
 }
 
-.indent {
+input[type=radio].indent {
   margin-left: 24px;
 }
