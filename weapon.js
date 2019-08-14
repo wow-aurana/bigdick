@@ -39,15 +39,15 @@ class Weapon {
     const targetDef = target.level * 5;
     const baseSkill = this.char.level * 5;
     const skillDiff = targetDef - this.stats.skill;
-    const penalty = this.char.off ? 19 : 0;
 
     // miss
     // see this blue post:
     // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
     const hitOnGear = m.max(0, this.char.stats.hit - (skillDiff > 10 ? 1 : 0));
     const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
-    this.table.miss =
-        clamp(0, 100)(penalty + 5 + missFromSkill - hitOnGear);
+    const baseMiss = 5 + missFromSkill;
+    const actualMiss = !this.char.off ? baseMiss : (.8 * baseMiss + 20);
+    this.table.miss = clamp(0, 100)(actualMiss - hitOnGear);
     
     // dodge
     this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
