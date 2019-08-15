@@ -25,40 +25,43 @@
       The code makes a number of assumptions that are not necessarily verified yet:
       <ul>
         <li>
-          Due to lack of data, all weapon procs are assumed to be 1ppm for now
+          Due to lack of data, all weapon procs are assumed to be 1ppm for now.
         </li>
         <li>
-          Rage is a floating point number, rage gains and losses are not rounded to whole numbers
+          Rage is a floating point number, rage gains and losses are not rounded to whole numbers.
         </li>
         <li>
-          Extra swings like Hand of Justice and Windfury Totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows
+          Extra swings like Hand of Justice and Windfury Totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows.
         </li>
         <li>
-          Extra swings like Hand of Justice and Windfury totem *do* consume Flurry charges; Ironfoe proc consumes up to two Flurry charges
+          Extra swings like Hand of Justice and Windfury Totem *do* consume Flurry charges; Ironfoe proc consumes up to two Flurry charges.
         </li>
         <li>
-          The attack power buff from Windfury Totem applies to other swings that happen a short time after (see <a target="_blank" href="https://github.com/magey/classic-warrior/issues/7">here</a> for details)
+          Extra swings like Hand of Justice and Windfury Totem can be Heroic Strikes.
         </li>
         <li>
-          All procs, including extra attacks always happen after the actual event that triggered them. In particular, an attack will *not* profit form the strength buff of a Crusader proc that it itself caused
+          The attack power buff from Windfury Totem applies to other swings that happen a short time after (see <a target="_blank" href="https://github.com/magey/classic-warrior/issues/7">here</a> for details).
         </li>
         <li>
-          Extra attack procs cannot proc each other, although they can all proc on the same swing
+          All procs, including extra attacks always happen after the actual event that triggered them. In particular, an attack will *not* profit form the strength buff of a Crusader proc that it itself caused.
         </li>
         <li>
-          Dodged and parried white swings generate 75% of the rage that a normal hit would have; misses generate 0 rage
+          Extra attack procs cannot proc each other, although they can all proc on the same swing.
         </li>
         <li>
-          Glancing blows generate rage proportional to their damage, which means depending on your weapon skill, a glancing blow could generate less rage than a dodge
+          Dodged and parried white swings generate 75% of the rage that a normal hit would have; misses generate 0 rage.
         </li>
         <li>
-          Slam rage costs are checked at the start of the cast, but the rage is subtracted at the end of the cast
+          Glancing blows generate rage proportional to their damage, which means depending on your weapon skill, a glancing blow could generate less rage than a dodge.
         </li>
         <li>
-          All abilities except Whirlwind refund 80% of their rage costs if they are dodged/parried/miss
+          Slam rage costs are checked at the start of the cast, but the rage is subtracted at the end of the cast.
         </li>
         <li>
-          Execute refunds 84% of its total cost rather than 80% (needs testing)
+          All abilities except Whirlwind refund 80% of their rage costs if they are dodged/parried/miss.
+        </li>
+        <li>
+          Execute refunds 84% of its total cost rather than 80% (needs testing).
         </li>
       </ul>
     </li>

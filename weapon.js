@@ -107,7 +107,8 @@ class Weapon {
 
     if (this.isMainhand && this.char.slam) this.char.slam.opportunity.force();
 
-    if (!extraSwing && this.isMainhand && this.char.heroicQueued) {
+    // Extra swings also can be Heroic Strikes
+    if (this.isMainhand && this.char.heroicQueued) {
       this.char.heroicQueued = false;
       if (this.char.heroic.canUse()) {
         this.char.heroic.swing();
@@ -117,11 +118,6 @@ class Weapon {
 
     this.log.swings += 1;
     const roll = m.random() * 100;
-    // Heroic Strike bug: https://github.com/SunwellTracker/issues/issues/2170
-    // Put this back in if it turns out that it exists in classic
-    // const hsBug = (!this.isMainhand && this.char.heroicQueued)
-    //               ? m.min(19, this.table.miss) : 0;
-    // roll += hsBug;
 
     let dmg = this.getDmg() * this.char.armorDmgMul;
     if (roll < this.table.miss) {
