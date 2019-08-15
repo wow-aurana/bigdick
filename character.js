@@ -26,6 +26,7 @@ class Character {
     this.handOfJustice = char.hoj;
     this.blessingOfKings = char.bok;
     this.windfuryTotem = char.wftotem;
+    this.windfuryBuff = new WindfuryAp();
     this.flurry = new Flurry();
     this.abilityApScaling = !!char.twohand ? 3.3
                             : char.mainhand.dagger ? 1.7 : 2.4;
@@ -73,7 +74,7 @@ class Character {
       this.slam,
       this.bloodthirst,
       this.whirlwind,
-      this.hamstring
+      this.hamstring,
     ].filter(exists);
  
     this.autos = [this.main, this.off].filter(exists);
@@ -87,7 +88,11 @@ class Character {
       this.apOnUse,
     ]).filter(exists);
 
-    this.cooldowns = [...this.events].concat([this.gcd, this.flurry]);
+    this.cooldowns = [...this.events].concat([
+      this.gcd,
+      this.flurry,
+      this.windfuryBuff,
+    ]);
 
     // helper methods
     this.checkBtCd = !!this.bloodthirst ?
@@ -101,7 +106,10 @@ class Character {
   }
 
   getAp() {
-    const apOnUse = !!this.apOnUse ? this.apOnUse.getAp() : 0;
+    let apBuffs = !!this.apOnUse ? this.apOnUse.getAp() : 0;
+    // TODO lower WF ranks
+    if (this.windfuryBuff.running()) apBuffs += 315;
+    
     let procStr = 0;
     for (const weapon of this.autos) {
       for (const proc of weapon.strprocs) {
@@ -110,7 +118,7 @@ class Character {
     }
     if (this.ragePotion) procStr += this.ragePotion.getStr();
     if (this.blessingOfKings) procStr *= 1.1;
-    return this.stats.ap + apOnUse + procStr * 2;
+    return this.stats.ap + apBuffs + procStr * 2;
   }
 
   setTarget(target) {
@@ -137,7 +145,8 @@ class Character {
   procWindfury() {
     if (this.windfuryTotem && m.random() <= .2) {
       this.main.cooldown.reset();
-      this.main.swing(true, 315);
+      this.windfuryBuff.gain();
+      this.main.swing(true);
     }
   }
 

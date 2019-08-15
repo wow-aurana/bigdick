@@ -25,7 +25,7 @@
       The code makes a number of assumptions that are not necessarily verified yet:
       <ul>
         <li>
-          Due to lack of data, all weapon procs are assumed to be 1ppm
+          Due to lack of data, all weapon procs are assumed to be 1ppm for now
         </li>
         <li>
           Rage is a floating point number, rage gains and losses are not rounded to whole numbers
@@ -37,10 +37,10 @@
           Extra swings like Hand of Justice and Windfury totem *do* consume Flurry charges; Ironfoe proc consumes up to two Flurry charges
         </li>
         <li>
-          The attack power buff from Windfury Totem does not apply to other swings that happen a short time after
+          The attack power buff from Windfury Totem applies to other swings that happen a short time after (see <a target="_blank" href="https://github.com/magey/classic-warrior/issues/7">here</a> for details)
         </li>
         <li>
-          All procs, including extra attacks always happen before the actual event that triggered them. In particular, an attack will profit form the attack power buff of a Crusader proc that it itself caused
+          All procs, including extra attacks always happen after the actual event that triggered them. In particular, an attack will *not* profit form the strength buff of a Crusader proc that it itself caused
         </li>
         <li>
           Extra attack procs cannot proc each other, although they can all proc on the same swing
@@ -63,51 +63,13 @@
       </ul>
     </li>
     <li>
-      Things that are working so far:
-      <ul>
-        <li>
-          Basic setup with UI, Web Worker and main loop
-        </li>
-        <li>
-          Combat mechanics, including target level, weapon skill etc.
-        </li>
-        <li>
-          Raw damage calculations for all common Fury specs
-        </li>
-        <li>
-          Basic <a target="_blank" href="https://wowwiki.fandom.com/wiki/Rage#Rage_conversion_value">rage mechanics</a> (need to double check the numbers)
-        </li>
-        <li>
-          Anger Management, Unbridled Wrath and Mighty Rage Potion
-        </li>
-        <li>
-          Most commonly used damage Abilites, Bloodrage on cooldown
-        </li>
-        <li>
-          Two-hand weapons
-        </li>
-        <li>
-          Hand of Justice, Windfury Totem and Crusader enchant
-        </li>
-        <li>
-          Parsing talent spec from a link
-        </li>
-        <li>
-          Basic logging and results
-        </li>
-        <li>
-          APEP calculations for the common stats (may add others, e.g. weapon speed and dps).
-        </li>
-      </ul>
-    </li>
-    <li>
       Lots of things are still missing. In particular:
       <ul>
         <li>
           Some relevant procs (Bonereaver's Edge, Lifestealing, Demonslaying...)
         </li>
         <li>
-          Overpower, Deep Wounds, and Deathwish
+          Overpower, Deep Wounds and Deathwish
         </li>
         <li>
           Arms and Prot specs

@@ -22,9 +22,8 @@ class Weapon {
     for (const proc of this.strprocs) { proc.tick(seconds); }
   }
 
-  getDmg(extraAp = 0) {
-    const dmg =
-        this.avgDmg + (this.char.getAp() + extraAp) / 14 * this.stats.speed;
+  getDmg() {
+    const dmg = this.avgDmg + (this.char.getAp()) / 14 * this.stats.speed;
 
     if (this.isMainhand) {
       return dmg * this.char.wpnspec;
@@ -68,8 +67,12 @@ class Weapon {
   }
 
   timeUntil() { return this.cooldown.timeUntil(); }
-  reset() { return this.cooldown.reset(); }
   canUse() { return !(this.char.slam && this.char.slam.casting); }
+
+  reset() {
+    this.cooldown.reset();
+    for (const proc of this.strprocs) { proc.reset(); }
+  }
 
   applyFlurry() {
     // This code assumes that the remaining swing time is recalculated
@@ -97,7 +100,7 @@ class Weapon {
     }
   }
 
-  swing(extraSwing = false, extraAp = 0) {
+  swing(extraSwing = false) {
     this.char.flurry.useCharge();
     this.cooldown.use();
     this.flurried = false;  // will be recalculated in main loop
@@ -120,7 +123,7 @@ class Weapon {
     //               ? m.min(19, this.table.miss) : 0;
     // roll += hsBug;
 
-    let dmg = this.getDmg(extraAp) * this.char.armorDmgMul;
+    let dmg = this.getDmg() * this.char.armorDmgMul;
     if (roll < this.table.miss) {
       this.log.misses += 1;
 

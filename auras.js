@@ -20,11 +20,29 @@ class Aura {
   
   running() { return this.timer > 0; }
   gain() { this.timer = this.duration; this.log.count += 1; }
+  reset() { this.timer = 0; }
 
   tick(seconds) {
     this.log.uptime += m.min(seconds, this.timer);
     this.timer = m.max(0, this.timer - seconds);
   }
+}
+
+class WindfuryAp extends Aura {
+  constructor() {
+    super(1.6, 'Windfury AP buff');
+  }
+
+  rollDuration() {
+    // The duration of the AP buff from WF is not static.
+    // See: https://github.com/magey/classic-warrior/issues/7
+    // This code tries to simulate observed behavior.
+    const lowDuration = (m.random() > .5);
+    if (lowDuration) return (.4 + m.random() * .4);
+    return (1.4 + m.random() * .2);
+  }
+
+  gain() { this.duration = this.rollDuration(); super.gain(); }
 }
 
 class ProcStr extends Aura {
