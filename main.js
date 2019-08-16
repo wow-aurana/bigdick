@@ -22,6 +22,7 @@ const executebt = new Checkbox('executebt');
 const executeww = new Checkbox('executeww');
 
 const abilities = {
+  deathwish: new Checkbox('deathwish'),
   aponuse: new Checkbox('aponuse'),
   slam: new Checkbox('slam'),
   bloodthirst: new Checkbox('bloodthirst'),

@@ -109,7 +109,7 @@ class Execute extends Ability {
 
   getDmg() { 
     return (600 + (this.char.rage.current - this.cost) * 15)
-           * this.char.wpnspec;
+           * this.char.multiplier();
   }
 
   // TODO verify that rage is refunded correctly
@@ -130,7 +130,7 @@ class Slam extends Ability {
 
   reset() { super.reset(); this.casting = false; }
   tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
-  getDmg() { return this.char.main.getDmg() + 87 * this.char.wpnspec; }
+  getDmg() { return this.char.main.getDmg() + 87 * this.char.multiplier(); }
 
   checkConditions() {
     return !this.casting
@@ -161,7 +161,7 @@ class Bloodthirst extends Ability {
     super(char, 30, 6, usewhen, 'Bloodthirst');
   }
 
-  getDmg() { return this.char.getAp() * .45 * this.char.wpnspec; }
+  getDmg() { return this.char.getAp() * .45 * this.char.multiplier(); }
   checkConditions() { return this.char.rage.has(this.usewhen.rage); }
   
   checkExecuteConditions() {
@@ -180,7 +180,7 @@ class Whirlwind extends Ability {
   getDmg() {
     const dmg = this.char.main.avgDmg
               + this.char.getAp() / 14 * this.char.abilityApScaling;  
-    return dmg * this.char.wpnspec;
+    return dmg * this.char.multiplier();
   }
 
   checkConditions() {
@@ -204,7 +204,7 @@ class HeroicStrike extends Ability {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
   }
 
-  getDmg() { return this.char.main.getDmg() + 138 * this.char.wpnspec; }
+  getDmg() { return this.char.main.getDmg() + 138 * this.char.multiplier(); }
 
   checkConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
@@ -222,7 +222,7 @@ class Hamstring extends Ability {
     super(char, cost, 0, usewhen, 'Hamstring');
   }
 
-  getDmg() { return 45 * this.char.wpnspec; }
+  getDmg() { return 45 * this.char.multiplier(); }
 
   checkConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;

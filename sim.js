@@ -42,9 +42,10 @@ function runSimulation(cfg) {
     }
 
     let timer = 0;
+    const executeWindowStart = cfg.duration - cfg.execute;
     while (timer < cfg.duration) {
-      char.canExecute = timer >= (cfg.duration - cfg.execute);
-      const nextEvent = char.getNextEvent();
+      char.canExecute = timer >= executeWindowStart;
+      const nextEvent = char.getNextEvent(cfg.duration - timer);
       nextEventTimer = nextEvent.timeUntil();
       console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
       timer += nextEventTimer;

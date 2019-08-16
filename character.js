@@ -13,7 +13,7 @@ class Character {
     const talents = parseTalents(char.talents);
     this.heroicCost = 15 - talents.improvedHS;
     this.yellowCritMul = 2 + talents.impale * .1;
-    this.wpnspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
+    this.weaponspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
     this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
     this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
     this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
@@ -48,6 +48,8 @@ class Character {
     };
 
     // Abilites
+    this.deathwish = create(DeathWish, char.deathwish);
+
     this.brainlag = (char.lag && char.lag.delay / 1000) || 0;
     this.delay = 0;
 
@@ -80,6 +82,7 @@ class Character {
     this.autos = [this.main, this.off].filter(exists);
 
     this.events = [...this.abilities].concat(this.autos).concat([
+      this.deathwish,
       this.anger,
       this.ragePotion,
       this.slamSwing,
@@ -103,6 +106,12 @@ class Character {
         () => true;
     this.checkBtWwCd =
         (cutoff) => this.checkBtCd(cutoff) && this.checkWwCd(cutoff);
+  }
+
+  multiplier() {
+    if (!this.deathwish) return this.weaponspec;
+    if (!this.deathwish.active()) return this.weaponspec;
+    return this.weaponspec * 1.2;
   }
 
   getAp() {
@@ -150,12 +159,14 @@ class Character {
     }
   }
 
-  getNextEvent() {
+  getNextEvent(fightEndsIn) {
     // Reroll brain lag
     this.delay = m.random() * this.brainlag;
 
     const nextEvent = this.events.reduce((ret, e) => {
-      return (e.canUse() && e.timeUntil() <= ret.timeUntil()) ? e : ret;
+      if (!e.canUse(fightEndsIn)) return ret;
+      if (e.timeUntil() > ret.timeUntil()) return ret;
+      return e;
     }, this.main);
     return nextEvent;
   }

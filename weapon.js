@@ -25,10 +25,8 @@ class Weapon {
   getDmg() {
     const dmg = this.avgDmg + (this.char.getAp()) / 14 * this.stats.speed;
 
-    if (this.isMainhand) {
-      return dmg * this.char.wpnspec;
-    }
-    return dmg * this.char.offhandDmgMul;
+    if (this.isMainhand) return (dmg * this.char.multiplier());
+    return (dmg * this.char.multiplier() * this.char.offhandDmgMul);
   }
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table

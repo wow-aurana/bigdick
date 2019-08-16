@@ -81,6 +81,27 @@ class ApOnUse extends Cooldown {
   handle() { this.use(); }
 }
 
+class DeathWish extends Cooldown {
+  constructor(char, cfg) {
+    super(180, 'Death Wish');
+    this.char = char;
+    this.waitForEndOfFight = cfg.endoffight;
+  }
+
+  canUse(fightEndsIn) {
+    if (!this.char.rage.has(10)) return false;
+    if (!this.waitForEndOfFight) return true;
+    if (fightEndsIn <= 31.5) return true;
+    // For fights longer than 210 seconds
+    return (this.timer + this.duration < fightEndsIn - 30);
+  }
+
+  timeUntil() { return m.max(this.timer, this.char.gcd.timeUntil()); }
+  use() { super.use(); this.char.gcd.use(); this.char.rage.use(10); }
+  active() { return (this.duration - this.timer) < 30; }
+  handle() { this.use(); }
+}
+
 class RagePotion extends Cooldown {
   constructor(rage) {
     super(120, 'Mighty Rage Potion');
