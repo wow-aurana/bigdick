@@ -1,3 +1,5 @@
+'use strict';
+
 class Ability {
   constructor(char, rage, cooldown, usewhen, name) {
     this.log = new SwingLog(name);

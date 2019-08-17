@@ -1,3 +1,5 @@
+'use strict';
+
 importScripts('util.js');
 importScripts('auras.js');
 importScripts('talents.js');
@@ -46,7 +48,7 @@ function runSimulation(cfg) {
     while (timer < cfg.duration) {
       char.canExecute = timer >= executeWindowStart;
       const nextEvent = char.getNextEvent(cfg.duration - timer);
-      nextEventTimer = nextEvent.timeUntil();
+      const nextEventTimer = nextEvent.timeUntil();
       console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
       timer += nextEventTimer;
 

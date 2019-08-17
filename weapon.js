@@ -1,3 +1,5 @@
+'use strict';
+
 class Weapon {
   constructor(char, stats, name) {
     this.log = new SwingLog(name);

@@ -1,3 +1,5 @@
+'use strict';
+
 const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3';
 
 const output = new Output();
@@ -99,7 +101,7 @@ function collectInputs() {
     execute: getInputNumber('executephase'),
   }
 
-  for (a of Object.values(abilities)) {
+  for (const a of Object.values(abilities)) {
     config.char[a.name] = a.collect();
   }
   if (executebt.checked())

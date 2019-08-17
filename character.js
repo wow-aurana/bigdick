@@ -1,3 +1,5 @@
+'use strict';
+
 class Character {
   constructor(char) {
     this.stats = char.stats;

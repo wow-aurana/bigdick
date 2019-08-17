@@ -1,3 +1,5 @@
+'use strict';
+
 const defaultTalentUrl =
     'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051';
 

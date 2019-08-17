@@ -1,3 +1,5 @@
+'use strict';
+
 class SimWorker {
   constructor(cfg) {
     this.cfg = cfg;

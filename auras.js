@@ -1,3 +1,5 @@
+'use strict';
+
 class Flurry {
   constructor() {
     this.charges = 0;
