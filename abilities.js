@@ -10,7 +10,6 @@ class Ability {
     this.usewhen = usewhen;
 
     this.table = {};
-    this.crit = 0;
   }
 
   reset() { this.cooldown.reset(); }
@@ -46,12 +45,12 @@ class Ability {
     const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
     this.table.crit =
         clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
-
+    final(this.table);
   }
 
   timeUntil() {
     return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil()) +
-           this.char.delay;
+           this.char.brainlag.current;
   }
 
   checkConditions() { return true; }
@@ -63,7 +62,7 @@ class Ability {
 
   canUse() {
     if (!this.char.rage.has(this.cost)) return false;
-    if (this.char.canExecute) return this.checkExecuteConditions();
+    if (this.char.can.execute) return this.checkExecuteConditions();
     return this.checkConditions();
   }
   
@@ -107,17 +106,19 @@ class Ability {
 class Execute extends Ability {
   constructor(char, usewhen) {
     super(char, char.executeCost, 0, usewhen, 'Execute');
+
+    final(this);
   }
 
   getDmg() { 
-    return (600 + (this.char.rage.current - this.cost) * 15)
+    return (600 + (this.char.rage.is.now - this.cost) * 15)
            * this.char.multiplier();
   }
 
   // TODO verify that rage is refunded correctly
-  onMiss() { this.char.rage.use(this.char.rage.current * .16); }
-  onDodge() { this.char.rage.use(this.char.rage.current * .16); }
-  onHit() { this.char.rage.use(this.char.rage.current); }
+  onMiss() { this.char.rage.use(this.char.rage.is.now * .16); }
+  onDodge() { this.char.rage.use(this.char.rage.is.now * .16); }
+  onHit() { this.char.rage.use(this.char.rage.is.now); }
   checkConditions() { return false; }
   checkExecuteConditions() { return true; }
 }
@@ -126,23 +127,25 @@ class Execute extends Ability {
 class Slam extends Ability {
   constructor(char, usewhen) {
     super(char, 15, 0, usewhen, 'Slam');
-    this.casting = false;
+    this.is = { casting: false };
     this.opportunity = new Cooldown(this.usewhen.delay / 1000, 'Slam now!');
+
+    final(this);
   }
 
-  reset() { super.reset(); this.casting = false; }
+  reset() { super.reset(); this.is.casting = false; }
   tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
   getDmg() { return this.char.main.getDmg() + 87 * this.char.multiplier(); }
 
   checkConditions() {
-    return !this.casting
+    return !this.is.casting
            && this.opportunity.running()
            && this.char.rage.has(this.usewhen.rage);
   }
 
   swing() {
-    console.assert(this.casting, 'Trying to swing slam when not casting');
-    this.casting = false;
+    console.assert(this.is.casting, 'Trying to swing slam when not casting');
+    this.is.casting = false;
     super.swing();
     for (const a of this.char.autos) {
       a.cooldown.force();
@@ -152,7 +155,7 @@ class Slam extends Ability {
   handle() {
     this.cooldown.use();
     this.char.gcd.use();
-    this.casting = true;
+    this.is.casting = true;
     this.char.slamSwing.use();
   }
 }
@@ -161,6 +164,8 @@ class Slam extends Ability {
 class Bloodthirst extends Ability {
   constructor(char, usewhen) {
     super(char, 30, 6, usewhen, 'Bloodthirst');
+
+    final(this);
   }
 
   getDmg() { return this.char.getAp() * .45 * this.char.multiplier(); }
@@ -177,6 +182,8 @@ class Bloodthirst extends Ability {
 class Whirlwind extends Ability {
   constructor(char, usewhen) {
     super(char, 25, 10, usewhen, 'Whirlwind');
+
+    final(this);
   }
 
   getDmg() {
@@ -204,6 +211,9 @@ class Whirlwind extends Ability {
 class HeroicStrike extends Ability {
   constructor(char, usewhen) {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');
+    this.is = { queued: false };
+
+    final(this);
   }
 
   getDmg() { return this.char.main.getDmg() + 138 * this.char.multiplier(); }
@@ -222,6 +232,8 @@ class Hamstring extends Ability {
   constructor(char, usewhen) {
     const cost = usewhen.gloves ? 7 : 10;
     super(char, cost, 0, usewhen, 'Hamstring');
+
+    final(this);
   }
 
   getDmg() { return 45 * this.char.multiplier(); }

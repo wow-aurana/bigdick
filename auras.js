@@ -2,72 +2,78 @@
 
 class Flurry {
   constructor() {
-    this.charges = 0;
-    this.uptime = 0;
+    this.has = { charges: 0 };
+    this.log = { uptime: 0 };
+
+    final(this);
   }
 
-  hasCharges() { return this.charges > 0; }
-  useCharge() { this.charges = m.max(this.charges - 1, 0); }
-  refresh() { this.charges = 3; }
-  reset() { this.charges = 0; }
-  tick(seconds) { if (this.hasCharges()) this.uptime += seconds; }
+  hasCharges() { return this.has.charges > 0; }
+  useCharge() { this.has.charges = m.max(this.has.charges - 1, 0); }
+  refresh() { this.has.charges = 3; }
+  reset() { this.has.charges = 0; }
+  tick(seconds) { if (this.hasCharges()) this.log.uptime += seconds; }
 }
 
 class Aura {
-  constructor(duration, name = 'Aura') {
+  constructor(duration, name) {
     this.duration = duration;
-    this.timer = 0;
+    this.time =  { left: 0 };
     this.log = { name: name, count: 0, uptime: 0, };
   }
   
-  running() { return this.timer > 0; }
-  gain() { this.timer = this.duration; this.log.count += 1; }
-  reset() { this.timer = 0; }
+  running() { return this.time.left > 0; }
+  gain() { this.time.left = this.duration; this.log.count += 1; }
+  reset() { this.time.left = 0; }
 
   tick(seconds) {
-    this.log.uptime += m.min(seconds, this.timer);
-    this.timer = m.max(0, this.timer - seconds);
+    this.log.uptime += m.min(seconds, this.time.left);
+    this.time.left = m.max(0, this.time.left - seconds);
   }
 }
 
 class WindfuryAp extends Aura {
   constructor() {
-    super(1.6, 'Windfury AP buff');
-  }
-
-  rollDuration() {
     // The duration of the AP buff from WF is not static.
     // See: https://github.com/magey/classic-warrior/issues/7
     // This code tries to simulate observed behavior.
-    const lowDuration = (m.random() > .5);
-    if (lowDuration) return (.4 + m.random() * .4);
-    return (1.4 + m.random() * .2);
+    // TODO update with new findings.
+    super(1.5, 'Windfury AP buff');
+
+    final(this);
   }
 
-  gain() { this.duration = this.rollDuration(); super.gain(); }
+  gain() { super.gain(); }
 }
 
+function ppmToChance(ppm, speed) { return (ppm / 60) * speed; }
+
 class ProcStr extends Aura {
-  constructor(wpnspeed, amount, duration, name = 'Strength proc') {
+  constructor(chance, amount, duration, name = 'Strength proc') {
     super(duration, name);
     this.amount = amount;
-    this.speed = wpnspeed;
+    this.chance = chance;
   }
 
-  proc() { const roll = m.random() * 60; if (roll < this.speed) this.gain(); }
+  proc() { if (m.random() < this.chance) this.gain(); }
 }
 
 class Crusader extends ProcStr {
-  constructor(wpnspeed) { super(wpnspeed, 100, 15, 'Crusader'); }
+  constructor(wpnspeed) {
+    super(ppmToChance(1, wpnspeed), 100, 15, 'Crusader');
+
+    final(this);
+  }
 }
 
 function getStrengthProc(speed, id) {
+  const chance = ppmToChance(1, speed);
   if (id == 'MS') {
-    return new ProcStr(speed, 50, 30, 'Malown\'s Slam');
+    return final(new ProcStr(chance, 50, 30, 'Malown\'s Slam'));
   } else if (id == 'AC') {
-    return new ProcStr(speed, 120, 30, 'Strength of the Champion');
+    return final(new ProcStr(chance, 120, 30, 'Strength of the Champion'));
   } else if (id == 'UTB') {
-    return new ProcStr(speed, 300, 8, 'Untamed Fury');
+    return final(new ProcStr(chance, 300, 8, 'Untamed Fury'));
   }
   return null;
 }

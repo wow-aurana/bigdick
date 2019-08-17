@@ -6,7 +6,7 @@ class Character {
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
-    this.canExecute = false;
+    this.can = { execute: false };
 
     // Target armor mitigation
     this.armorDmgMul = 1;
@@ -34,11 +34,15 @@ class Character {
                             : char.mainhand.dagger ? 1.7 : 2.4;
 
     this.main = new Weapon(this, char.twohand || char.mainhand, 'Mainhand');
+    this.main.lock();
 
     this.off = char.offhand ? new Weapon(this, char.offhand, 'Offhand') : null;
-    if (this.off) this.off.isMainhand = false;
-    // First offhand swing delayed by 200ms (according to some guy on Discord)
-    if (this.off) this.off.cooldown.timer = .2;
+    if (this.off) {
+      this.off.isMainhand = false;
+      // First offhand swing delayed by 200ms (according to some guy on Discord)
+      this.off.cooldown.force(.2);
+      this.off.lock();
+    }
 
     // AP on use (Blood Fury, trinkets etc.)
     this.apOnUse = !!char.aponuse ? new ApOnUse(char.aponuse) : null;
@@ -52,8 +56,10 @@ class Character {
     // Abilites
     this.deathwish = create(DeathWish, char.deathwish);
 
-    this.brainlag = (char.lag && char.lag.delay / 1000) || 0;
-    this.delay = 0;
+    this.brainlag = {
+      max: ((char.lag && char.lag.delay / 1000) || 0),
+      current: 0,
+    };
 
     this.bloodrage = new Bloodrage(this.rage);
 
@@ -64,7 +70,6 @@ class Character {
     this.whirlwind = create(Whirlwind, char.whirlwind);
 
     this.heroic = create(HeroicStrike, char.heroic);
-    this.heroicQueued = false;
 
     this.slam = create(Slam, char.slam);
     this.slamSwing = this.slam ? new SlamSwing(this.slam, this.slamCast) : null;
@@ -80,11 +85,12 @@ class Character {
       this.whirlwind,
       this.hamstring,
     ].filter(exists);
+
+    this.onGcd = [this.deathwish].concat(this.abilities).filter(exists);
  
     this.autos = [this.main, this.off].filter(exists);
 
-    this.events = [...this.abilities].concat(this.autos).concat([
-      this.deathwish,
+    this.events = [...this.onGcd].concat(this.autos).concat([
       this.anger,
       this.ragePotion,
       this.slamSwing,
@@ -108,6 +114,8 @@ class Character {
         () => true;
     this.checkBtWwCd =
         (cutoff) => this.checkBtCd(cutoff) && this.checkWwCd(cutoff);
+
+    final(this);
   }
 
   multiplier() {
@@ -144,7 +152,16 @@ class Character {
     if (this.heroic) this.heroic.setTarget(target);
   }
 
-  shouldHeroicStrike() { return this.heroic && this.heroic.canUse(); }
+  heroicQueued() {
+    if (!this.heroic) return false;
+    return this.heroic.is.queued; 
+  }
+
+  queueHeroicStrike() {
+    if (!this.heroic) return;
+    if (!this.heroic.canUse()) return;
+    this.heroic.is.queued = true; 
+  }
 
   procHoJ() {
     if (this.handOfJustice && m.random() <= .02) {
@@ -162,14 +179,19 @@ class Character {
   }
 
   getNextEvent(fightEndsIn) {
+    // console.clear();
     // Reroll brain lag
-    this.delay = m.random() * this.brainlag;
+    this.brainlag.current = m.random() * this.brainlag.max;
 
     const nextEvent = this.events.reduce((ret, e) => {
+      // console.log(e);
       if (!e.canUse(fightEndsIn)) return ret;
-      if (e.timeUntil() > ret.timeUntil()) return ret;
+      if (e.timeUntil() >= ret.timeUntil()) return ret;
       return e;
     }, this.main);
+    // console.log('-----');
+    // console.log(nextEvent);
+    // debugger;
     return nextEvent;
   }
 
@@ -180,8 +202,8 @@ class Character {
   }
 
   finishFight() {
-    this.rage.current = 0;
-    this.canExecute = false;
+    this.rage.is.now = 0;
+    this.can.execute = false;
 
     for (const e of this.cooldowns) {
       e.reset();

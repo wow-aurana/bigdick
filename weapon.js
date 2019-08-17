@@ -10,7 +10,7 @@ class Weapon {
     this.stats = stats;
     this.avgDmg = (stats.min + stats.max) * .5;
     this.isMainhand = true;
-    this.flurried = false;
+    this.is = { flurried: false };
     this.table = {};
     
     const crusader = stats.crusader ? new Crusader(stats.speed) : null;
@@ -18,6 +18,9 @@ class Weapon {
     this.strprocs = [crusader, strproc].filter((e) => !!e);
     this.extraAttacks = getExtraAttacks(stats.proc);
   }
+
+  // TODO refactor offhand flag so this crutch isn't needed.
+  lock() { final(this); }
 
   tick(seconds) {
     this.cooldown.tick(seconds);
@@ -53,7 +56,7 @@ class Weapon {
     this.table.dodge += this.table.miss;
 
     // glance
-    this.glanceMul = clamp(.2, .95)(.65 + (15 - skillDiff) * .04);
+    this.table.glanceMul = clamp(.2, .95)(.65 + (15 - skillDiff) * .04);
     const glance = 10 + (targetDef - m.min(baseSkill, this.stats.skill)) * 2;
     this.table.glance = clamp(0, 100)(glance); 
     this.table.glance += this.table.dodge;
@@ -64,6 +67,7 @@ class Weapon {
     this.table.crit =
         clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
     this.table.crit += this.table.glance;
+    final(this.table);
   }
 
   timeUntil() { return this.cooldown.timeUntil(); }
@@ -71,19 +75,20 @@ class Weapon {
 
   reset() {
     this.cooldown.reset();
+    this.is.flurried = false;
     for (const proc of this.strprocs) { proc.reset(); }
   }
 
   applyFlurry() {
     // This code assumes that the remaining swing time is recalculated
     // if flurry goes up or down mid swing (e.g. offhand eats last charge).
-    if (this.flurried && !this.char.flurry.hasCharges()) {
-      this.cooldown.timer *= this.char.flurryHaste;
-      this.flurried = false;
+    if (this.is.flurried && !this.char.flurry.hasCharges()) {
+      this.cooldown.time.left *= this.char.flurryHaste;
+      this.is.flurried = false;
     }
-    if (!this.flurried && this.char.flurry.hasCharges()) {
-      this.cooldown.timer /= this.char.flurryHaste;
-      this.flurried = true;
+    if (!this.is.flurried && this.char.flurry.hasCharges()) {
+      this.cooldown.time.left /= this.char.flurryHaste;
+      this.is.flurried = true;
     }
   }
   
@@ -103,13 +108,13 @@ class Weapon {
   swing(extraSwing = false) {
     this.char.flurry.useCharge();
     this.cooldown.use();
-    this.flurried = false;  // will be recalculated in main loop
+    this.is.flurried = false;  // will be recalculated in main loop
 
     if (this.isMainhand && this.char.slam) this.char.slam.opportunity.force();
 
     // Extra swings also can be Heroic Strikes
-    if (this.isMainhand && this.char.heroicQueued) {
-      this.char.heroicQueued = false;
+    if (this.isMainhand && this.char.heroicQueued()) {
+      this.char.heroic.is.queued = false;
       if (this.char.heroic.canUse()) {
         this.char.heroic.swing();
         return;
@@ -131,7 +136,7 @@ class Weapon {
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
       this.proc(extraSwing);
-      dmg *= this.glanceMul;
+      dmg *= this.table.glanceMul;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);

@@ -136,7 +136,7 @@ getElement('setup').addEventListener('submit', (e) => {
   const onWorkersFinished = apep.checked() ? () => {
     const wrks = Object.values(workers);
     // Wait until all workers finished
-    for (worker of wrks) { if (!worker.finished()) return; }
+    for (const worker of wrks) { if (!worker.finished()) return; }
 
     if (getInputChecked('ping')) new Audio(audioURL).play();
 

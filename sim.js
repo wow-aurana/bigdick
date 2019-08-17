@@ -1,6 +1,7 @@
 'use strict';
 
 importScripts('util.js');
+importScripts('cooldowns.js');
 importScripts('auras.js');
 importScripts('talents.js');
 importScripts('weapon.js');
@@ -23,7 +24,7 @@ function compileResults(char) {
   res.procs = { main: char.main.strprocs.map((s) => s.log) };
   res.procs.off = !!char.off ? char.off.strprocs.map((s) => s.log) : [];
 
-  res.flurry = char.flurry.uptime;
+  res.flurry = char.flurry.log.uptime;
   res.rage = char.rage.log;
   return res;
 }
@@ -46,7 +47,7 @@ function runSimulation(cfg) {
     let timer = 0;
     const executeWindowStart = cfg.duration - cfg.execute;
     while (timer < cfg.duration) {
-      char.canExecute = timer >= executeWindowStart;
+      char.can.execute = timer >= executeWindowStart;
       const nextEvent = char.getNextEvent(cfg.duration - timer);
       const nextEventTimer = nextEvent.timeUntil();
       console.assert(nextEventTimer >= 0, 'Trying to go back in time!');
@@ -58,7 +59,7 @@ function runSimulation(cfg) {
       nextEvent.handle();
       char.main.applyFlurry();
       if (char.off) char.off.applyFlurry();
-      char.heroicQueued |= char.shouldHeroicStrike();
+      char.queueHeroicStrike();
     }
 
     char.finishFight();
