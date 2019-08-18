@@ -129,11 +129,15 @@ function createWorker(cfg, onFinished) {
 getElement('setup').addEventListener('submit', (e) => {
   if (e.preventDefault) e.preventDefault();
 
+  getElement('submit').disabled = true;
+
   // Remove workers from previous run
   workers = {};
 
   const checkboxes = apep.collect();
   const onWorkersFinished = apep.checked() ? () => {
+    getElement('submit').disabled = false;
+
     const wrks = Object.values(workers);
     // Wait until all workers finished
     for (const worker of wrks) { if (!worker.finished()) return; }
@@ -163,7 +167,9 @@ getElement('setup').addEventListener('submit', (e) => {
 
     const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
     output.print('(Finished in ' + maxTime + ' seconds)');
-  } : () => {
+  } : () => {  // No APEP calculations 
+    getElement('submit').disabled = false;
+
     if (getInputChecked('ping')) new Audio(audioURL).play();
 
     output.clear();
