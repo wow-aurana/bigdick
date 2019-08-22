@@ -24,6 +24,7 @@ const executebt = new Checkbox('executebt');
 const executeww = new Checkbox('executeww');
 
 const abilities = {
+  wftotem: new Checkbox('wftotem'),
   deathwish: new Checkbox('deathwish'),
   aponuse: new Checkbox('aponuse'),
   slam: new Checkbox('slam'),
@@ -48,12 +49,12 @@ abilities.whirlwind.clickCb = (enabled) => {
 };
 
 // Some abilities disabled by default
+abilities.wftotem.check(false);
 abilities.aponuse.check(false);
 abilities.slam.check(false);
 abilities.hamstring.check(false);
 abilities.brainlag.check(false);
 executeww.check(false);
-new Checkbox('wftotem').check(false);
 new Checkbox('ragepotion').check(false);
 
 // EP calculations disabled by default.
@@ -85,7 +86,6 @@ function collectInputs() {
       bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
       ragepotion: getInputChecked('ragepotion'),
-      wftotem: getInputChecked('wftotem'),
       stats: {
         ap: getInputNumber('charap'),
         crit: getInputNumber('charcrit'),

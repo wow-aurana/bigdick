@@ -33,12 +33,13 @@ class Aura {
 }
 
 class WindfuryAp extends Aura {
-  constructor() {
+  constructor(cfg) {
     // The duration of the AP buff from WF is not static.
     // See: https://github.com/magey/classic-warrior/issues/7
     // This code tries to simulate observed behavior.
     // TODO update with new findings.
     super(1.5, 'Windfury AP buff');
+    this.ap = 315 * (!!cfg.improved ? 1.3 : 1);
 
     final(this);
   }

@@ -27,8 +27,7 @@ class Character {
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
     this.blessingOfKings = char.bok;
-    this.windfuryTotem = char.wftotem;
-    this.windfuryBuff = new WindfuryAp();
+    this.windfury = !!char.wftotem ? new WindfuryAp(char.wftotem) : null;
     this.flurry = new Flurry();
     this.abilityApScaling = !!char.twohand ? 3.3
                             : char.mainhand.dagger ? 1.7 : 2.4;
@@ -102,8 +101,8 @@ class Character {
     this.cooldowns = [...this.events].concat([
       this.gcd,
       this.flurry,
-      this.windfuryBuff,
-    ]);
+      this.windfury,
+    ]).filter(exists);
 
     // helper methods
     this.checkBtCd = !!this.bloodthirst ?
@@ -127,7 +126,7 @@ class Character {
   getAp() {
     let apBuffs = !!this.apOnUse ? this.apOnUse.getAp() : 0;
     // TODO lower WF ranks
-    if (this.windfuryBuff.running()) apBuffs += 315;
+    if (this.windfury && this.windfury.running()) apBuffs += this.windfury.ap;
     
     let procStr = 0;
     for (const weapon of this.autos) {
@@ -171,11 +170,11 @@ class Character {
   }
 
   procWindfury() {
-    if (this.windfuryTotem && m.random() <= .2) {
-      this.main.cooldown.reset();
-      this.windfuryBuff.gain();
-      this.main.swing(true);
-    }
+    if (!this.windfury) return;
+    if (m.random() > .2) return;
+    this.main.cooldown.reset();
+    this.windfury.gain();
+    this.main.swing(true);
   }
 
   getNextEvent(fightEndsIn) {
