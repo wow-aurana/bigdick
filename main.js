@@ -164,6 +164,8 @@ getElement('setup').addEventListener('submit', (e) => {
     reportEp(workers.crit, '1% crit');
     reportEp(workers.mskill, '' + checkboxes.mskillstep + ' mainhand skill');
     reportEp(workers.oskill, '' + checkboxes.oskillstep + ' offhand skill');
+    reportEp(workers.mspeed, '' + checkboxes.mspeedstep + ' slower mainhand');
+    reportEp(workers.ospeed, '' + checkboxes.ospeedstep + ' slower offhand');
 
     const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
     output.print('(Finished in ' + maxTime + ' seconds)');
@@ -210,8 +212,30 @@ getElement('setup').addEventListener('submit', (e) => {
     if (checkboxes.oskill) {
       const skillCfg = collectInputs();
       const step = checkboxes.oskillstep;
-      if (skillCfg.char.offhand) skillCfg.char.offhand.skill += step;
-      workers.oskill = createWorker(skillCfg, onWorkersFinished);
+      if (skillCfg.char.offhand) {
+        skillCfg.char.offhand.skill += step;
+        workers.oskill = createWorker(skillCfg, onWorkersFinished);
+      } 
+    }
+
+    if (checkboxes.mspeed) {
+      const speedCfg = collectInputs();
+      const step = checkboxes.mspeedstep;
+      const weapon = speedCfg.char.twohand || speedCfg.char.mainhand;
+      const factor = (weapon.speed + step) / weapon.speed;
+      weapon.speed += step; weapon.min *= factor; weapon.max *= factor;
+      workers.mspeed = createWorker(speedCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.ospeed) {
+      const speedCfg = collectInputs();
+      const weapon = speedCfg.char.offhand;
+      if (weapon) {
+        const step = checkboxes.ospeedstep;
+        const factor = (weapon.speed + step) / weapon.speed;
+        weapon.speed += step; weapon.min *= factor; weapon.max *= factor;
+        workers.ospeed = createWorker(speedCfg, onWorkersFinished);
+      }
     }
   }
 

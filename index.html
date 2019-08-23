@@ -225,17 +225,25 @@
         <span>seconds Execute phase)</span>
         <br>
         <input id="apep" type="checkbox" checked>
-        <span class="apep">calculate APEP for</span>
-        <input class="apep" name="hit" type="checkbox" checked>
-        <span class="apep">1% hit </span>
+        <span class="apep">calculate APEP for:</span>
+        <br>
+        <input class="apep indent" name="hit" type="checkbox" checked>
+        <span class="apep">1% hit</span>
         <input class="apep" name="crit" type="checkbox" checked>
-        <span class="apep">1% crit </span>
+        <span class="apep">1% crit</span>
         <input class="apep" name="mskill" type="checkbox" checked>
         <input class="apep" name="mskillstep" type="number" min="1" max="9" value="3">
-        <span class="apep">mainhand skill </span>
+        <span class="apep">mainhand skill</span>
         <input class="apep" name="oskill" type="checkbox" checked>
         <input class="apep" name="oskillstep" type="number" min="1" max="9" value="3">
-        <span class="apep">offhand skill </span>
+        <span class="apep">offhand skill</span>
+        <br>
+        <input class="apep indent" name="mspeed" type="checkbox" checked>
+        <input class="apep" name="mspeedstep" type="number" min="-1" max="1" step="0.1" value="0.1">
+        <span class="apep">slower mainhand (same DPS)</span>
+        <input class="apep" name="ospeed" type="checkbox" checked>
+        <input class="apep" name="ospeedstep" type="number" min="-1" max="1" step="0.1" value="0.1">
+        <span class="apep">slower offhand (same DPS)</span>
       </div>
     </div>
     <br>
