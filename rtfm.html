@@ -31,13 +31,13 @@
           Rage is a floating point number, rage gains and losses are not rounded to whole numbers.
         </li>
         <li>
-          Extra swings like Hand of Justice and Windfury Totem are regular attacks, that suffer the dual-wield hit penalty and can be glancing blows.
-        </li>
-        <li>
           Extra swings like Hand of Justice and Windfury Totem *do* consume Flurry charges; Ironfoe proc consumes up to two Flurry charges.
         </li>
         <li>
           Extra swings like Hand of Justice and Windfury Totem can be Heroic Strikes.
+        </li>
+        <li>
+          Extra swings like Hand of Justice and Windfury Totem cannot proc each other, although they can all proc on the same swing.
         </li>
         <li>
           The attack power buff from Windfury Totem applies to other swings that happen a short time after (see <a target="_blank" href="https://github.com/magey/classic-warrior/issues/7">here</a> for details).
@@ -46,19 +46,13 @@
           All procs, including extra attacks always happen after the actual event that triggered them. In particular, an attack will *not* profit form the strength buff of a Crusader proc that it itself caused.
         </li>
         <li>
-          Extra attack procs cannot proc each other, although they can all proc on the same swing.
-        </li>
-        <li>
           Dodged and parried white swings generate 75% of the rage that a normal hit would have; misses generate 0 rage.
         </li>
         <li>
           Glancing blows generate rage proportional to their damage, which means depending on your weapon skill, a glancing blow could generate less rage than a dodge.
         </li>
         <li>
-          Slam rage costs are checked at the start of the cast, but the rage is subtracted at the end of the cast.
-        </li>
-        <li>
-          All abilities except Whirlwind refund 80% of their rage costs if they are dodged/parried/miss.
+          All abilities except Whirlwind and Execute refund 80% of their rage costs if they are dodged/parried/miss.
         </li>
         <li>
           Execute refunds 84% of its total cost rather than 80% (needs testing).
@@ -92,22 +86,7 @@
       Known issues:
       <ul>
         <li>
-          Flury is likely affected spell batching in some way, but the sim does not simulate that. Once we have a better understanding of how it works, I will add it.
-        </li>
-        <li>
           When the UI says 'above' or 'below', it usually means 'equal to or above/below'.
-        </li>
-        <li>
-          Orcs' Blood Fury triggers a GCD, whereas the AP on use checkbox in the sim doesn't.
-        </li>
-        <li>
-          Thrash Blade PPM has been tested, seems to be around 0.65, not 1.
-        </li>
-        <li>
-          Brain lag isn't applied to Bloodrage, Death Wish and something else I forgot.
-        </li>
-        <li>
-          Unbridled Wrath is affected by spell batching, but the sim does not simulate that.
         </li>
         <li>
           Bloodrage and Mighty Rage Potion are used on cooldown regardless of current rage.
@@ -117,6 +96,21 @@
         </li>
         <li>
           Windfury totem attack power buff mechanics are not reproduced exactly. As a consequence the value of WF totem is slightly inflated (~0.5-1dps) compared to the actual game. <br> The inaccuracy is most prominent with fast weapons.
+        </li>
+        <li>
+          Flury is likely affected spell batching in some way, but the sim does not simulate that. Once we have a better understanding of how it works, I will add it.
+        </li>
+        <li>
+          Unbridled Wrath is affected by spell batching, but the sim does not simulate that.
+        </li>
+        <li>
+          Orcs' Blood Fury triggers a GCD, whereas the AP on use checkbox in the sim doesn't.
+        </li>
+        <li>
+          Thrash Blade PPM has been tested, seems to be around 0.65, not 1.
+        </li>
+        <li>
+          Brain lag isn't applied to Bloodrage, Death Wish and something else I forgot.
         </li>
       </ul>
     </li>
@@ -159,6 +153,5 @@
       Q: Has anyone actually asked you any of these questions?
       <br>A: No.
     </p>
-    <p>v 0.4</p>
   </body>
 </html>
