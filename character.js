@@ -1,7 +1,7 @@
 'use strict';
 
 class Character {
-  constructor(char) {
+  constructor(char, target) {
     this.stats = char.stats;
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
@@ -104,6 +104,17 @@ class Character {
       this.windfury,
     ]).filter(exists);
 
+    // Set target
+    if (target.armor > 0) {
+      const mitigation = target.armor / (target.armor + 400 + 85 * this.level);
+      this.armorDmgMul = 1 - mitigation;
+    }
+
+    for (const swing of this.abilities.concat(this.autos)) {
+      swing.setTarget(target);
+    }
+    if (this.heroic) this.heroic.setTarget(target);
+
     // helper methods
     this.checkBtCd = !!this.bloodthirst ?
         (cutoff) => this.bloodthirst.cooldown.timeUntil() > cutoff :
@@ -137,18 +148,6 @@ class Character {
     if (this.ragePotion) procStr += this.ragePotion.getStr();
     if (this.blessingOfKings) procStr *= 1.1;
     return this.stats.ap + apBuffs + procStr * 2;
-  }
-
-  setTarget(target) {
-    if (target.armor > 0) {
-      const mitigation = target.armor / (target.armor + 400 + 85 * this.level);
-      this.armorDmgMul = 1 - mitigation;
-    }
-
-    for (const swing of this.abilities.concat(this.autos)) {
-      swing.setTarget(target);
-    }
-    if (this.heroic) this.heroic.setTarget(target);
   }
 
   heroicQueued() {

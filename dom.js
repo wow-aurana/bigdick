@@ -6,6 +6,7 @@ function getInputNumber(id) { return parseFloat(getElement(id).value); }
 function getInputChecked(id) { return getElement(id).checked; }
 
 function getEffectiveArmor() {
+  // TODO move calculations inside sim
   const base = getInputNumber('armor');
   const sunder = getInputChecked('sunder') ? 5 * 450 : 0;
   const faerie = getInputChecked('faerie') ? 505 : 0;

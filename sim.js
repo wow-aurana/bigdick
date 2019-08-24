@@ -32,8 +32,7 @@ function compileResults(char) {
 function runSimulation(cfg) {
   const startTime = new Date().getTime();
 
-  const char = new Character(cfg.char);
-  char.setTarget(cfg.target);
+  const char = new Character(cfg.char, cfg.target);
 
   let reportedProgress = 0;
 
