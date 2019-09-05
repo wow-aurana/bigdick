@@ -106,7 +106,6 @@ class Weapon {
   }
 
   swing(extraSwing = false) {
-    this.char.flurry.useCharge();
     this.cooldown.use();
     this.is.flurried = false;  // will be recalculated in main loop
 
@@ -120,6 +119,7 @@ class Weapon {
         return;
       }
     }
+    this.char.flurry.useCharge();
 
     this.log.swings += 1;
     const roll = m.random() * 100;
