@@ -9,7 +9,7 @@ class Weapon {
 
     this.stats = stats;
     this.avgDmg = (stats.min + stats.max) * .5;
-    this.isMainhand = true;
+    this.isMainhand = true;  // Will be set to false for OH in Character
     this.is = { flurried: false };
     this.table = {};
     
@@ -122,7 +122,14 @@ class Weapon {
     this.char.flurry.useCharge();
 
     this.log.swings += 1;
-    const roll = m.random() * 100;
+    let roll = m.random() * 100;
+
+    // Heroic Strike bug: https://bit.ly/2mK8i3Y
+    if (!this.isMainhand) {
+      if (!!this.char.heroic && this.char.heroic.is.queued) {
+        roll += m.min(20, this.table.miss);
+      }
+    }
 
     let dmg = this.getDmg() * this.char.armorDmgMul;
     if (roll < this.table.miss) {
