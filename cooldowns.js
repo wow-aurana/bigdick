@@ -95,6 +95,18 @@ class SlamSwing extends CooldownBase {
   handle() { this.slam.swing(); }
 }
 
+class RageReset extends CooldownBase {
+  constructor(rage) {
+    super(.8, 'Execute rage reset');
+    this.rage = rage;
+    this.did = { execute: false, };
+    final(this);
+  }
+
+  canUse() { return this.did.execute; }
+  handle() { this.did.execute = false; this.rage.use(this.rage.is.now); }
+}
+
 class AngerManagement extends CooldownBase {
   constructor(rage) {
     super(3, 'Anger Management');
