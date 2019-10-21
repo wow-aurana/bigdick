@@ -44,6 +44,10 @@
         <input id="charhit" type="number" min="0" max="100" value="6">
         <span>%</span>
         <br>
+        <span class="stat">Haste on gear:</span>
+        <input id="charhaste" type="number" min="0" max="10" value="0">
+        <span>% (e.g. <a target="_blank" href="https://classic.wowhead.com/item=18329/arcanum-of-rapidity">Arcanum of Rapidity</a>)</span>
+        <br>
         <span class="stat">Crit:</span>
         <input id="charcrit" type="number" min="0" max="100" step="0.01" value="31.5">
         <span>% in Berserker Stance</span>
@@ -231,6 +235,9 @@
         <span class="apep">1% hit</span>
         <input class="apep" name="crit" type="checkbox" checked>
         <span class="apep">1% crit</span>
+        <input class="apep" name="haste" type="checkbox" checked>
+        <input class="apep" name="hastestep" type="number" min="1" max="9" value="3">
+        <span class="apep">% haste</span>
         <input class="apep" name="mskill" type="checkbox" checked>
         <input class="apep" name="mskillstep" type="number" min="1" max="9" value="3">
         <span class="apep">mainhand skill</span>

@@ -90,6 +90,7 @@ function collectInputs() {
         ap: getInputNumber('charap'),
         crit: getInputNumber('charcrit'),
         hit: getInputNumber('charhit'),
+        haste: getInputNumber('charhaste'),
       },
     },
     target: {
@@ -162,6 +163,7 @@ getElement('setup').addEventListener('submit', (e) => {
     };
     reportEp(workers.hit, '1% hit');
     reportEp(workers.crit, '1% crit');
+    reportEp(workers.haste, '' + checkboxes.hastestep + '% attack speed');
     reportEp(workers.mskill, '' + checkboxes.mskillstep + ' mainhand skill');
     reportEp(workers.oskill, '' + checkboxes.oskillstep + ' offhand skill');
     reportEp(workers.mspeed, '' + checkboxes.mspeedstep + ' slower mainhand');
@@ -199,6 +201,13 @@ getElement('setup').addEventListener('submit', (e) => {
       const critCfg = collectInputs();
       critCfg.char.stats.crit += 1;
       workers.crit = createWorker(critCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.haste) {
+      const hasteCfg = collectInputs();
+      const step = checkboxes.hastestep;
+      hasteCfg.char.stats.haste += step;
+      workers.haste = createWorker(hasteCfg, onWorkersFinished);
     }
 
     if (checkboxes.mskill) {

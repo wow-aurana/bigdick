@@ -73,6 +73,7 @@ input[name="delay"] {
   width: 36px;
 }
 
+input[name="hastestep"],
 input[name="mskillstep"],
 input[name="oskillstep"] {
   width: 10px;
@@ -89,6 +90,7 @@ input[type=number]::-webkit-outer-spin-button {
 #charlvl,
 #charhit,
 #charcrit,
+#charhaste,
 #duration,
 #charap {
   width: 36px;

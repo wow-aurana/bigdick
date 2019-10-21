@@ -5,7 +5,8 @@ class Weapon {
     this.log = new SwingLog(name);
 
     this.char = char;
-    this.cooldown = new Cooldown(stats.speed, name);
+    const speed = stats.speed / (1 + char.stats.haste / 100);
+    this.cooldown = new Cooldown(speed, name);
 
     this.stats = stats;
     this.avgDmg = (stats.min + stats.max) * .5;
