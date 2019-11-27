@@ -38,8 +38,6 @@ class Character {
     this.off = char.offhand ? new Weapon(this, char.offhand, 'Offhand') : null;
     if (this.off) {
       this.off.isMainhand = false;
-      // First offhand swing delayed by 200ms (according to some guy on Discord)
-      this.off.cooldown.force(.2);
       this.off.lock();
     }
 
