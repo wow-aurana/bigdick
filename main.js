@@ -4,6 +4,20 @@ const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect
 
 const output = new Output();
 
+const updateMitigtion = () => {
+  getElement('effective').textContent = 
+      '(Mitigation: ' + (getMitigation() * 100).toFixed(1) + '%)';
+}
+updateMitigtion();
+
+const armorCheckboxes = [
+    new Checkbox('sunder'),
+    new Checkbox('faerie'),
+    new Checkbox('curse'),
+    new Checkbox('annihilator'),
+];
+armorCheckboxes.forEach(checkbox => checkbox.clickCb = updateMitigtion);
+
 const twohand = new WeaponCheckbox('twohand');
 twohand.check(false);
 const mainhand = new WeaponCheckbox('mainhand');

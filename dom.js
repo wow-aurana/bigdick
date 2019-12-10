@@ -15,6 +15,13 @@ function getEffectiveArmor() {
   return base - sunder - faerie - curse - annihilator;
 }
 
+function getMitigation() {
+  const armor = getEffectiveArmor();
+  const charlevel = getInputNumber('charlvl');
+  if (armor <= 0) return 0;
+  return (armor / (armor + 400 + 85 * charlevel));
+}
+
 class Checkbox {
   constructor(id) {
     this.el = getElement(id);
