@@ -124,7 +124,7 @@ class Execute extends Ability {
     this.char.rage.use(this.cost);
     this.ragereset.did.execute = true;
     // Spell batching nonsense
-    this.ragereset.force(.8 + m.random() * .4);
+    this.ragereset.force(.4 + m.random() * .4);
   }
 
   checkConditions() { return false; }
