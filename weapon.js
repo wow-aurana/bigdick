@@ -81,15 +81,16 @@ class Weapon {
   }
 
   applyFlurry() {
-    // This code assumes that the remaining swing time is recalculated
-    // if flurry goes up or down mid swing (e.g. offhand eats last charge).
-    if (this.is.flurried && !this.char.flurry.hasCharges()) {
-      this.cooldown.time.left *= this.char.flurryHaste;
-      this.is.flurried = false;
-    }
     if (!this.is.flurried && this.char.flurry.hasCharges()) {
       this.cooldown.time.left /= this.char.flurryHaste;
       this.is.flurried = true;
+    }
+  }
+
+  unapplyFlurry() {
+    if (this.is.flurried && !this.char.flurry.hasCharges()) {
+      this.cooldown.time.left *= this.char.flurryHaste;
+      this.is.flurried = false;
     }
   }
   
@@ -106,9 +107,17 @@ class Weapon {
     }
   }
 
+  procUnbridledWrath() {
+    if (this.char.extraRageChance > m.random()) {
+      this.char.batch.add(() => this.char.rage.gain(1), 1);
+    }
+  }
+
   swing(extraSwing = false) {
     this.cooldown.use();
-    this.is.flurried = false;  // will be recalculated in main loop
+    if (this.char.flurry.hasCharges()) {
+      this.cooldown.time.left /= this.char.flurryHaste;
+    }
 
     if (this.isMainhand && this.char.slam) this.char.slam.opportunity.force();
 
@@ -147,7 +156,7 @@ class Weapon {
       dmg *= this.table.glanceMul;
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.procUnbridledWrath();
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
@@ -156,14 +165,14 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.procUnbridledWrath();
 
     } else {  // hit
       this.log.hits += 1;
       this.proc(extraSwing);
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.procUnbridledWrath();
     }
   }
 

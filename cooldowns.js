@@ -29,6 +29,34 @@ class Cooldown extends CooldownBase {
   }
 }
 
+class Batching extends CooldownBase {
+  constructor() {
+    super(.4, 'Server batching');
+    this.events = [];
+
+    final(this);
+  }
+
+  canUse() { return true; }
+  reset() { super.reset(); this.events.length = 0; }
+  
+  add(event, delay = 0) {
+    if (delay > 0) {
+      this.events.push(() => this.add(event, delay - 1));
+      return;
+    } 
+    this.events.push(event);
+  }
+
+  handle() { 
+    this.use();
+    if (!this.events.length) return;
+    const events = [...this.events];
+    this.events.length = 0;
+    for (const fn of events) fn();
+  }
+}
+
 class ApOnUse extends CooldownBase {
   constructor(cfg) {
     super(cfg.cooldown, 'AP on use');

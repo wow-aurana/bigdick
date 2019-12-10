@@ -1,7 +1,10 @@
 'use strict';
 
 class Flurry {
-  constructor() {
+  constructor(batch, main, off) {
+    this.batch = batch;
+    this.main = main;
+    this.off = off;
     this.has = { charges: 0 };
     this.log = { uptime: 0 };
 
@@ -9,10 +12,26 @@ class Flurry {
   }
 
   hasCharges() { return this.has.charges > 0; }
-  useCharge() { this.has.charges = m.max(this.has.charges - 1, 0); }
-  refresh() { this.has.charges = 3; }
   reset() { this.has.charges = 0; }
   tick(seconds) { if (this.hasCharges()) this.log.uptime += seconds; }
+  
+  useCharge() {
+    this.batch.add(() => {
+      this.has.charges = m.max(this.has.charges - 1, 0);
+      if (!this.has.charges) {
+        this.main.unapplyFlurry();
+        this.off && this.off.unapplyFlurry();
+      }
+    }, 1);
+  }
+
+  refresh() {
+    this.batch.add(() => { 
+      this.has.charges = 3;
+      this.main.applyFlurry();
+      this.off && this.off.applyFlurry();
+    }, 1);
+  }
 }
 
 class Aura {

@@ -56,8 +56,6 @@ function runSimulation(cfg) {
       if (timer > cfg.duration) break;
 
       nextEvent.handle();
-      char.main.applyFlurry();
-      if (char.off) char.off.applyFlurry();
       char.queueHeroicStrike();
     }
 

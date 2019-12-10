@@ -7,6 +7,8 @@ class Character {
     this.gcd = new Cooldown(1.5, 'GCD');
     this.rage = new Rage(char.level);
     this.can = { execute: false };
+    this.batch = new Batching();
+    this.batch.force(m.random() * .4);
 
     // Target armor mitigation
     this.armorDmgMul = 1;
@@ -28,7 +30,6 @@ class Character {
     this.handOfJustice = char.hoj;
     this.blessingOfKings = char.bok;
     this.windfury = !!char.wftotem ? new WindfuryAp(char.wftotem) : null;
-    this.flurry = new Flurry();
     this.abilityApScaling = !!char.twohand ? 3.3
                             : char.mainhand.dagger ? 1.7 : 2.4;
 
@@ -40,6 +41,7 @@ class Character {
       this.off.isMainhand = false;
       this.off.lock();
     }
+    this.flurry = new Flurry(this.batch, this.main, this.off);
 
     // AP on use (Blood Fury, trinkets etc.)
     this.apOnUse = !!char.aponuse ? new ApOnUse(char.aponuse) : null;
@@ -94,7 +96,7 @@ class Character {
       this.bloodrage,
       this.bloodrage.ragetick,
       this.apOnUse,
-      this.execute.ragereset,
+      this.batch,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([
@@ -205,5 +207,6 @@ class Character {
     for (const e of this.cooldowns) {
       e.reset();
     }
+    this.batch.force(m.random() * .4);
   }
 }

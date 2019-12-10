@@ -106,7 +106,6 @@ class Ability {
 class Execute extends Ability {
   constructor(char, usewhen) {
     super(char, char.executeCost, 0, usewhen, 'Execute');
-    this.ragereset = new RageReset(char.rage);
 
     final(this);
   }
@@ -122,9 +121,8 @@ class Execute extends Ability {
 
   onHit() {
     this.char.rage.use(this.cost);
-    this.ragereset.did.execute = true;
-    // Spell batching nonsense
-    this.ragereset.force(.8 + m.random() * .4);
+    // Reset rage, delayed by 2 batches
+    this.char.batch.add(() => this.char.rage.use(this.char.rage.is.now), 2);
   }
 
   checkConditions() { return false; }
