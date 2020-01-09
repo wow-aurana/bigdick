@@ -224,7 +224,7 @@ class HeroicStrike extends Ability {
     final(this);
   }
 
-  getDmg() { return this.char.main.getDmg() + 138 * this.char.multiplier(); }
+  getDmg() { return (this.char.main.getDmg() + 138) * this.char.multiplier(); }
 
   checkConditions() {
     if (!this.char.rage.has(this.usewhen.rage)) return false;
