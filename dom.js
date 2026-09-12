@@ -5,6 +5,16 @@ function getInputString(id) { return getElement(id).value; }
 function getInputNumber(id) { return parseFloat(getElement(id).value); }
 function getInputChecked(id) { return getElement(id).checked; }
 
+// Talent selection made on talents.html; see TALENTS_STORAGE_KEY in
+// talent-picker.js.
+function getTalents() {
+  try {
+    return JSON.parse(localStorage.getItem('bigdickTalents')) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
 function getEffectiveArmor() {
   // TODO move calculations inside sim
   const base = getInputNumber('armor');

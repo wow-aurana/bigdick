@@ -1,30 +1,29 @@
 'use strict';
 
-const defaultTalentUrl =
-    'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051';
+// Reads the talent selection produced by talents.html (see
+// TALENTS_STORAGE_KEY in talent-picker.js) and translates it into the flags
+// Character.js expects. `talents` is {arms: {key: rank}, fury: {...},
+// protection: {...}}, as collected by collectInputs() in main.js.
 
+function parseTalents(talents) {
+  const arms = (talents && talents.arms) || {};
+  const fury = (talents && talents.fury) || {};
 
-function parseTalents(url = defaultTalentUrl) {
-  const numbers = url.split('/').pop();
-  let arms, fury, prot;
-  [arms, fury, prot] = numbers.split('-');
+  const rank = (tree, key) => tree[key] || 0;
 
-  const getValue = (str, idx, def) => {
-    return (str && str.length > idx) ? (parseInt(str[idx]) || def) : def;
-  }
   return {
-    improvedHS: getValue(arms, 0, 0),
-    angerMgmt: getValue(arms, 7, 0),
-    deepWounds: getValue(arms, 8, 0),
-    twoHandSpec: getValue(arms, 9, 0),
-    impale: getValue(arms, 10, 0),
+    improvedHS: rank(arms, 'improved-heroic-strike'),
+    angerMgmt: rank(arms, 'anger-management'),
+    deepWounds: rank(arms, 'deep-wounds'),
+    twoHandSpec: rank(arms, 'two-handed-weapon-specialization'),
+    impale: rank(arms, 'impale'),
     // TODO add rest of arms?
-    boomingVoice: getValue(fury, 0, 0),
-    unbridledWrath: getValue(fury, 3, 0),
-    dualWieldSpec: getValue(fury, 8, 0),
-    improvedExecute: getValue(fury, 9, 0),
-    improvedSlam: getValue(fury, 11, 0),
-    deathWish: getValue(fury, 12, 0),
-    flurry: getValue(fury, 15, 0),
+    boomingVoice: rank(fury, 'booming-voice'),
+    unbridledWrath: rank(fury, 'unbridled-wrath'),
+    dualWieldSpec: rank(fury, 'dual-wield-specialization'),
+    improvedExecute: rank(fury, 'improved-execute'),
+    improvedSlam: rank(fury, 'improved-slam'),
+    deathWish: rank(fury, 'death-wish'),
+    flurry: rank(fury, 'flurry'),
   }
 }

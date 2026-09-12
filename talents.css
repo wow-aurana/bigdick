@@ -1,0 +1,164 @@
+body {
+  background: #111;
+  color: #ddd;
+  font-family: sans-serif;
+}
+
+a { color: #e0b040; }
+
+#totalPoints {
+  font-weight: normal;
+  font-size: 0.7em;
+  color: #aaa;
+}
+
+#trees {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.tree {
+  --cell: 56px;
+  --gap: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.tree-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tree-header img {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #555;
+  border-radius: 3px;
+}
+
+.tree-header .tree-name {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.tree-header .tree-points {
+  color: #e0b040;
+  margin-left: 4px;
+}
+
+.tree-header button {
+  margin-left: auto;
+  background: #333;
+  color: #ddd;
+  border: 1px solid #555;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 2px 8px;
+}
+
+.tree-grid-wrap {
+  position: relative;
+}
+
+.tree-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+}
+
+.tree-arrows {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.talent-cell {
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  border: 2px solid #444;
+  border-radius: 4px;
+  background: #000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.talent-cell img {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  display: block;
+}
+
+.talent-cell.locked {
+  cursor: not-allowed;
+}
+
+.talent-cell.locked img {
+  filter: grayscale(1) brightness(0.4);
+}
+
+.talent-cell.available {
+  border-color: #886020;
+}
+
+.talent-cell.allocated {
+  border-color: #e0b040;
+  box-shadow: 0 0 6px #e0b04080;
+}
+
+.talent-cell.maxed {
+  border-color: #4caf50;
+  box-shadow: 0 0 6px #4caf5080;
+}
+
+.talent-points {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  background: #000c;
+  color: #fff;
+  font-size: 11px;
+  padding: 0 3px;
+  border-radius: 3px;
+  line-height: 1.4;
+}
+
+.talent-tooltip {
+  position: fixed;
+  max-width: 320px;
+  background: #0a0a0aee;
+  border: 1px solid #886020;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #ddd;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.talent-tooltip .tt-name {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.talent-tooltip .tt-rank {
+  color: #e0b040;
+  font-size: 0.9em;
+}
+
+.talent-tooltip .tt-req {
+  color: #c44;
+  margin-top: 4px;
+}

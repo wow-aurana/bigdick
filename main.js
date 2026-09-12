@@ -85,18 +85,10 @@ for (const el of getElement('setup').elements) {
 }
 
 function collectInputs() {
-  const talentSource = 'classic.wowhead.com/talent-calc/warrior/';
-  const talentUrl = getInputString('talents');
-  if (talentUrl.indexOf(talentSource) < 0) {
-    output.clear();
-    output.print('Use talent source from ' + talentSource);
-    return;
-  }
-
   const config = {
     char: {
       level: getInputNumber('charlvl'),
-      talents: talentUrl,
+      talents: getTalents(),
       bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
       ragepotion: getInputChecked('ragepotion'),
@@ -273,3 +265,24 @@ getElement('setup').addEventListener('submit', (e) => {
 getElement('setup').addEventListener('change', saveSettings);
 getElement('setup').addEventListener('input', saveSettings);
 loadSettings();
+
+// Talent spec is set on talents.html (a separate tab), not on this form, so
+// keep a live read-only summary here instead. Refresh whenever the user
+// could plausibly have changed it there: on load, when this tab regains
+// focus, and immediately if talents.html is open in another tab right now
+// (the 'storage' event only fires in *other* tabs of the same origin).
+function updateTalentsSummary() {
+  const talents = getTalents();
+  const summary = TALENT_TREES.map((tree) => {
+    const points = tree.talents.reduce((sum, t) => {
+      return sum + ((talents[tree.key] && talents[tree.key][t.key]) || 0);
+    }, 0);
+    return tree.name + ' ' + points;
+  }).join(' / ');
+  getElement('talentsSummary').textContent = ' (' + summary + ')';
+}
+updateTalentsSummary();
+window.addEventListener('focus', updateTalentsSummary);
+window.addEventListener('storage', (e) => {
+  if (e.key === 'bigdickTalents') updateTalentsSummary();
+});
