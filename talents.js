@@ -22,7 +22,7 @@ function parseTalents(talents) {
     unbridledWrath: rank(fury, 'unbridled-wrath'),
     dualWieldSpec: rank(fury, 'dual-wield-specialization'),
     improvedExecute: rank(fury, 'improved-execute'),
-    improvedSlam: rank(fury, 'improved-slam'),
+    improvedSlam: rank(arms, 'improved-slam'),
     deathWish: rank(fury, 'death-wish'),
     flurry: rank(fury, 'flurry'),
   }
