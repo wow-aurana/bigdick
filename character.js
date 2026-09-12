@@ -169,7 +169,9 @@ class Character {
 
   procWindfury() {
     if (!this.windfury) return;
+    if (!this.windfury.offCooldown()) return;
     if (m.random() > .2) return;
+    this.windfury.triggerIcd();
     this.main.cooldown.reset();
     this.windfury.gain();
     this.main.swing(true);

@@ -46,10 +46,15 @@ class Weapon {
     // miss
     // see this blue post:
     // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
-    const hitOnGear = m.max(0, this.char.stats.hit - (skillDiff > 10 ? 1 : 0));
+    // Hit rating suppression scales continuously past the +10 skill deficit
+    // threshold: https://github.com/magey/classic-warrior/wiki/Attack-table
+    const hitSuppression = skillDiff > 10 ? (skillDiff - 10) * .2 : 0;
+    const hitOnGear = m.max(0, this.char.stats.hit - hitSuppression);
     const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
     const baseMiss = 5 + missFromSkill;
-    const actualMiss = !this.char.off ? baseMiss : (.8 * baseMiss + 20);
+    // Dual wield miss penalty is a flat +19, not the older 0.8x+20 estimate:
+    // https://github.com/magey/classic-warrior/wiki/Attack-table
+    const actualMiss = !this.char.off ? baseMiss : (baseMiss + 19);
     this.table.miss = clamp(0, 100)(actualMiss - hitOnGear);
     
     // dodge
@@ -65,8 +70,9 @@ class Weapon {
     // crit
     const baseSkillDiff = targetDef - baseSkill;
     const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
-    this.table.crit =
-        clamp(0, 100)(this.char.stats.crit - baseSkillDiff *.2 - magicNumber);
+    const suppressedCrit = applyCritSuppression(
+        this.char.stats.crit, this.char.stats.agility, magicNumber);
+    this.table.crit = clamp(0, 100)(suppressedCrit - baseSkillDiff * .2);
     this.table.crit += this.table.glance;
     final(this.table);
   }

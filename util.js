@@ -5,6 +5,15 @@ const clamp =
     (min, max) => (value) => value < min ? min : value > max ? max : value;
 const final = Object.freeze;
 
+// The extra crit suppression applied against +3 level targets only affects
+// crit gained from auras/talents/gear, not base Agility-derived crit.
+// See https://github.com/magey/classic-warrior/wiki/Crit-aura-suppression
+function applyCritSuppression(totalCrit, agility, suppression) {
+  const agiCrit = m.min(totalCrit, (agility || 0) / 20);
+  const nonAgiCrit = totalCrit - agiCrit;
+  return agiCrit + m.max(0, nonAgiCrit - suppression);
+}
+
 class SwingLog {
   constructor(name) {
     this.name = name;

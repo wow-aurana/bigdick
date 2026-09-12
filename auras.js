@@ -41,10 +41,17 @@ class WindfuryAp extends Aura {
     super(1.5, 'Windfury AP buff');
     this.ap = 315 * (!!cfg.improved ? 1.3 : 1);
 
+    // Windfury Totem/Weapon/Wild Strikes share a 1.5s internal cooldown:
+    // https://github.com/magey/classic-warrior/wiki/Windfury-Totem
+    this.icd = new Cooldown(1.5, 'Windfury ICD');
+
     final(this);
   }
 
   gain() { super.gain(); }
+  tick(seconds) { super.tick(seconds); this.icd.tick(seconds); }
+  offCooldown() { return !this.icd.running(); }
+  triggerIcd() { this.icd.use(); }
 }
 
 function ppmToChance(ppm, speed) { return (ppm / 60) * speed; }

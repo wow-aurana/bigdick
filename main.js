@@ -103,6 +103,7 @@ function collectInputs() {
       stats: {
         ap: getInputNumber('charap'),
         crit: getInputNumber('charcrit'),
+        agility: getInputNumber('charagi'),
         hit: getInputNumber('charhit'),
         haste: getInputNumber('charhaste'),
       },
