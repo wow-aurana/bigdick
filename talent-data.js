@@ -128,71 +128,77 @@ const TALENT_TREES = [
     name: 'Fury',
     icon: 'ability_warrior_innerrage',
     talents: [
-      { key: 'booming-voice', name: 'Booming Voice', tier: 1, col: 1, maxRank: 5, icon: 'spell_nature_purge', spellId: 12321, ranks: [
+      { key: 'booming-voice', name: 'Booming Voice', tier: 1, col: 2, maxRank: 5, icon: 'spell_nature_purge', spellId: 12321, ranks: [
         'Increases the radius of your Battle Shout and Demoralizing Shout abilities by 10%.',
         'Increases the radius of your Battle Shout and Demoralizing Shout abilities by 20%.',
         'Increases the radius of your Battle Shout and Demoralizing Shout abilities by 30%.',
         'Increases the radius of your Battle Shout and Demoralizing Shout abilities by 40%.',
         'Increases the radius of your Battle Shout and Demoralizing Shout abilities by 50%.',
       ] },
-      { key: 'cruelty', name: 'Cruelty', tier: 1, col: 2, maxRank: 5, icon: 'ability_rogue_eviscerate', spellId: 12320, ranks: [
+      { key: 'cruelty', name: 'Cruelty', tier: 1, col: 3, maxRank: 5, icon: 'ability_rogue_eviscerate', spellId: 12320, ranks: [
         'Increases your chance to get a critical strike with melee attacks by 1%.',
         'Increases your chance to get a critical strike with melee attacks by 2%.',
         'Increases your chance to get a critical strike with melee attacks by 3%.',
         'Increases your chance to get a critical strike with melee attacks by 4%.',
         'Increases your chance to get a critical strike with melee attacks by 5%.',
       ] },
-      { key: 'improved-demoralizing-shout', name: 'Improved Demoralizing Shout', tier: 1, col: 3, maxRank: 5, icon: 'ability_warrior_warcry', spellId: 12324, ranks: [
-        'Increases the melee attack power reduction of your Demoralizing Shout by 8%.',
-        'Increases the melee attack power reduction of your Demoralizing Shout by 16%.',
-        'Increases the melee attack power reduction of your Demoralizing Shout by 24%.',
-        'Increases the melee attack power reduction of your Demoralizing Shout by 32%.',
-        'Increases the melee attack power reduction of your Demoralizing Shout by 40%.',
+      { key: 'iron-will', name: 'Iron Will', tier: 2, col: 2, maxRank: 5, icon: 'spell_magic_magearmor', spellId: 12300, ranks: [
+        'Reduces the duration of Stun and Fear effects inflicted on you by 3%.',
+        'Reduces the duration of Stun and Fear effects inflicted on you by 6%.',
+        'Reduces the duration of Stun and Fear effects inflicted on you by 9%.',
+        'Reduces the duration of Stun and Fear effects inflicted on you by 12%.',
+        'Reduces the duration of Stun and Fear effects inflicted on you by 15%.',
       ] },
-      { key: 'unbridled-wrath', name: 'Unbridled Wrath', tier: 1, col: 4, maxRank: 5, icon: 'spell_nature_stoneclawtotem', spellId: 12322, ranks: [
+      { key: 'unbridled-wrath', name: 'Unbridled Wrath', tier: 2, col: 3, maxRank: 5, icon: 'spell_nature_stoneclawtotem', spellId: 12322, ranks: [
         'Gives you a 12% chance to generate 1 additional Rage (2 for two-handed weapons) when you deal melee damage with a weapon.',
         'Gives you a 24% chance to generate 1 additional Rage (2 for two-handed weapons) when you deal melee damage with a weapon.',
         'Gives you a 36% chance to generate 1 additional Rage (2 for two-handed weapons) when you deal melee damage with a weapon.',
         'Gives you a 48% chance to generate 1 additional Rage (2 for two-handed weapons) when you deal melee damage with a weapon.',
         'Gives you a 60% chance to generate 1 additional Rage (2 for two-handed weapons) when you deal melee damage with a weapon.',
       ] },
-      { key: 'improved-cleave', name: 'Improved Cleave', tier: 2, col: 1, maxRank: 3, icon: 'ability_warrior_cleave', spellId: 12329, ranks: [
+      { key: 'improved-cleave', name: 'Improved Cleave', tier: 3, col: 1, maxRank: 3, icon: 'ability_warrior_cleave', spellId: 12329, ranks: [
         'Reduces the Rage cost of your Cleave ability by 1.',
         'Reduces the Rage cost of your Cleave ability by 2.',
         'Reduces the Rage cost of your Cleave ability by 3.',
       ] },
-      { key: 'piercing-howl', name: 'Piercing Howl', tier: 2, col: 2, maxRank: 1, icon: 'spell_shadow_deathscream', spellId: 12323, ranks: [
+      { key: 'piercing-howl', name: 'Piercing Howl', tier: 3, col: 2, maxRank: 1, icon: 'spell_shadow_deathscream', spellId: 12323, ranks: [
         '10 sec cooldown, Instant. Causes all nearby enemies to be Dazed, reducing movement speed by 50% for 6 sec.',
       ] },
-      { key: 'blood-craze', name: 'Blood Craze', tier: 2, col: 3, maxRank: 3, icon: 'spell_shadow_summonimp', spellId: 16487, ranks: [
+      { key: 'blood-craze', name: 'Blood Craze', tier: 3, col: 3, maxRank: 3, icon: 'spell_shadow_summonimp', spellId: 16487, ranks: [
         'Regenerates 1% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum health from a single attack.',
         'Regenerates 2% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum health from a single attack.',
         'Regenerates 3% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum health from a single attack.',
       ] },
-      { key: 'improved-battle-shout', name: 'Improved Battle Shout', tier: 2, col: 4, maxRank: 5, icon: 'ability_warrior_battleshout', spellId: 12318, ranks: [
-        'Increases the melee attack power bonus of your Battle Shout by 5%.',
-        'Increases the melee attack power bonus of your Battle Shout by 10%.',
-        'Increases the melee attack power bonus of your Battle Shout by 15%.',
-        'Increases the melee attack power bonus of your Battle Shout by 20%.',
-        'Increases the melee attack power bonus of your Battle Shout by 25%.',
+      { key: 'boundless-rage', name: 'Boundless Rage', tier: 3, col: 4, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+        'Increases your maximum Rage by 10.',
+        'Increases your maximum Rage by 20.',
+        'Increases your maximum Rage by 30.',
       ] },
-      { key: 'dual-wield-specialization', name: 'Dual Wield Specialization', tier: 3, col: 1, maxRank: 5, icon: 'ability_dualwield', spellId: 23584, ranks: [
+      { key: 'dual-wield-specialization', name: 'Dual Wield Specialization', tier: 4, col: 1, maxRank: 5, icon: 'ability_dualwield', spellId: 23584, ranks: [
         'Increases your off-hand weapon damage by 5%, off-hand Rage generation by 20%, and chance to hit with off-hand attacks by 2%.',
         'Increases your off-hand weapon damage by 10%, off-hand Rage generation by 40%, and chance to hit with off-hand attacks by 4%.',
         'Increases your off-hand weapon damage by 15%, off-hand Rage generation by 60%, and chance to hit with off-hand attacks by 6%.',
         'Increases your off-hand weapon damage by 20%, off-hand Rage generation by 80%, and chance to hit with off-hand attacks by 8%.',
         'Increases your off-hand weapon damage by 25%, off-hand Rage generation by 100%, and chance to hit with off-hand attacks by 10%.',
       ] },
-      { key: 'improved-execute', name: 'Improved Execute', tier: 3, col: 2, maxRank: 2, icon: 'inv_sword_48', spellId: 20502, ranks: [
-        'Reduces the Rage cost of your Execute ability by 2.',
-        'Reduces the Rage cost of your Execute ability by 5.',
+      { key: 'raging-blows', name: 'Raging Blows', tier: 4, col: 2, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+        'Causes your Whirlwind to also strike with your off-hand weapon, and reduces the Rage cost of your Cleave ability by 2.',
       ] },
-      { key: 'enrage', name: 'Enrage', tier: 3, col: 3, maxRank: 5, icon: 'spell_shadow_unholyfrenzy', spellId: 12317, ranks: [
+      { key: 'enrage', name: 'Enrage', tier: 4, col: 3, maxRank: 5, icon: 'spell_shadow_unholyfrenzy', spellId: 12317, ranks: [
         'Gives you a 5% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
         'Gives you a 10% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
         'Gives you a 15% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
         'Gives you a 20% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
         'Gives you a 25% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
+      ] },
+      { key: 'improved-execute', name: 'Improved Execute', tier: 4, col: 4, maxRank: 2, icon: 'inv_sword_48', spellId: 20502, ranks: [
+        'Reduces the Rage cost of your Execute ability by 2.',
+        'Reduces the Rage cost of your Execute ability by 5.',
+      ] },
+      { key: 'precision', name: 'Precision', tier: 5, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+        'Increases your chance to hit with all abilities and melee attacks by 1%.',
+        'Increases your chance to hit with all abilities and melee attacks by 2%.',
+        'Increases your chance to hit with all abilities and melee attacks by 3%.',
       ] },
       { key: 'death-wish', name: 'Death Wish', tier: 5, col: 2, maxRank: 1, icon: 'spell_shadow_deathpact', spellId: 12328, ranks: [
         '30 Rage, 3 min cooldown, Instant. When activated, increases Physical damage done by 20% and makes you immune to Fear effects, but increases all damage taken by 5%. Lasts 30 sec.',
@@ -205,32 +211,12 @@ const TALENT_TREES = [
         'Your Berserker Rage ability will instantly generate 5 Rage and has a 50% chance to remove all movement-impairing effects when activated.',
         'Your Berserker Rage ability will instantly generate 10 Rage and has a 100% chance to remove all movement-impairing effects when activated.',
       ] },
-      { key: 'iron-will', name: 'Iron Will', tier: 4, col: 4, maxRank: 5, icon: 'spell_magic_magearmor', spellId: 12300, ranks: [
-        'Reduces the duration of Stun and Fear effects inflicted on you by 3%.',
-        'Reduces the duration of Stun and Fear effects inflicted on you by 6%.',
-        'Reduces the duration of Stun and Fear effects inflicted on you by 9%.',
-        'Reduces the duration of Stun and Fear effects inflicted on you by 12%.',
-        'Reduces the duration of Stun and Fear effects inflicted on you by 15%.',
-      ] },
-      { key: 'boundless-rage', name: 'Boundless Rage', tier: 5, col: 3, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
-        'Increases your maximum Rage by 10.',
-        'Increases your maximum Rage by 20.',
-        'Increases your maximum Rage by 30.',
-      ] },
       { key: 'flurry', name: 'Flurry', tier: 6, col: 3, maxRank: 5, icon: 'ability_ghoulfrenzy', spellId: 12319, requires: { key: 'enrage', rank: 5 }, ranks: [
         'Increases your attack speed by 5% for your next 3 swings after dealing a melee critical strike.',
         'Increases your attack speed by 10% for your next 3 swings after dealing a melee critical strike.',
         'Increases your attack speed by 15% for your next 3 swings after dealing a melee critical strike.',
         'Increases your attack speed by 20% for your next 3 swings after dealing a melee critical strike.',
         'Increases your attack speed by 25% for your next 3 swings after dealing a melee critical strike.',
-      ] },
-      { key: 'raging-blows', name: 'Raging Blows', tier: 6, col: 2, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
-        'Causes your Whirlwind to also strike with your off-hand weapon, and reduces the Rage cost of your Cleave ability by 2.',
-      ] },
-      { key: 'precision', name: 'Precision', tier: 5, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
-        'Increases your chance to hit with all abilities and melee attacks by 1%.',
-        'Increases your chance to hit with all abilities and melee attacks by 2%.',
-        'Increases your chance to hit with all abilities and melee attacks by 3%.',
       ] },
       { key: 'bloodthirst', name: 'Bloodthirst', tier: 7, col: 2, maxRank: 1, icon: 'spell_nature_bloodlust', spellId: 23881, requires: { key: 'death-wish', rank: 1 }, ranks: [
         '30 Rage, Instant, 6 sec cooldown, Melee Range. Instantly attack the target causing damage equal to 35% of your Attack Power plus 30, and increasing your movement speed by 10% for 10 sec.',
