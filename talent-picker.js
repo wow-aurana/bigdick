@@ -5,7 +5,8 @@
 // here are picked up by the sim immediately -- no copy/pasting a spec URL.
 
 const TALENTS_STORAGE_KEY = 'bigdickTalents';
-const CELL_PITCH = 56 + 10; // must match --cell + --gap in talents.css
+const CELL_SIZE = 46; // must match --cell in talents.css
+const CELL_PITCH = CELL_SIZE + 18; // CELL_SIZE + --gap in talents.css
 
 function loadTalentState() {
   let saved = null;
@@ -155,11 +156,11 @@ function buildTreeDom(tree) {
 
   const grid = document.createElement('div');
   grid.className = 'tree-grid';
-  grid.style.gridTemplateRows = `repeat(${maxTier}, 56px)`;
+  grid.style.gridTemplateRows = `repeat(${maxTier}, ${CELL_SIZE}px)`;
 
   const cellCenter = (tier, col) => ({
-    x: (col - 1) * CELL_PITCH + 28,
-    y: (tier - 1) * CELL_PITCH + 28,
+    x: (col - 1) * CELL_PITCH + CELL_SIZE / 2,
+    y: (tier - 1) * CELL_PITCH + CELL_SIZE / 2,
   });
 
   for (const talent of tree.talents) {
@@ -188,9 +189,9 @@ function buildTreeDom(tree) {
       const to = cellCenter(talent.tier, talent.col);
       const line = document.createElementNS(svgNs, 'line');
       line.setAttribute('x1', from.x);
-      line.setAttribute('y1', from.y + 28);
+      line.setAttribute('y1', from.y + CELL_SIZE / 2);
       line.setAttribute('x2', to.x);
-      line.setAttribute('y2', to.y - 28);
+      line.setAttribute('y2', to.y - CELL_SIZE / 2);
       line.setAttribute('stroke', '#886020');
       line.setAttribute('stroke-width', '2');
       arrows.appendChild(line);

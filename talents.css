@@ -19,8 +19,8 @@ a { color: #e0b040; }
 }
 
 .tree {
-  --cell: 56px;
-  --gap: 10px;
+  --cell: 46px;
+  --gap: 18px;
   background: #1a1a1a;
   border: 1px solid #333;
   border-radius: 6px;
