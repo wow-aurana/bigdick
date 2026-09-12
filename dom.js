@@ -100,6 +100,89 @@ class WeaponCheckbox extends Checkbox {
   }
 }
 
+// Persist the whole #setup form to localStorage and restore it on load.
+//
+// Most inputs share a `name` across multiple gear/ability groups (e.g. every
+// weapon slot has a "min"/"max"/"speed"/"skill"), so `name` alone isn't a
+// stable key. We key on `id` when present, otherwise on the element's first
+// CSS class (the group it belongs to, matching a Checkbox id) plus `name`.
+const SETTINGS_KEY = 'bigdickSettings';
+
+function settingsKey(el) {
+  if (el.id) return 'id:' + el.id;
+  return 'cls:' + (el.classList[0] || '') + '.' + el.name;
+}
+
+function saveSettings() {
+  const form = getElement('setup');
+  const settings = {};
+  for (const el of form.elements) {
+    if (el.type == 'submit') continue;
+    const key = settingsKey(el);
+    if (el.type == 'checkbox') {
+      settings[key] = el.checked;
+    } else if (el.type == 'radio') {
+      if (el.checked) settings[key] = el.value;
+    } else {
+      settings[key] = el.value;
+    }
+  }
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (e) {
+    // Storage unavailable (private browsing, disabled, quota, ...). Ignore.
+  }
+}
+
+function loadSettings() {
+  let settings = null;
+  try {
+    settings = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+  } catch (e) {
+    settings = null;
+  }
+  if (!settings) return;
+
+  const form = getElement('setup');
+
+  // Restore checkboxes/radios first, via .click() so wired onclick handlers
+  // (enabling/disabling related fields, WeaponCheckbox's setWeaponStats
+  // preset, mutually-exclusive twohand/mainhand+offhand, etc.) run exactly
+  // as if the user had clicked them. Number/text fields are restored in a
+  // second pass below so saved values always win over any preset a proc
+  // radio's click handler might have just written into them.
+  for (const el of form.elements) {
+    if (el.type != 'checkbox' && el.type != 'radio') continue;
+    const key = settingsKey(el);
+    if (!(key in settings)) continue;
+    const shouldBeChecked =
+        el.type == 'radio' ? (el.value === settings[key]) : !!settings[key];
+    if (el.checked === shouldBeChecked) continue;
+
+    if (key.startsWith('id:')) {
+      // Top-level toggle: click it so wired onclick handlers (enabling or
+      // disabling related fields, twohand/mainhand+offhand mutual
+      // exclusivity, etc.) run as if the user had clicked it themselves.
+      el.click();
+    } else {
+      // Nested field. A toggle processed above may have already disabled
+      // it, and .click() silently no-ops on disabled elements, so set the
+      // state directly instead. This also skips a proc radio's
+      // setWeaponStats preset, which the value pass below overwrites
+      // with the saved numbers anyway.
+      el.checked = shouldBeChecked;
+    }
+  }
+
+  for (const el of form.elements) {
+    if (el.type == 'checkbox' || el.type == 'radio' || el.type == 'submit') {
+      continue;
+    }
+    const key = settingsKey(el);
+    if (key in settings) el.value = settings[key];
+  }
+}
+
 class Output {
   constructor() {
     this.el = getElement('output');

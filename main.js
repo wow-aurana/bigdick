@@ -265,3 +265,11 @@ getElement('setup').addEventListener('submit', (e) => {
 
   for (const worker of Object.values(workers)) { worker.start(); }
 });
+
+// Persist the whole form to localStorage and restore it on load, so a
+// browser refresh doesn't lose the current setup. Must run after all the
+// Checkbox/WeaponCheckbox wiring and default-check calls above, so it
+// overrides those hardcoded defaults with whatever was last saved.
+getElement('setup').addEventListener('change', saveSettings);
+getElement('setup').addEventListener('input', saveSettings);
+loadSettings();
