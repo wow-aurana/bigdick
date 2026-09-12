@@ -75,10 +75,12 @@ const TALENT_TREES = [
       { key: 'anger-management', name: 'Anger Management', tier: 3, col: 2, maxRank: 1, icon: 'spell_holy_blessingofstamina', spellId: 12296, requires: { key: 'improved-tactical-mastery', rank: 5 }, ranks: [
         'Generates 1 Rage every 3 sec while in combat, and reduces Rage loss while out of combat by 30%.',
       ] },
-      { key: 'deep-wounds', name: 'Deep Wounds', tier: 3, col: 3, maxRank: 1, icon: 'ability_backstab', spellId: 12834, requires: { key: 'improved-rend', rank: 3 }, ranks: [
+      { key: 'deep-wounds', name: 'Deep Wounds', tier: 3, col: 3, maxRank: 3, icon: 'ability_backstab', spellId: 12834, requires: { key: 'improved-rend', rank: 3 }, ranks: [
         "Your critical strikes cause your opponent to bleed, dealing 20% of your melee weapon's average damage over 12 sec.",
+        "Your critical strikes cause your opponent to bleed, dealing 40% of your melee weapon's average damage over 12 sec.",
+        "Your critical strikes cause your opponent to bleed, dealing 60% of your melee weapon's average damage over 12 sec.",
       ] },
-      { key: 'searing-strike', name: 'Searing Strike', tier: 5, col: 3, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'spearing-strike', name: 'Spearing Strike', tier: 4, col: 1, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         '15 Rage, Melee Range, 10 sec cooldown, Instant. A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.',
       ] },
       { key: 'two-handed-weapon-specialization', name: 'Two-Handed Weapon Specialization', tier: 4, col: 2, maxRank: 3, icon: 'inv_axe_09', spellId: 12163, ranks: [
@@ -86,11 +88,11 @@ const TALENT_TREES = [
         'Increases the damage you deal with two-handed melee weapons by 2%.',
         'Increases the damage you deal with two-handed melee weapons by 3%.',
       ] },
-      { key: 'impale', name: 'Impale', tier: 4, col: 3, maxRank: 2, icon: 'ability_searingarrow', spellId: 16493, requires: { key: 'deep-wounds', rank: 1 }, ranks: [
+      { key: 'impale', name: 'Impale', tier: 4, col: 3, maxRank: 2, icon: 'ability_searingarrow', spellId: 16493, ranks: [
         'Increases the critical strike damage bonus of your abilities by 10%.',
         'Increases the critical strike damage bonus of your abilities by 20%.',
       ] },
-      { key: 'bloodthrill', name: 'Bloodthrill', tier: 5, col: 4, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'bloodthrill', name: 'Bloodthrill', tier: 5, col: 1, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Your melee attacks against targets afflicted by your Rend have a 2% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
         'Your melee attacks against targets afflicted by your Rend have a 4% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
         'Your melee attacks against targets afflicted by your Rend have a 6% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
@@ -100,7 +102,7 @@ const TALENT_TREES = [
       { key: 'sweeping-strikes', name: 'Sweeping Strikes', tier: 5, col: 2, maxRank: 1, icon: 'ability_rogue_slicedice', spellId: 12292, ranks: [
         '30 sec cooldown, Requires Battle Stance. Your next 5 melee attacks strike an additional nearby opponent.',
       ] },
-      { key: 'weaponmaster', name: 'Weaponmaster', tier: 5, col: 1, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'weaponmaster', name: 'Weaponmaster', tier: 5, col: 3, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         "Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +1% critical strike chance. Mace/Staff: attacks ignore 3% of your target's armor. Sword: 1% chance to trigger an extra attack on the target.",
         "Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +2% critical strike chance. Mace/Staff: attacks ignore 6% of your target's armor. Sword: 2% chance to trigger an extra attack on the target.",
         "Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +3% critical strike chance. Mace/Staff: attacks ignore 9% of your target's armor. Sword: 3% chance to trigger an extra attack on the target.",
@@ -117,7 +119,7 @@ const TALENT_TREES = [
         'Gives your Hamstring ability a 15% chance to immobilize the target for 5 sec.',
       ] },
       { key: 'mortal-strike', name: 'Mortal Strike', tier: 7, col: 2, maxRank: 1, icon: 'ability_warrior_savageblow', spellId: 12294, requires: { key: 'sweeping-strikes', rank: 1 }, ranks: [
-        'A vicious strike that deals weapon damage plus 85 and wounds the target, reducing the effectiveness of any healing by 50% for 10 sec.',
+        '30 Rage, Instant, 6 sec cooldown, Melee Range. A vicious strike that deals weapon damage plus 85 and wounds the target, reducing the effectiveness of any healing by 50% for 10 sec.',
       ] },
     ],
   },
