@@ -262,11 +262,6 @@ const TALENT_TREES = [
       { key: 'last-stand', name: 'Last Stand', tier: 3, col: 1, maxRank: 1, icon: 'spell_holy_ashestoashes', spellId: 12975, requires: { key: 'improved-bloodrage', rank: 2 }, ranks: [
         '3 min cooldown, Instant. When activated, this ability temporarily grants you an additional 30% of your maximum Health for 20 sec. When the effect ends, the health is lost.',
       ] },
-      { key: 'improved-shield-block', name: 'Improved Shield Block', tier: 3, col: 2, maxRank: 3, icon: 'ability_defend', spellId: 12945, requires: { key: 'shield-specialization', rank: 5 }, ranks: [
-        'Allows your Shield Block ability to block an additional attack and increases the duration by 0.5 second.',
-        'Allows your Shield Block ability to block an additional attack and increases the duration by 1 second.',
-        'Allows your Shield Block ability to block an additional attack and increases the duration by 2 seconds.',
-      ] },
       { key: 'improved-revenge', name: 'Improved Revenge', tier: 3, col: 3, maxRank: 3, icon: 'ability_warrior_revenge', spellId: 12797, ranks: [
         'Increases damage dealt by your Revenge ability by 20%.',
         'Increases damage dealt by your Revenge ability by 40%.',
@@ -287,10 +282,6 @@ const TALENT_TREES = [
         'Reduces the cooldown of your Disarm ability by 14 sec.',
         'Reduces the cooldown of your Disarm ability by 21 sec.',
       ] },
-      { key: 'improved-taunt', name: 'Improved Taunt', tier: 4, col: 3, maxRank: 2, icon: 'spell_nature_reincarnation', spellId: 12302, ranks: [
-        'Reduces the cooldown of your Taunt ability by 1 sec.',
-        'Reduces the cooldown of your Taunt ability by 2 sec.',
-      ] },
       { key: 'improved-shield-wall', name: 'Improved Shield Wall', tier: 5, col: 1, maxRank: 2, icon: 'ability_warrior_shieldwall', spellId: 12312, ranks: [
         'Reduces the cooldown of your Shield Wall ability by 5.5 min.',
         'Reduces the cooldown of your Shield Wall ability by 11 min.',
@@ -302,36 +293,29 @@ const TALENT_TREES = [
         'Gives your Shield Bash ability a 50% chance to Silence the target for 3 sec.',
         'Gives your Shield Bash ability a 100% chance to Silence the target for 3 sec.',
       ] },
-      { key: 'one-handed-weapon-specialization', name: 'One-Handed Weapon Specialization', tier: 6, col: 3, maxRank: 5, icon: 'inv_sword_20', spellId: 16538, ranks: [
-        'Increases the damage you deal with One-Handed Melee weapons by 2%.',
-        'Increases the damage you deal with One-Handed Melee weapons by 4%.',
-        'Increases the damage you deal with One-Handed Melee weapons by 6%.',
-        'Increases the damage you deal with One-Handed Melee weapons by 8%.',
-        'Increases the damage you deal with One-Handed Melee weapons by 10%.',
-      ] },
       { key: 'shield-slam', name: 'Shield Slam', tier: 7, col: 2, maxRank: 1, icon: 'inv_shield_05', spellId: 23922, requires: { key: 'concussion-blow', rank: 1 }, ranks: [
         '30 Rage, Melee Range, 6 sec cooldown, Instant. Slams the target with your shield, causing 421 to 439 damage, increased by your Block Value, and has a 50% chance of dispelling 1 magic effect on the target. Causes a very high amount of threat.',
       ] },
-      { key: 'master-of-defense', name: 'Master of Defense', tier: 2, col: 2, maxRank: 2, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'master-of-defense', name: 'Master of Defense', tier: 3, col: 2, maxRank: 2, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Grants you a 50% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.',
         'Grants you a 100% chance to generate 10 Rage when you Dodge or Parry while a shield is equipped.',
       ] },
-      { key: 'vanguard', name: 'Vanguard', tier: 4, col: 4, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'vanguard', name: 'Vanguard', tier: 4, col: 3, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Your Charge ability is now usable while in Defensive Stance.',
       ] },
-      { key: 'vitality', name: 'Vitality', tier: 1, col: 4, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'vitality', name: 'Vitality', tier: 5, col: 4, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Increases your Stamina and Strength by 2%.',
         'Increases your Stamina and Strength by 4%.',
         'Increases your Stamina and Strength by 6%.',
         'Increases your Stamina and Strength by 8%.',
         'Increases your Stamina and Strength by 10%.',
       ] },
-      { key: 'focused-rage', name: 'Focused Rage', tier: 5, col: 4, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'focused-rage', name: 'Focused Rage', tier: 6, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Reduces the Rage cost of your defensive abilities by 1.',
         'Reduces the Rage cost of your defensive abilities by 2.',
         'Reduces the Rage cost of your defensive abilities by 3.',
       ] },
-      { key: 'bastion', name: 'Bastion', tier: 6, col: 1, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'bastion', name: 'Bastion', tier: 6, col: 3, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
         'Reduces all damage you take by 2% while a shield is equipped.',
         'Reduces all damage you take by 4% while a shield is equipped.',
         'Reduces all damage you take by 6% while a shield is equipped.',
