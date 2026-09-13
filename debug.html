@@ -23,18 +23,19 @@
 <body>
   <p><a href="index.html">&larr; Back to simulator</a></p>
   <p>
-    Live event log. Check "Debug log" on the simulator tab and hit Simulate
-    there (runs are capped to 10 iterations while debug is on) &mdash; events
-    show up here as they happen.
+    Live event log. Hit Run below (or check "Debug log" and hit Simulate on
+    the simulator tab) &mdash; runs are capped to 10 iterations while debug
+    is on, and events show up here as they happen.
   </p>
   <p>
+    <button id="run" type="button">Run</button>
     <button id="copy" type="button">Copy to clipboard</button>
     <button id="clear" type="button">Clear</button>
     <span id="status"></span>
   </p>
   <textarea id="log" readonly wrap="off"></textarea>
 
-  <script src="debug.js"></script>
+  <script src="debug.js?v=2"></script>
 </body>
 
 </html>

@@ -163,10 +163,11 @@ function createWorker(cfg, onFinished) {
   return worker;
 }
 
-// Main 'submit' button hook
-getElement('setup').addEventListener('submit', (e) => {
-  if (e.preventDefault) e.preventDefault();
-
+// Runs a simulation. Shared by the form's 'submit' handler and by a "run"
+// request from the debug.html tab (opening that tab steals focus -- browsers
+// don't let scripts open a background tab or suppress that -- so its Run
+// button lets you kick off a debug run without switching back here).
+function runSim(debugOn) {
   getElement('submit').disabled = true;
 
   // Remove workers from previous run
@@ -175,7 +176,6 @@ getElement('setup').addEventListener('submit', (e) => {
   // Debug mode is a focused, single-run tool: it skips the EP-comparison
   // workers below (which would each also be capped and each want their own
   // log) and just streams one baseline run's events to the debug.html tab.
-  const debugOn = debugCheckbox.checked;
   if (debugOn) debugChannel.postMessage({ type: 'reset' });
 
   const checkboxes = apep.collect();
@@ -302,7 +302,20 @@ getElement('setup').addEventListener('submit', (e) => {
   }
 
   for (const worker of Object.values(workers)) { worker.start(); }
+}
+
+getElement('setup').addEventListener('submit', (e) => {
+  if (e.preventDefault) e.preventDefault();
+  runSim(debugCheckbox.checked);
 });
+
+// A "run" request from the debug.html tab's Run button.
+debugChannel.onmessage = (e) => {
+  if (e.data && e.data.type === 'run') {
+    debugCheckbox.checked = true;
+    runSim(true);
+  }
+};
 
 // Persist the whole form to localStorage and restore it on load, so a
 // browser refresh doesn't lose the current setup. Must run after all the

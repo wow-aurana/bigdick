@@ -6,6 +6,7 @@
 // and reopened, or reloaded, mid-run.
 const logEl = document.getElementById('log');
 const statusEl = document.getElementById('status');
+const runButton = document.getElementById('run');
 
 const channel = new BroadcastChannel('bigdickDebug');
 channel.onmessage = (e) => {
@@ -13,6 +14,7 @@ channel.onmessage = (e) => {
   if (msg.type === 'reset') {
     logEl.value = '';
     statusEl.textContent = 'Running...';
+    runButton.disabled = true;
   } else if (msg.type === 'lines') {
     const atBottom =
         logEl.scrollTop + logEl.clientHeight >= logEl.scrollHeight - 4;
@@ -20,8 +22,15 @@ channel.onmessage = (e) => {
     if (atBottom) logEl.scrollTop = logEl.scrollHeight;
   } else if (msg.type === 'done') {
     statusEl.textContent = 'Finished.';
+    runButton.disabled = false;
   }
 };
+
+// Asks the simulator tab (still running in the background -- see main.js)
+// to run a debug simulation, without needing to switch back to it.
+runButton.addEventListener('click', () => {
+  channel.postMessage({ type: 'run' });
+});
 
 document.getElementById('copy').addEventListener('click', async () => {
   try {
