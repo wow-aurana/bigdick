@@ -262,3 +262,63 @@ appears to have early/press access ahead of the public beta.
 4. Exact grid position (tier/column) within each tree is not yet
    reconciled with the new talent set — to be done in a separate pass once
    the talent list itself is considered final.
+
+## Cross-check against nikftw.github.io/forevertalent (2026-09-14)
+
+A second, independent Forever-specific talent calculator exists at
+https://nikftw.github.io/forevertalent/warrior/ (a Next.js site with the
+full talent tree embedded as server-rendered JSON — row/col, prerequisites,
+per-rank text, and a `review: new/updated/unchanged` tag per talent). Pulled
+and compared its full dataset against ours.
+
+**Verdict: the user trusts their own screenshot over this site**, so
+nothing was changed based on it except two items the user separately
+confirmed independent of the site:
+  - Improved Execute is -3 Rage at rank 1, -5 (cumulative) at rank 2 --
+    fixed (was -2/-5).
+  - Flurry is confirmed 5%/rank (5/10/15/20/25) as already implemented --
+    no change needed.
+
+Everything else below is **unresolved** — recorded for whenever it's worth
+a second look, not acted on:
+
+**A pattern across this whole site**: rank-1 text is usually a good match
+for what the user independently confirmed, but rank 2+ text is very often
+stale leftover Classic tooltip wording (sometimes a completely different
+mechanic, not just different numbers) -- e.g. Iron Will rank 1 talks about
+Fear/duration (matches the user), rank 3 talks about Charm/resist-chance
+(pure Classic). Treat any rank-1 agreement from this site as corroboration;
+treat its rank 2+ values with real skepticism.
+
+Genuine structural conflicts, most significant first:
+  - **Deep Wounds doesn't exist at all** in this site's Arms tree; Impale
+    requires Improved Rend directly instead. The user has directly
+    confirmed Deep Wounds exists (3 ranks, 20%/rank, not a prereq for
+    Impale) as recently as this session, so this is being treated as
+    likely wrong on the site's part -- but flagging since it's a full
+    talent's existence at stake, not just a number.
+  - **Bloodthrill / Sweeping Strikes / Weaponmaster row order differs**:
+    the user said Bloodthrill-left, Sweeping Strikes-middle,
+    Weaponmaster-right, all one row (tier 5). This site has Weaponmaster
+    *left* of Sweeping Strikes, and Bloodthrill in a different row
+    entirely (next to Two-Hand Spec, tier 4).
+  - **Bloodthirst's prerequisite**: we have Death Wish (carried over
+    unconfirmed from Classic); this site says Raging Blows.
+  - **Bastion's effect is inverted**: we have "reduces damage you take"
+    (defensive); this site says "increases all damage you deal"
+    (offensive). Same numbers (2/4/6/8/10%), opposite mechanic.
+  - **Focused Rage**: this site says "offensive abilities"; we have
+    "defensive abilities".
+  - **Improved Revenge**: this site adds a prerequisite (5 points in
+    Toughness) that we don't have at all.
+  - **Enrage's rank 1** on this site is an entirely different mechanic
+    (30% chance, 2% damage, triggers off any damaging attack) vs. our
+    Classic-style version (flat %, crit-triggered, 12-swing cap) -- but
+    its own ranks 2-5 flip back to matching our version, which smells like
+    a data error on the site's part rather than a real rank-1-only change.
+
+One plausible-but-unconfirmed alternative worth remembering: this site's
+Flurry ranks 2-5 are 15/20/25/30% (i.e. *only* rank 1 nerfed to 5%, ranks
+2-5 keep their Classic values) rather than a uniform linear rescale. The
+user confirmed the current 5/10/15/20/25 instead, but if that ever looks
+wrong in practice, this is the alternative to try.

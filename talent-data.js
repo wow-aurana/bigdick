@@ -202,7 +202,7 @@ const TALENT_TREES = [
         'Passive. Gives you a 25% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.',
       ] },
       { key: 'improved-execute', name: 'Improved Execute', tier: 4, col: 4, maxRank: 2, icon: 'inv_sword_48', spellId: 20502, ranks: [
-        'Passive. Reduces the Rage cost of your Execute ability by 2.',
+        'Passive. Reduces the Rage cost of your Execute ability by 3.',
         'Passive. Reduces the Rage cost of your Execute ability by 5.',
       ] },
       { key: 'precision', name: 'Precision', tier: 5, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
