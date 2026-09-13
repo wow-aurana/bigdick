@@ -89,7 +89,6 @@ class Character {
       this.bloodrage,
       this.bloodrage.ragetick,
       this.apOnUse,
-      this.execute.ragereset,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([

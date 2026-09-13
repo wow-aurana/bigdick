@@ -62,7 +62,7 @@
           All abilities except Whirlwind and Execute refund 80% of their rage costs if they are dodged/parried/miss.
         </li>
         <li>
-          Execute does not refund its base cost. On a hit, Execute resets rage on the second batch after the button press.
+          Execute does not refund its base cost. On a hit, it resets your remaining rage to 0 immediately (this used to be delayed a batch or two by spell batching, but patch 1.13.7 cut the batch window from 400ms to 10ms, so the delay is no longer meaningful).
         </li>
       </ul>
     </li>
@@ -103,12 +103,6 @@
         </li>
         <li>
           Windfury totem attack power buff mechanics are not reproduced exactly. As a consequence the value of WF totem is slightly inflated (~0.5-1dps) compared to the actual game. <br> The inaccuracy is most prominent with fast weapons.
-        </li>
-        <li>
-          Flury is likely affected spell batching in some way, but the sim does not simulate that. Once we have a better understanding of how it works, I will add it.
-        </li>
-        <li>
-          Unbridled Wrath is affected by spell batching, but the sim does not simulate that.
         </li>
         <li>
           Orcs' Blood Fury triggers a GCD, whereas the AP on use checkbox in the sim doesn't.

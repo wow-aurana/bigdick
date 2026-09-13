@@ -98,12 +98,11 @@ class Ability {
 class Execute extends Ability {
   constructor(char, usewhen) {
     super(char, char.executeCost, 0, usewhen, 'Execute');
-    this.ragereset = new RageReset(char.rage);
 
     final(this);
   }
 
-  getDmg() { 
+  getDmg() {
     return (600 + (this.char.rage.is.now - this.cost) * 15)
            * this.char.multiplier();
   }
@@ -114,9 +113,15 @@ class Execute extends Ability {
 
   onHit() {
     this.char.rage.use(this.cost);
-    this.ragereset.did.execute = true;
-    // Spell batching nonsense
-    this.ragereset.force(.4 + m.random() * .4);
+    // Used to be delayed a batch or two ("spell batching") -- up to 400-800ms
+    // when the batch window was 400ms -- but patch 1.13.7 (2021) cut that
+    // window to 10ms, well below anything this sim resolves, so the reset is
+    // effectively instant now.
+    const remaining = this.char.rage.is.now;
+    this.char.rage.use(remaining);
+    if (remaining > 0) {
+      Debug.log('Execute rage reset: ' + remaining.toFixed(1) + ' -> 0');
+    }
   }
 
   checkConditions() { return false; }
