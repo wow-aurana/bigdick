@@ -66,7 +66,12 @@ function baseAttackChances(char, target, weaponSkill, missBonus = 0) {
       5 + missFromSkill + missBonus - hitOnGear - char.precisionHit);
 
   // dodge
-  const dodge = clamp(0, 100)(5 + skillDiff * .1);
+  // Reduce dodge/parry: a flat percentage reduction to the target's chance
+  // to dodge or parry, same idea as Hit vs. miss above. Parry itself isn't
+  // separately modeled by this sim (an attacker behind the target -- the
+  // normal DPS position -- can't be parried in the first place), so this
+  // only ever acts on the dodge chance in practice.
+  const dodge = clamp(0, 100)(5 + skillDiff * .1 - char.stats.reduceDodge);
 
   // crit
   const baseSkillDiff = targetDef - baseSkill;

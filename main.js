@@ -137,6 +137,7 @@ function collectInputs() {
         crit: getInputNumber('charcrit'),
         agility: getInputNumber('charagi'),
         hit: getInputNumber('charhit'),
+        reduceDodge: getInputNumber('charreducedodge'),
         haste: getInputNumber('charhaste'),
       },
     },

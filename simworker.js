@@ -4,7 +4,7 @@ class SimWorker {
   constructor(cfg) {
     this.cfg = cfg;
     this.result = { progress: 0 };
-    this.worker = new Worker('sim.js?v=14');
+    this.worker = new Worker('sim.js?v=15');
 
     this.onProgress = () => {};
     this.onFinished = () => {};

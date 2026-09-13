@@ -1,6 +1,6 @@
 'use strict';
 
-importScripts('util.js?v=4');
+importScripts('util.js?v=5');
 importScripts('cooldowns.js?v=8');
 importScripts('auras.js?v=2');
 importScripts('talents.js?v=4');

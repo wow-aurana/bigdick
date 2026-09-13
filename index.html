@@ -82,6 +82,10 @@
         <input id="charhit" type="number" min="0" max="100" value="6">
         <span>%</span>
         <br>
+        <span class="stat">Reduce dodge/parry:</span>
+        <input id="charreducedodge" type="number" min="0" max="100" step="0.01" value="0">
+        <span>% (reduces the target's dodge and parry chance, same idea as Hit vs. miss)</span>
+        <br>
         <span class="stat">Haste on gear:</span>
         <input id="charhaste" type="number" min="0" max="10" value="0">
         <span>% (e.g. <a target="_blank" href="https://classic.wowhead.com/item=18329/arcanum-of-rapidity">Arcanum of Rapidity</a>)</span>
@@ -402,8 +406,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=4"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=14"></script>
-  <script src="main.js?v=10"></script>
+  <script src="simworker.js?v=15"></script>
+  <script src="main.js?v=11"></script>
 </body>
 
 </html>
