@@ -26,8 +26,10 @@
 //    in-game reference (Arms/Fury/Protection all corrected 2026-09-13).
 //  - Icons are the real Classic icon where a talent's name/identity carried
 //    over from Classic (even if its effect changed); brand-new talents use
-//    `inv_misc_questionmark` (a real WoW "unknown" icon) as an explicit
-//    placeholder rather than a guessed-and-possibly-wrong icon.
+//    the icon nikftw.github.io/forevertalent assigned them (verified to
+//    exist on wow.zamimg.com before adopting). PLACEHOLDER_ICON
+//    (`inv_misc_questionmark`, a real WoW "unknown" icon) is kept as a
+//    fallback for any future new talent without a known icon yet.
 //  - spellId is omitted (null) for brand-new talents -- there's no Classic
 //    spell to link to, and the Forever spell ID isn't known.
 //  - A few prerequisite links are carried over unchanged from Classic
@@ -87,7 +89,7 @@ const TALENT_TREES = [
         "Passive. Your critical strikes cause your opponent to bleed, dealing 40% of your melee weapon's average damage over 12 sec.",
         "Passive. Your critical strikes cause your opponent to bleed, dealing 60% of your melee weapon's average damage over 12 sec.",
       ] },
-      { key: 'spearing-strike', name: 'Spearing Strike', tier: 4, col: 1, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'spearing-strike', name: 'Spearing Strike', tier: 4, col: 1, maxRank: 1, icon: 'inv_spear_01', spellId: null, ranks: [
         '15 Rage, Melee Range, 10 sec cooldown, Instant. A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.',
       ] },
       { key: 'two-handed-weapon-specialization', name: 'Two-Handed Weapon Specialization', tier: 4, col: 2, maxRank: 3, icon: 'inv_axe_09', spellId: 12163, ranks: [
@@ -99,7 +101,7 @@ const TALENT_TREES = [
         'Passive. Increases the critical strike damage bonus of your abilities by 10%.',
         'Passive. Increases the critical strike damage bonus of your abilities by 20%.',
       ] },
-      { key: 'bloodthrill', name: 'Bloodthrill', tier: 5, col: 1, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'bloodthrill', name: 'Bloodthrill', tier: 5, col: 1, maxRank: 5, icon: 'ability_warrior_bloodfrenzy', spellId: null, ranks: [
         'Passive. Your melee attacks against targets afflicted by your Rend have a 2% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
         'Passive. Your melee attacks against targets afflicted by your Rend have a 4% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
         'Passive. Your melee attacks against targets afflicted by your Rend have a 6% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 seconds.',
@@ -109,7 +111,7 @@ const TALENT_TREES = [
       { key: 'sweeping-strikes', name: 'Sweeping Strikes', tier: 5, col: 2, maxRank: 1, icon: 'ability_rogue_slicedice', spellId: 12292, ranks: [
         'Instant, 30 sec cooldown, Requires Battle Stance. Your next 5 melee attacks strike an additional nearby opponent.',
       ] },
-      { key: 'weaponmaster', name: 'Weaponmaster', tier: 5, col: 3, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'weaponmaster', name: 'Weaponmaster', tier: 5, col: 3, maxRank: 5, icon: 'ability_warrior_weaponmastery', spellId: null, ranks: [
         "Passive. Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +1% critical strike chance. Mace/Staff: attacks ignore 3% of your target's armor. Sword: 1% chance to trigger an extra attack on the target.",
         "Passive. Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +2% critical strike chance. Mace/Staff: attacks ignore 6% of your target's armor. Sword: 2% chance to trigger an extra attack on the target.",
         "Passive. Gives your melee weapon attacks a benefit depending on the weapon: Axe/Polearm: +3% critical strike chance. Mace/Staff: attacks ignore 9% of your target's armor. Sword: 3% chance to trigger an extra attack on the target.",
@@ -179,7 +181,7 @@ const TALENT_TREES = [
         'Passive. Regenerates 2% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum health from a single attack.',
         'Passive. Regenerates 3% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum health from a single attack.',
       ] },
-      { key: 'boundless-rage', name: 'Boundless Rage', tier: 3, col: 4, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'boundless-rage', name: 'Boundless Rage', tier: 3, col: 4, maxRank: 3, icon: 'ability_warrior_intensifyrage', spellId: null, ranks: [
         'Passive. Increases your maximum Rage by 10.',
         'Passive. Increases your maximum Rage by 20.',
         'Passive. Increases your maximum Rage by 30.',
@@ -191,7 +193,7 @@ const TALENT_TREES = [
         'Passive. Increases your off-hand weapon damage by 20%, off-hand Rage generation by 80%, and chance to hit with off-hand attacks by 8%.',
         'Passive. Increases your off-hand weapon damage by 25%, off-hand Rage generation by 100%, and chance to hit with off-hand attacks by 10%.',
       ] },
-      { key: 'raging-blows', name: 'Raging Blows', tier: 4, col: 2, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'raging-blows', name: 'Raging Blows', tier: 4, col: 2, maxRank: 1, icon: 'ability_whirlwind', spellId: null, ranks: [
         'Passive. Causes your Whirlwind to also strike with your off-hand weapon, and reduces the Rage cost of your Cleave ability by 2.',
       ] },
       { key: 'enrage', name: 'Enrage', tier: 4, col: 3, maxRank: 5, icon: 'spell_shadow_unholyfrenzy', spellId: 12317, ranks: [
@@ -205,7 +207,7 @@ const TALENT_TREES = [
         'Passive. Reduces the Rage cost of your Execute ability by 3.',
         'Passive. Reduces the Rage cost of your Execute ability by 5.',
       ] },
-      { key: 'precision', name: 'Precision', tier: 5, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'precision', name: 'Precision', tier: 5, col: 1, maxRank: 3, icon: 'ability_marksmanship', spellId: null, ranks: [
         'Passive. Increases your chance to hit with all abilities and melee attacks by 1%.',
         'Passive. Increases your chance to hit with all abilities and melee attacks by 2%.',
         'Passive. Increases your chance to hit with all abilities and melee attacks by 3%.',
@@ -305,26 +307,26 @@ const TALENT_TREES = [
       { key: 'shield-slam', name: 'Shield Slam', tier: 7, col: 2, maxRank: 1, icon: 'inv_shield_05', spellId: 23922, requires: { key: 'concussion-blow', rank: 1 }, ranks: [
         '30 Rage, Melee Range, 6 sec cooldown, Instant. Slams the target with your shield, causing 421 to 439 damage, increased by your Block Value, and has a 50% chance of dispelling 1 magic effect on the target. Causes a very high amount of threat.',
       ] },
-      { key: 'master-of-defense', name: 'Master of Defense', tier: 3, col: 2, maxRank: 2, icon: PLACEHOLDER_ICON, spellId: null, requires: { key: 'shield-specialization', rank: 5 }, ranks: [
+      { key: 'master-of-defense', name: 'Master of Defense', tier: 3, col: 2, maxRank: 2, icon: 'ability_defend', spellId: null, requires: { key: 'shield-specialization', rank: 5 }, ranks: [
         'Passive. Grants you a 50% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.',
         'Passive. Grants you a 100% chance to generate 10 Rage when you Dodge or Parry while a shield is equipped.',
       ] },
-      { key: 'vanguard', name: 'Vanguard', tier: 4, col: 3, maxRank: 1, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'vanguard', name: 'Vanguard', tier: 4, col: 3, maxRank: 1, icon: 'ability_warrior_victoryrush', spellId: null, ranks: [
         'Passive. Your Charge ability is now usable while in Defensive Stance.',
       ] },
-      { key: 'vitality', name: 'Vitality', tier: 5, col: 4, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'vitality', name: 'Vitality', tier: 5, col: 4, maxRank: 5, icon: 'inv_helmet_21', spellId: null, ranks: [
         'Passive. Increases your Stamina and Strength by 2%.',
         'Passive. Increases your Stamina and Strength by 4%.',
         'Passive. Increases your Stamina and Strength by 6%.',
         'Passive. Increases your Stamina and Strength by 8%.',
         'Passive. Increases your Stamina and Strength by 10%.',
       ] },
-      { key: 'focused-rage', name: 'Focused Rage', tier: 6, col: 1, maxRank: 3, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'focused-rage', name: 'Focused Rage', tier: 6, col: 1, maxRank: 3, icon: 'ability_warrior_focusedrage', spellId: null, ranks: [
         'Passive. Reduces the Rage cost of your offensive abilities by 1.',
         'Passive. Reduces the Rage cost of your offensive abilities by 2.',
         'Passive. Reduces the Rage cost of your offensive abilities by 3.',
       ] },
-      { key: 'bastion', name: 'Bastion', tier: 6, col: 3, maxRank: 5, icon: PLACEHOLDER_ICON, spellId: null, ranks: [
+      { key: 'bastion', name: 'Bastion', tier: 6, col: 3, maxRank: 5, icon: 'inv_shield_04', spellId: null, ranks: [
         'Passive. Increases all damage you deal by 2% while a shield is equipped.',
         'Passive. Increases all damage you deal by 4% while a shield is equipped.',
         'Passive. Increases all damage you deal by 6% while a shield is equipped.',

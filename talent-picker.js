@@ -226,9 +226,19 @@ function render() {
     }
   }
   totalPointsEl.textContent = `${totalPoints()} / ${TALENT_MAX_POINTS} points spent`;
+
+  // Refresh the open tooltip in place, if any, so a rank added/removed
+  // while hovering shows up immediately instead of only on the next
+  // mouseenter.
+  if (hoveredTalent) {
+    tooltipEl.innerHTML = tooltipHtml(hoveredTalent.tree, hoveredTalent.talent);
+  }
 }
 
-function showTooltip(e, tree, talent) {
+// {tree, talent} of the cell currently under the mouse, or null.
+let hoveredTalent = null;
+
+function tooltipHtml(tree, talent) {
   const rank = rankOf(tree.key, talent.key);
   const nextRankIdx = Math.min(rank, talent.maxRank - 1);
   const reason = unmetReason(tree, talent);
@@ -245,8 +255,12 @@ function showTooltip(e, tree, talent) {
     html += `<div>Requires ${talent.requires.rank} point${s} in ${reqTalent.name}.</div>`;
   }
   if (reason) html += `<div class="tt-req">${reason}</div>`;
+  return html;
+}
 
-  tooltipEl.innerHTML = html;
+function showTooltip(e, tree, talent) {
+  hoveredTalent = { tree, talent };
+  tooltipEl.innerHTML = tooltipHtml(tree, talent);
   tooltipEl.hidden = false;
   positionTooltip(e);
 }
@@ -262,6 +276,7 @@ function positionTooltip(e) {
 }
 
 function hideTooltip() {
+  hoveredTalent = null;
   tooltipEl.hidden = true;
 }
 
