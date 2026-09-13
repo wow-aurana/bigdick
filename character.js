@@ -119,10 +119,12 @@ class Character {
     this.execute = create(Execute, {});
 
     this.rend = create(Rend, char.rend);
-    // No checkbox: always available, gated purely by whether a charge is
-    // up (either from a dodge, always possible, or from Bloodthrill, if
-    // talented -- see Overpower.checkConditions() in abilities.js).
-    this.overpower = new Overpower(this, {});
+    // Not talent-gated like most other create() calls here -- the checkbox
+    // just lets you turn the ability off entirely. When on, it's used
+    // whenever a charge is up (either from a dodge, always possible, or
+    // from Bloodthrill, if talented -- see Overpower.checkConditions() in
+    // abilities.js).
+    this.overpower = create(Overpower, char.overpower);
 
     this.mortalStrike = create(MortalStrike, char.mortalstrike);
 

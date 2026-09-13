@@ -253,6 +253,14 @@
         <span class="deathwish">in the last 30 seconds of the fight</span>
         <br>
         </div>
+        <!-- Overpower. Not talent-gated -- the dodge-triggered window is
+             baseline and always available, Bloodthrill just adds a second
+             trigger on top (see Character.procBloodthrill()/
+             procOverpowerDodge() and Overpower.checkConditions() in
+             abilities.js). -->
+        <input id="overpower" type="checkbox" checked>
+        <span class="overpower">Overpower when ready (triggered by a dodge, or by Bloodthrill talent)</span>
+        <br>
         <!-- Rend. Hidden unless Bloodthrill is talented -- see
              updateTalentGating(). Kept up whenever possible; no threshold
              to configure yet since spell priority is still a TODO. -->
@@ -405,8 +413,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=4"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=16"></script>
-  <script src="main.js?v=12"></script>
+  <script src="simworker.js?v=17"></script>
+  <script src="main.js?v=13"></script>
 </body>
 
 </html>

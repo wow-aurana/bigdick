@@ -72,6 +72,7 @@ const abilities = {
   wftotem: new Checkbox('wftotem'),
   deathwish: new Checkbox('deathwish'),
   aponuse: new Checkbox('aponuse'),
+  overpower: new Checkbox('overpower'),
   rend: new Checkbox('rend'),
   spearingstrike: new Checkbox('spearingstrike'),
   slam: new Checkbox('slam'),
