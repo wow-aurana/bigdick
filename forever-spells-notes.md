@@ -221,7 +221,9 @@ confirms one way or the other. Classic reference data: Level 30, 10 Rage,
 directly). "Charge an enemy, generate rage, and stun it."
 
 **Slam** — **[FOREVER: CHANGED]** — one of the 2 confirmed changes. Base
-rank learned at level 30: 15 Rage, Melee Range, 1.5 sec cast, no stance
+rank learned at level 30: 15 Rage, Melee Range, 1.5 sec cast, **15 sec
+cooldown** (confirmed by the user, 2026-09-20 — Classic's Slam has no
+cooldown at all beyond the cast time/GCD, so this is new), no stance
 requirement (any stance, per Classic). Classic: "Slams the opponent,
 causing weapon damage plus 87" (highest Classic rank) / "+32" (rank 1).
 **Confirmed change**: the rank-up schedule was accelerated — Rank 3 is

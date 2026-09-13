@@ -179,7 +179,9 @@ class Execute extends Ability {
 // checkbox on the main page is hidden below Improved Slam rank 2.
 class Slam extends Ability {
   constructor(char, usewhen) {
-    super(char, 15, 0, usewhen, 'Slam');
+    // Classic's Slam has no cooldown beyond the cast time/GCD; Forever
+    // gives it a real 15 sec cooldown (confirmed by the user, 2026-09-20).
+    super(char, 15, 15, usewhen, 'Slam');
     this.is = { casting: false };
 
     final(this);
