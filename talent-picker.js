@@ -43,6 +43,22 @@ function totalPoints() {
   return TALENT_TREES.reduce((sum, t) => sum + pointsInTree(t.key), 0);
 }
 
+// Points spent strictly above `tier` -- i.e. in earlier rows only, never
+// `tier`'s own row or anything below it. This (not pointsInTree) is what a
+// tier's point requirement actually checks: in the real game you can only
+// ever add points, never remove a single one (a respec wipes the whole
+// tree back to 0 and you start over), so "5 points in the tree" for row 2
+// can only ever mean "5 points in row 1" -- row 2's own points, or row 3+'s,
+// were never a way to reach that 5 in the first place. That distinction
+// only matters here because this picker offers per-point undo as a
+// convenience the real game doesn't have; see canDeallocate() below.
+function pointsAboveTier(treeKey, tier) {
+  const tree = TALENT_TREES.find((t) => t.key === treeKey);
+  return tree.talents.reduce((sum, t) => {
+    return t.tier < tier ? sum + rankOf(treeKey, t.key) : sum;
+  }, 0);
+}
+
 function tierRequirement(talent) {
   return TALENT_POINTS_PER_TIER * (talent.tier - 1);
 }
@@ -57,7 +73,7 @@ function unmetReason(tree, talent) {
   if (rank >= talent.maxRank) return null; // maxed, not "locked"
   if (totalPoints() >= TALENT_MAX_POINTS) return 'No talent points remaining.';
   const tierNeeded = tierRequirement(talent);
-  if (pointsInTree(tree.key) < tierNeeded) {
+  if (pointsAboveTier(tree.key, talent.tier) < tierNeeded) {
     return `Requires ${tierNeeded} points in ${tree.name} Talents.`;
   }
   if (talent.requires) {
@@ -86,12 +102,14 @@ function canDeallocate(tree, talent) {
     if (rankOf(tree.key, dep.key) > 0 && nextRank < dep.requires.rank) return false;
   }
 
-  // Would removing this point drop the tree's total below what some other
-  // already-allocated talent's tier requires?
-  const newTreeTotal = pointsInTree(tree.key) - 1;
+  // Would removing this point drop some other already-allocated talent's
+  // tier below what it requires? Only tiers strictly below `talent`'s own
+  // tier can even be affected -- a tier's requirement never counts points
+  // in its own row or in rows below it (see pointsAboveTier()).
   for (const other of tree.talents) {
-    if (other === talent) continue;
-    if (rankOf(tree.key, other.key) > 0 && newTreeTotal < tierRequirement(other)) return false;
+    if (other.tier <= talent.tier) continue;
+    if (rankOf(tree.key, other.key) <= 0) continue;
+    if (pointsAboveTier(tree.key, other.tier) - 1 < tierRequirement(other)) return false;
   }
 
   return true;
