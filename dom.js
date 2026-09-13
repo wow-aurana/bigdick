@@ -4,6 +4,11 @@ function getElement(id) { return document.getElementById(id); }
 function getInputNumber(id) { return parseFloat(getElement(id).value); }
 function getInputChecked(id) { return getElement(id).checked; }
 
+function getRadioValue(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : null;
+}
+
 // Talent selection made on talents.html; see TALENTS_STORAGE_KEY in
 // talent-picker.js.
 function getTalents() {

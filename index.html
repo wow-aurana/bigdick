@@ -65,7 +65,7 @@
         <br>
         <span class="stat">Crit:</span>
         <input id="charcrit" type="number" min="0" max="100" step="0.01" value="42.2">
-        <span>% in Berserker Stance</span>
+        <span>% (excluding Berserker Stance's +3%, added automatically -- see Default stance below)</span>
         <br>
         <span class="stat">Agility:</span>
         <input id="charagi" type="number" min="0" max="2000" value="0">
@@ -74,6 +74,14 @@
         <span class="stat">Talent spec:</span>
         <a id="talentsLink" href="talents.html" target="_blank">Open Talent Calculator</a>
         <span id="talentsSummary"></span>
+        <br>
+        <span class="stat">Default stance:</span>
+        <input class="stance" name="stance" type="radio" value="battle" checked>
+        <span class="stance">Battle</span>
+        <input class="stance" name="stance" type="radio" value="berserker">
+        <span class="stance">Berserker</span>
+        <input class="stance" name="stance" type="radio" value="lazy">
+        <span class="stance">Lazy (only switch stance when a spell requires it, never switch back)</span>
       </div>
       <div class="group">
         <h4>Buffs/Consumables</h4>
@@ -288,10 +296,10 @@
   <p id="output"></p>
 
   <script src="items.js"></script>
-  <script src="dom.js"></script>
+  <script src="dom.js?v=2"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=3"></script>
-  <script src="main.js?v=4"></script>
+  <script src="simworker.js?v=6"></script>
+  <script src="main.js?v=5"></script>
 </body>
 
 </html>

@@ -1,13 +1,19 @@
 'use strict';
 
 class Ability {
-  constructor(char, rage, cooldown, usewhen, name) {
+  // `stances`, if given, is the list of stances this ability can be used
+  // in (e.g. ['berserker']); null means no restriction. Defensive Stance
+  // is never modeled, so an ability usable in "Battle or Defensive" etc.
+  // can just be left unrestricted (null) -- the sim never enters Defensive
+  // anyway, so there's nothing to gate.
+  constructor(char, rage, cooldown, usewhen, name, stances = null) {
     this.log = new SwingLog(name);
 
     this.char = char;
     this.cost = rage;
     this.cooldown = new Cooldown(cooldown, name);
     this.usewhen = usewhen;
+    this.stances = stances;
 
     this.table = {};
   }
@@ -21,6 +27,9 @@ class Ability {
   }
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
+  // Not frozen (unlike most cached state in this codebase): stance changes
+  // mid-fight change crit chance, so this can be recomputed more than once
+  // -- see Character.recomputeTables().
   setTarget(target) {
     const { miss, dodge, crit } =
         baseAttackChances(this.char, target, this.char.main.stats.skill);
@@ -28,7 +37,6 @@ class Ability {
     this.table.dodge = dodge;
     this.table.dodge += this.table.miss;
     this.table.crit = crit;
-    final(this.table);
   }
 
   timeUntil() {
@@ -43,12 +51,40 @@ class Ability {
   onDodge() { this.char.rage.use(this.cost * .2); }
   onHit() { this.char.rage.use(this.cost); }
 
-  canUse() {
-    if (!this.char.rage.has(this.cost)) return false;
-    if (this.char.can.execute) return this.checkExecuteConditions();
-    return this.checkConditions();
+  inRightStance() {
+    return !this.stances || this.stances.includes(this.char.stance.is.current);
   }
-  
+
+  // If a stance switch is needed and available, that switch will cap rage
+  // (see Stance.switchTo()) *before* this ability actually spends any --
+  // stance-dancing into a costly ability on high rage can leave too little
+  // for the very ability that demanded the dance. Returns the rage that
+  // would actually be available at the moment this ability executes.
+  rageAfterStanceSwitch() {
+    if (!this.stances || this.inRightStance()) return this.char.rage.is.now;
+    if (this.char.stance.running()) return 0;
+    return m.min(this.char.rage.is.now, this.char.stance.retainedRage());
+  }
+
+  canUse() {
+    const rage = this.rageAfterStanceSwitch();
+    if (rage < this.cost) return false;
+    if (rage === this.char.rage.is.now) {
+      // No stance switch pending: check conditions against real rage.
+      if (this.char.can.execute) return this.checkExecuteConditions();
+      return this.checkConditions();
+    }
+    // A switch is pending and will cap rage first -- checkConditions()
+    // reads char.rage directly, so briefly present it with the post-switch
+    // value. Synchronous and restored before anything else can observe it.
+    const real = this.char.rage.is.now;
+    this.char.rage.is.now = rage;
+    const result = this.char.can.execute
+        ? this.checkExecuteConditions() : this.checkConditions();
+    this.char.rage.is.now = real;
+    return result;
+  }
+
   swing() {
     this.log.swings += 1;
     const label = this.log.name;
@@ -88,6 +124,11 @@ class Ability {
   }
 
   handle() {
+    // Stance switching is instant and off the GCD, so this still happens
+    // in the same instant as the rest of the ability below.
+    if (this.stances && !this.inRightStance()) {
+      this.char.stance.switchTo(this.stances[0]);
+    }
     this.cooldown.use();
     this.char.gcd.use();
     this.swing();
@@ -186,7 +227,7 @@ class Bloodthirst extends Ability {
 // Whirlwind
 class Whirlwind extends Ability {
   constructor(char, usewhen) {
-    super(char, 25, 10, usewhen, 'Whirlwind');
+    super(char, 25, 10, usewhen, 'Whirlwind', ['berserker']);
 
     final(this);
   }

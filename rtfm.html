@@ -64,6 +64,12 @@
         <li>
           Execute does not refund its base cost. On a hit, it resets your remaining rage to 0 immediately (this used to be delayed a batch or two by spell batching, but patch 1.13.7 cut the batch window from 400ms to 10ms, so the delay is no longer meaningful).
         </li>
+        <li>
+          Defensive Stance is not modeled at all -- only Battle and Berserker are simulated, so any ability listed as usable in "Battle or Defensive" / "Battle, Defensive or Berserker" is treated as unrestricted, since Defensive never comes up anyway.
+        </li>
+        <li>
+          Stance switching is assumed to retain a flat 10 rage by default (Forever apparently bakes in what used to be the Tactical Mastery <em>talent</em> in Classic as free baseline behavior -- unconfirmed until the beta ships, see <code>forever-spells-notes.md</code>), plus +3 rage per rank of Improved Tactical Mastery on top.
+        </li>
       </ul>
     </li>
     <li>

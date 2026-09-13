@@ -23,6 +23,18 @@ class Character {
     this.slamCast = 1.5 - talents.improvedSlam * .1;
     this.executeCost = 15 - (talents.improvedExecute > 1 ? 5 :
                              talents.improvedExecute > 0 ? 2 : 0);
+    this.improvedTacticalMastery = talents.improvedTacticalMastery;
+
+    // Stance. Defensive Stance is never modeled -- only Battle and
+    // Berserker are real options here. "lazy" only switches when an
+    // ability demands it and never switches back; "battle"/"berserker"
+    // switch back to that preferred stance as soon as the switch cooldown
+    // allows (see StanceReturn). Start already in the preferred stance
+    // (or Battle, for "lazy") -- no need to "dance" into position before
+    // the fight begins.
+    this.stancePreferred = char.stance || 'battle';
+    this.stance = new Stance(
+        this, this.stancePreferred === 'lazy' ? 'battle' : this.stancePreferred);
 
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
@@ -54,6 +66,7 @@ class Character {
     };
 
     this.bloodrage = new Bloodrage(this.rage);
+    this.stanceReturn = new StanceReturn(this);
 
     this.execute = create(Execute, {});
     
@@ -89,12 +102,14 @@ class Character {
       this.bloodrage,
       this.bloodrage.ragetick,
       this.apOnUse,
+      this.stanceReturn,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([
       this.gcd,
       this.flurry,
       this.windfury,
+      this.stance,
     ]).filter(exists);
 
     // Set target
@@ -103,10 +118,8 @@ class Character {
       this.armorDmgMul = 1 - mitigation;
     }
 
-    for (const swing of this.abilities.concat(this.autos)) {
-      swing.setTarget(target);
-    }
-    if (this.heroic) this.heroic.setTarget(target);
+    this.target = target;
+    this.recomputeTables();
 
     // helper methods
     this.checkBtCd = !!this.bloodthirst ?
@@ -119,6 +132,22 @@ class Character {
         (cutoff) => this.checkBtCd(cutoff) && this.checkWwCd(cutoff);
 
     final(this);
+  }
+
+  // Recomputes every attack table (they cache crit chance, which depends on
+  // current stance -- see getCrit()). Called once at setup and again
+  // whenever the stance actually changes.
+  recomputeTables() {
+    for (const swing of this.abilities.concat(this.autos)) {
+      swing.setTarget(this.target);
+    }
+    if (this.heroic) this.heroic.setTarget(this.target);
+  }
+
+  // Berserker Stance grants +3% crit; Battle (and, if it mattered here,
+  // Defensive) doesn't.
+  getCrit() {
+    return this.stats.crit + (this.stance.is.current === 'berserker' ? 3 : 0);
   }
 
   multiplier() {

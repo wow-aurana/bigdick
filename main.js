@@ -119,6 +119,7 @@ function collectInputs() {
     char: {
       level: getInputNumber('charlvl'),
       talents: getTalents(),
+      stance: getRadioValue('stance'),
       bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
       ragepotion: getInputChecked('ragepotion'),

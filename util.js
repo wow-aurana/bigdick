@@ -70,7 +70,7 @@ function baseAttackChances(char, target, weaponSkill, missBonus = 0) {
   const baseSkillDiff = targetDef - baseSkill;
   const magicNumber = (target.level - char.level) > 2 ? 1.8 : 0;
   const suppressedCrit =
-      applyCritSuppression(char.stats.crit, char.stats.agility, magicNumber);
+      applyCritSuppression(char.getCrit(), char.stats.agility, magicNumber);
   const crit = clamp(0, 100)(suppressedCrit - baseSkillDiff * .2);
 
   return { miss, dodge, crit };
@@ -120,5 +120,11 @@ class Rage {
     console.assert(this.is.now >= amount, 'Trying use ' + amount
                    + ' rage while only has' + this.is.now);
     this.is.now -= amount;
+  }
+
+  // Used when switching stances: rage above `max` is lost, the rest is
+  // retained.
+  cap(max) {
+    this.is.now = m.min(this.is.now, max);
   }
 }

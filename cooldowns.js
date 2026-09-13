@@ -172,3 +172,68 @@ class Bloodrage extends CooldownBase {
               + this.rage.is.now.toFixed(1) + ')');
   }
 }
+
+// Switching stances is instant but shares its own 1.5 sec cooldown between
+// switches -- separate from the GCD, so an ability used in the same instant
+// as a switch still goes on its own cooldown/GCD normally. See
+// Ability.canUse()/handle() in abilities.js for how abilities trigger a
+// switch when they need a stance they're not currently in.
+class Stance extends CooldownBase {
+  constructor(char, starting) {
+    super(1.5, 'Stance');
+    this.char = char;
+    this.starting = starting;
+    this.is = { current: starting };
+
+    final(this);
+  }
+
+  // Rage retained on a stance change. Forever apparently bakes in what used
+  // to be the Tactical Mastery *talent* in Classic as a free baseline 10
+  // (unconfirmed -- see forever-spells-notes.md), with Improved Tactical
+  // Mastery then adding +3 per rank on top of that.
+  retainedRage() { return 10 + this.char.improvedTacticalMastery * 3; }
+
+  switchTo(target) {
+    if (target === this.is.current) return;
+    console.assert(!this.running(),
+        'Trying to switch stance before its cooldown is up');
+    const before = this.char.rage.is.now;
+    this.char.rage.cap(this.retainedRage());
+    this.is.current = target;
+    this.use();
+    this.char.recomputeTables();
+    Debug.log('Stance: switched to ' + target + ' (rage: '
+              + before.toFixed(1) + ' -> ' + this.char.rage.is.now.toFixed(1)
+              + ')');
+  }
+
+  reset() {
+    super.reset();
+    this.is.current = this.starting;
+    this.char.recomputeTables();
+  }
+}
+
+// Switches back to the preferred stance once the Stance cooldown allows it,
+// for "battle"/"berserker" default-stance modes ("lazy" never returns). Not
+// itself a cooldown -- its readiness just mirrors char.stance's -- so
+// tick()/reset() are no-ops even though it ends up ticked/reset alongside
+// everything else in char.events/char.cooldowns.
+class StanceReturn {
+  constructor(char) {
+    this.char = char;
+
+    final(this);
+  }
+
+  canUse() {
+    return this.char.stancePreferred !== 'lazy'
+        && this.char.stance.is.current !== this.char.stancePreferred;
+  }
+
+  timeUntil() { return this.char.stance.timeUntil(); }
+  tick() {}
+  reset() {}
+  handle() { this.char.stance.switchTo(this.char.stancePreferred); }
+}

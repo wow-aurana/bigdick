@@ -35,6 +35,9 @@ class Weapon {
   }
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
+  // Not frozen (unlike most cached state in this codebase): stance changes
+  // mid-fight change crit chance, so this can be recomputed more than once
+  // -- see Character.recomputeTables().
   setTarget(target) {
     // Dual wield miss penalty is a flat +19, not the older 0.8x+20 estimate:
     // https://github.com/magey/classic-warrior/wiki/Attack-table
@@ -57,7 +60,6 @@ class Weapon {
 
     this.table.crit = crit;
     this.table.crit += this.table.glance;
-    final(this.table);
   }
 
   timeUntil() { return this.cooldown.timeUntil(); }

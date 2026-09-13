@@ -25,5 +25,6 @@ function parseTalents(talents) {
     improvedSlam: rank(arms, 'improved-slam'),
     deathWish: rank(fury, 'death-wish'),
     flurry: rank(fury, 'flurry'),
+    improvedTacticalMastery: rank(arms, 'improved-tactical-mastery'),
   }
 }
