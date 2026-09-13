@@ -20,6 +20,18 @@ darkmodeCheckbox.addEventListener('change', () => {
   }
 });
 
+// Debug log. Streams simulation events to a dedicated debug.html tab over a
+// BroadcastChannel as the sim runs (see sim.js/simworker.js for the
+// producing end). Kept out of the persisted #setup form, like the theme
+// toggle above: restoring a checked state via loadSettings()'s .click()
+// would try to window.open() outside of a user gesture on page load and get
+// silently swallowed by the popup blocker, so this always starts unchecked.
+const debugChannel = new BroadcastChannel('bigdickDebug');
+const debugCheckbox = getElement('debuglog');
+debugCheckbox.addEventListener('change', () => {
+  if (debugCheckbox.checked) window.open('debug.html', 'bigdickDebug');
+});
+
 const output = new Output();
 
 const updateMitigtion = () => {
@@ -160,8 +172,15 @@ getElement('setup').addEventListener('submit', (e) => {
   // Remove workers from previous run
   workers = {};
 
+  // Debug mode is a focused, single-run tool: it skips the EP-comparison
+  // workers below (which would each also be capped and each want their own
+  // log) and just streams one baseline run's events to the debug.html tab.
+  const debugOn = debugCheckbox.checked;
+  if (debugOn) debugChannel.postMessage({ type: 'reset' });
+
   const checkboxes = apep.collect();
-  const onWorkersFinished = apep.checked() ? () => {
+  const apepOn = apep.checked() && !debugOn;
+  const onWorkersFinished = apepOn ? () => {
     getElement('submit').disabled = false;
 
     const wrks = Object.values(workers);
@@ -196,7 +215,7 @@ getElement('setup').addEventListener('submit', (e) => {
 
     const maxTime = wrks.reduce((a, w) => w.runtime() > a ? w.runtime() : a, 0);
     output.print('(Finished in ' + maxTime + ' seconds)');
-  } : () => {  // No APEP calculations 
+  } : () => {  // No APEP calculations
     getElement('submit').disabled = false;
 
     if (getInputChecked('ping')) new Audio(audioURL).play();
@@ -206,11 +225,20 @@ getElement('setup').addEventListener('submit', (e) => {
     for (const line of report) {
       output.print(line);
     }
+    if (debugOn) debugChannel.postMessage({ type: 'done' });
   };
 
   const cfg = collectInputs();
+  if (debugOn) {
+    cfg.debug = true;
+    cfg.iterations = Math.min(cfg.iterations, 10);
+  }
   workers.baseline = createWorker(cfg, onWorkersFinished);
-  if (apep.checked()) {
+  if (debugOn) {
+    workers.baseline.onDebugLog =
+        (lines) => debugChannel.postMessage({ type: 'lines', lines });
+  }
+  if (apepOn) {
 
     const apCfg = collectInputs();
     apCfg.char.stats.ap += 50;

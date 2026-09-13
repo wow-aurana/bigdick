@@ -157,6 +157,7 @@ class Character {
 
   procHoJ() {
     if (this.handOfJustice && m.random() <= .02) {
+      Debug.log('Hand of Justice proc: extra mainhand swing');
       this.main.cooldown.reset();
       this.main.swing(true);
     }
@@ -169,6 +170,7 @@ class Character {
     this.windfury.triggerIcd();
     this.main.cooldown.reset();
     this.windfury.gain();
+    Debug.log('Windfury Totem proc (+' + this.windfury.ap + ' AP)');
     this.main.swing(true);
   }
 

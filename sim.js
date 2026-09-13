@@ -1,12 +1,12 @@
 'use strict';
 
-importScripts('util.js');
-importScripts('cooldowns.js');
-importScripts('auras.js');
+importScripts('util.js?v=2');
+importScripts('cooldowns.js?v=2');
+importScripts('auras.js?v=2');
 importScripts('talents.js');
-importScripts('weapon.js');
-importScripts('abilities.js');
-importScripts('character.js');
+importScripts('weapon.js?v=2');
+importScripts('abilities.js?v=2');
+importScripts('character.js?v=2');
 
 
 function reportProgress(progress) {
@@ -31,13 +31,24 @@ function compileResults(char) {
 
 function runSimulation(cfg) {
   const startTime = new Date().getTime();
+  Debug.reset(!!cfg.debug);
+  // Debug mode's whole point is a readable, copy-pasteable log, so cap the
+  // run regardless of what the iterations field says. main.js already caps
+  // this before sending cfg over so its own DPS/report math (which uses its
+  // copy of cfg.iterations) stays consistent with what actually ran here;
+  // this is just a second line of defense.
+  const iterations = Debug.enabled ? m.min(cfg.iterations, 10) : cfg.iterations;
 
   const char = new Character(cfg.char, cfg.target);
 
   let reportedProgress = 0;
 
-  for (let i = 0; i < cfg.iterations; ++i) {
-    const progress = m.round(i / cfg.iterations * 100);
+  for (let i = 0; i < iterations; ++i) {
+    Debug.iteration = i + 1;
+    Debug.time = 0;
+    Debug.log('--- Fight start ---');
+
+    const progress = m.round(i / iterations * 100);
     if (progress > reportedProgress) {
       reportedProgress = progress;
       reportProgress(progress);
@@ -55,6 +66,7 @@ function runSimulation(cfg) {
       char.advanceTime(nextEventTimer);
       if (timer > cfg.duration) break;
 
+      Debug.time = timer;
       nextEvent.handle();
       char.main.applyFlurry();
       if (char.off) char.off.applyFlurry();
@@ -62,6 +74,11 @@ function runSimulation(cfg) {
     }
 
     char.finishFight();
+    Debug.log('--- Fight end ---');
+    if (Debug.enabled) {
+      postMessage({ debugLog: Debug.lines });
+      Debug.lines = [];
+    }
   }
 
   const results = compileResults(char);

@@ -51,15 +51,19 @@ class Ability {
   
   swing() {
     this.log.swings += 1;
+    const label = this.log.name;
+    const rageNow = () => this.char.rage.is.now.toFixed(1);
 
     // Yellow attacks are on a 2 roll system
     const firstRoll = m.random() * 100;
     if (firstRoll < this.table.miss) {
       this.log.misses += 1;
       this.onMiss();
+      Debug.log(label + ': miss (rage: ' + rageNow() + ')');
     } else if (firstRoll < this.table.dodge) {
       this.log.dodges += 1;
       this.onDodge();
+      Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
     } else {
       const dmg = this.getDmg() * this.char.armorDmgMul;
       this.onHit();
@@ -67,13 +71,18 @@ class Ability {
       if (secondRoll < this.table.crit) {
         this.log.crits += 1;
         this.char.main.proc();
-        this.log.dmg += dmg * this.char.yellowCritMul;
+        const critDmg = dmg * this.char.yellowCritMul;
+        this.log.dmg += critDmg;
         this.char.flurry.refresh();
+        Debug.log(label + ': critical hit for ' + critDmg.toFixed(0)
+                  + ' (rage: ' + rageNow() + ')');
 
       } else {  // hit
         this.log.hits += 1;
         this.char.main.proc();
         this.log.dmg += dmg;
+        Debug.log(label + ': hit for ' + dmg.toFixed(0)
+                  + ' (rage: ' + rageNow() + ')');
       }
     }
   }

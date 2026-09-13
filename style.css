@@ -39,7 +39,8 @@ a {
   gap: 16px;
 }
 
-.theme-toggle {
+.theme-toggle,
+.debug-toggle {
   white-space: nowrap;
 }
 

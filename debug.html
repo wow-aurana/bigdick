@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Debug Log - Aurana's big dick simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+  <link href="debug.css" rel="stylesheet">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Same anti-flash-of-wrong-theme trick as index.html/talents.html.
+    (function() {
+      try {
+        if (localStorage.getItem('bigdickTheme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body>
+  <p><a href="index.html">&larr; Back to simulator</a></p>
+  <p>
+    Live event log. Check "Debug log" on the simulator tab and hit Simulate
+    there (runs are capped to 10 iterations while debug is on) &mdash; events
+    show up here as they happen.
+  </p>
+  <p>
+    <button id="copy" type="button">Copy to clipboard</button>
+    <button id="clear" type="button">Clear</button>
+    <span id="status"></span>
+  </p>
+  <textarea id="log" readonly wrap="off"></textarea>
+
+  <script src="debug.js"></script>
+</body>
+
+</html>

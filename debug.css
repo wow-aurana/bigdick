@@ -1,0 +1,23 @@
+#log {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 78vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Consolas, 'Roboto Mono', monospace;
+  font-size: 13px;
+  white-space: pre;
+  border: 1px solid var(--submit-border);
+  padding: 6px;
+}
+
+button {
+  background-color: var(--submit-bg);
+  color: var(--submit-text);
+  border: 1px solid var(--submit-border);
+  padding: 4px 10px;
+  font-family: 'Roboto';
+  font-size: 14px;
+  margin-right: 8px;
+}

@@ -5,6 +5,32 @@ const clamp =
     (min, max) => (value) => value < min ? min : value > max ? max : value;
 const final = Object.freeze;
 
+// Debug event log. Off (and free) by default; enabled by the "Debug log"
+// checkbox on the main page, which also caps the run to 10 iterations (see
+// sim.js) so the log stays a readable, copy-pasteable size. A single mutable
+// global rather than something threaded through every class, since half the
+// codebase would otherwise need a reference passed in just to log a line.
+const Debug = {
+  enabled: false,
+  iteration: 0,
+  time: 0,
+  lines: [],
+
+  reset(enabled) {
+    this.enabled = enabled;
+    this.iteration = 0;
+    this.time = 0;
+    this.lines = [];
+  },
+
+  log(msg) {
+    if (!this.enabled) return;
+    this.lines.push(
+        '[fight ' + this.iteration + ' @ ' + this.time.toFixed(2) + 's] '
+        + msg);
+  },
+};
+
 // The extra crit suppression applied against +3 level targets only affects
 // crit gained from auras/talents/gear, not base Agility-derived crit.
 // See https://github.com/magey/classic-warrior/wiki/Crit-aura-suppression

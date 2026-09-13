@@ -38,13 +38,17 @@ class ApOnUse extends CooldownBase {
     final(this);
   }
 
-  getAp() { 
+  getAp() {
     if (this.duration - this.time.left < this.uptime) return this.ap
     return 0;
   }
 
   canUse() { return true; }
-  handle() { this.use(); }
+  handle() {
+    this.use();
+    Debug.log('AP trinket activated (+' + this.ap + ' AP for '
+              + this.uptime + 's)');
+  }
 }
 
 class DeathWish extends CooldownBase {
@@ -65,7 +69,15 @@ class DeathWish extends CooldownBase {
   }
 
   timeUntil() { return m.max(this.time.left, this.char.gcd.timeUntil()); }
-  use() { super.use(); this.char.gcd.use(); this.char.rage.use(10); }
+
+  use() {
+    super.use();
+    this.char.gcd.use();
+    this.char.rage.use(10);
+    Debug.log('Death Wish activated (rage: '
+              + this.char.rage.is.now.toFixed(1) + ')');
+  }
+
   active() { return (this.duration - this.time.left) < 30; }
   handle() { this.use(); }
 }
@@ -80,7 +92,14 @@ class RagePotion extends CooldownBase {
 
   canUse() { return true; }
   getStr() { return (this.duration - this.time.left) < 20 ? 60 : 0; }
-  handle() { this.use(); this.rage.gain(45 + m.random() * 30); }
+
+  handle() {
+    this.use();
+    const gain = 45 + m.random() * 30;
+    this.rage.gain(gain);
+    Debug.log('Mighty Rage Potion: +' + gain.toFixed(1) + ' rage (rage: '
+              + this.rage.is.now.toFixed(1) + ')');
+  }
 }
 
 class SlamSwing extends CooldownBase {
@@ -104,7 +123,15 @@ class RageReset extends CooldownBase {
   }
 
   canUse() { return this.did.execute; }
-  handle() { this.did.execute = false; this.rage.use(this.rage.is.now); }
+
+  handle() {
+    this.did.execute = false;
+    const before = this.rage.is.now;
+    this.rage.use(this.rage.is.now);
+    if (before > 0) {
+      Debug.log('Execute rage reset: ' + before.toFixed(1) + ' -> 0');
+    }
+  }
 }
 
 class AngerManagement extends CooldownBase {
@@ -116,7 +143,13 @@ class AngerManagement extends CooldownBase {
   }
 
   canUse() { return true; }
-  handle() { this.use(); this.rage.gain(1); }
+
+  handle() {
+    this.use();
+    this.rage.gain(1);
+    Debug.log('Anger Management: +1 rage (rage: '
+              + this.rage.is.now.toFixed(1) + ')');
+  }
 }
 
 class BloodrageTick extends CooldownBase {
@@ -130,7 +163,14 @@ class BloodrageTick extends CooldownBase {
 
   start() { this.has.charges = 10; this.use(); }
   canUse() { return this.has.charges > 0; }
-  handle() { this.use(); this.rage.gain(1); this.has.charges -= 1; }
+
+  handle() {
+    this.use();
+    this.rage.gain(1);
+    this.has.charges -= 1;
+    Debug.log('Bloodrage tick: +1 rage (rage: '
+              + this.rage.is.now.toFixed(1) + ')');
+  }
 }
 
 class Bloodrage extends CooldownBase {
@@ -143,5 +183,12 @@ class Bloodrage extends CooldownBase {
   }
 
   canUse() { return true; }
-  handle() { this.use(); this.rage.gain(10); this.ragetick.start(); }
+
+  handle() {
+    this.use();
+    this.rage.gain(10);
+    this.ragetick.start();
+    Debug.log('Bloodrage activated: +10 rage (rage: '
+              + this.rage.is.now.toFixed(1) + ')');
+  }
 }

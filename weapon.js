@@ -89,6 +89,7 @@ class Weapon {
     // Weapon procs
     if (!extraSwing && (m.random() * 60 < this.stats.speed)) {
       for (let i = 0; i < this.extraAttacks; ++i) {
+        Debug.log(this.log.name + ' ' + this.stats.proc + ' proc: extra attack');
         this.char.main.cooldown.reset();
         this.char.main.swing(true);
       }
@@ -113,6 +114,8 @@ class Weapon {
 
     this.log.swings += 1;
     let roll = m.random() * 100;
+    const label = this.log.name + (extraSwing ? ' (extra swing)' : '');
+    const rageNow = () => this.char.rage.is.now.toFixed(1);
 
     // Heroic Strike bug: https://bit.ly/2mK8i3Y
     if (!this.isMainhand) {
@@ -124,11 +127,13 @@ class Weapon {
     let dmg = this.getDmg() * this.char.armorDmgMul;
     if (roll < this.table.miss) {
       this.log.misses += 1;
+      Debug.log(label + ': miss');
 
     } else if (roll < this.table.dodge) {
       this.log.dodges += 1;
       // According to Vilius on Fight Club, dodges give 75% rage.
       this.char.rage.gainFromSwing(dmg * .75);
+      Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
 
     } else if (roll < this.table.glance) {
       this.log.glances += 1;
@@ -137,6 +142,8 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      Debug.log(label + ': glancing blow for ' + dmg.toFixed(0)
+                + ' (rage: ' + rageNow() + ')');
 
     } else if (roll < this.table.crit) {
       this.log.crits += 1;
@@ -146,6 +153,8 @@ class Weapon {
       this.char.rage.gainFromSwing(dmg);
       this.char.flurry.refresh();
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      Debug.log(label + ': critical hit for ' + dmg.toFixed(0)
+                + ' (rage: ' + rageNow() + ')');
 
     } else {  // hit
       this.log.hits += 1;
@@ -153,6 +162,8 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(dmg);
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      Debug.log(label + ': hit for ' + dmg.toFixed(0)
+                + ' (rage: ' + rageNow() + ')');
     }
   }
 

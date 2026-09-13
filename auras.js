@@ -62,7 +62,12 @@ class ProcStr extends Aura {
     this.chance = chance;
   }
 
-  proc() { if (m.random() < this.chance) this.gain(); }
+  proc() {
+    if (m.random() >= this.chance) return;
+    this.gain();
+    Debug.log(this.log.name + ' proc (+' + this.amount + ' str for '
+              + this.duration + 's)');
+  }
 }
 
 class Crusader extends ProcStr {

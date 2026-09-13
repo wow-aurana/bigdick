@@ -4,10 +4,11 @@ class SimWorker {
   constructor(cfg) {
     this.cfg = cfg;
     this.result = { progress: 0 };
-    this.worker = new Worker('sim.js');
+    this.worker = new Worker('sim.js?v=2');
 
     this.onProgress = () => {};
     this.onFinished = () => {};
+    this.onDebugLog = () => {};
 
     this.worker.onerror = (e) => {
       console.log('Worker error:');
@@ -20,6 +21,10 @@ class SimWorker {
     };
 
     this.worker.onmessage = (e) => {
+      if (e.data.debugLog) {
+        this.onDebugLog(e.data.debugLog);
+        return;
+      }
       this.result = e.data;
       !!this.result.summary ? this.onFinished() : this.onProgress();
     };
