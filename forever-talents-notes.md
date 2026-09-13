@@ -279,6 +279,54 @@ confirmed independent of the site:
   - Flurry is confirmed 5%/rank (5/10/15/20/25) as already implemented --
     no change needed.
 
+## Second pass against the same site (2026-09-15)
+
+The site had been updated since the first pull. Re-extracted its full
+dataset and re-diffed against ours. Good news: most of the earlier
+structural conflicts resolved themselves --
+  - Deep Wounds reappeared in their Arms tree (3 ranks, requires 3 points
+    in Improved Rend, no longer a prerequisite for Impale) -- exact match
+    to ours now.
+  - All three trees' grid positions now match ours almost everywhere.
+  - Raging Blows moved to tier 4 on their site too, matching us.
+  - Bloodthirst's prerequisite corrected to Death Wish (was wrongly Raging
+    Blows in the first pull).
+  - Improved Revenge's extra prerequisite (5 points in Toughness, seen in
+    the first pull) is gone again -- back to no prerequisite, matching us.
+
+Went through the remaining differences with the user one at a time:
+  - **Bloodthrill/Weaponmaster row order**: still mirrored (their tier 5
+    is Weaponmaster-Sweeping Strikes-Bloodthrill; ours is
+    Bloodthrill-Sweeping Strikes-Weaponmaster). User confirmed ours is
+    correct per their screenshot, and noted the exact order doesn't
+    really matter as long as all three stay in the same row. No change.
+  - **New prerequisite**: their site now has Dual Wield Specialization
+    requiring 3 points in Improved Cleave. User doesn't see this in their
+    screenshots -- kept our version (no prerequisite).
+  - **New prerequisite chain**: their site now has Master of Defense (2)
+    -> Improved Disarm -> Improved Disarm (3) -> Concussion Blow. User
+    says this is also wrong -- kept our version (no prerequisites on
+    either).
+  - **Bastion**: user confirmed the site's mechanic is correct --
+    changed from "reduces damage you take" to "increases all damage you
+    deal" (same 2/4/6/8/10% scaling, opposite mechanic from what we had).
+  - **Focused Rage**: user confirmed the site is correct -- changed from
+    "defensive abilities" to "offensive abilities".
+  - **Flurry**: user reconfirmed our 5/10/15/20/25 over the site's
+    15/20/25/30-after-rank-1 alternative. No change.
+  - **Enrage**: user says the correct version is what the site's rank 1
+    already showed, just with the damage bonus scaling per rank rather
+    than staying fixed at 2% -- changed to "30% chance to deal N%
+    increased Physical damage for 12 sec after being the victim of any
+    damaging attack" at N = 2/4/6/8/10 for ranks 1-5. This replaces the
+    old Classic-style "flat %, crit-triggered, 12-swing cap" version
+    entirely -- a different mechanic, not just different numbers.
+
+Both talent-data.js <script> tags now carry a ?v=2 cache-busting query
+(matching the earlier fix to main.js) after hitting the same stale-browser-
+cache issue again while verifying these changes -- confirmed via a direct
+fetch that the server was serving the correct file the whole time.
+
 Everything else below is **unresolved** — recorded for whenever it's worth
 a second look, not acted on:
 
