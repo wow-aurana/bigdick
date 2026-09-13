@@ -1,12 +1,12 @@
 'use strict';
 
 importScripts('util.js?v=3');
-importScripts('cooldowns.js?v=4');
+importScripts('cooldowns.js?v=6');
 importScripts('auras.js?v=2');
-importScripts('talents.js?v=2');
-importScripts('weapon.js?v=4');
-importScripts('abilities.js?v=8');
-importScripts('character.js?v=5');
+importScripts('talents.js?v=3');
+importScripts('weapon.js?v=5');
+importScripts('abilities.js?v=9');
+importScripts('character.js?v=6');
 
 
 function reportProgress(progress) {

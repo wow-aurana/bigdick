@@ -26,6 +26,9 @@ class Character {
     this.executeCost = 15 - (talents.improvedExecute > 1 ? 5 :
                              talents.improvedExecute > 0 ? 2 : 0);
     this.improvedTacticalMastery = talents.improvedTacticalMastery;
+    this.improvedOverpower = talents.improvedOverpower;
+    // 2/4/6/8/10% per rank -- see procBloodthrill().
+    this.bloodthrillChance = talents.bloodthrill * .02;
 
     // Stance. Defensive Stance is never modeled -- only Battle and
     // Berserker are real options here. "lazy" only switches when an
@@ -43,6 +46,11 @@ class Character {
     this.blessingOfKings = char.bok;
     this.windfury = !!char.wftotem ? new WindfuryAp(char.wftotem) : null;
     this.flurry = new Flurry();
+    this.rendDot = new RendDot(this);
+    // Bloodthrill's "for 1 attack, lasts 6 seconds" window: Overpower is
+    // usable while this is up, consumed the instant Overpower is used --
+    // see Overpower.handle() in abilities.js.
+    this.overpowerReady = new Aura(6, 'Bloodthrill');
     this.abilityApScaling = !!char.twohand ? 3.3
                             : char.mainhand.dagger ? 1.7 : 2.4;
 
@@ -72,6 +80,12 @@ class Character {
 
     this.execute = create(Execute, {});
 
+    this.rend = create(Rend, char.rend);
+    // No checkbox: entirely dependent on Bloodthrill actually granting a
+    // charge (this.overpowerReady), which only happens with points spent
+    // there in the first place.
+    this.overpower = new Overpower(this, {});
+
     this.mortalStrike = create(MortalStrike, char.mortalstrike);
 
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
@@ -89,6 +103,8 @@ class Character {
     const exists = (e) => !!e;
     this.abilities = [
       this.execute,
+      this.overpower,
+      this.rend,
       this.slam,
       this.mortalStrike,
       this.bloodthirst,
@@ -108,6 +124,7 @@ class Character {
       this.bloodrage.ragetick,
       this.apOnUse,
       this.stanceReturn,
+      this.rendDot,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([
@@ -115,6 +132,7 @@ class Character {
       this.flurry,
       this.windfury,
       this.stance,
+      this.overpowerReady,
     ]).filter(exists);
 
     // Set target
@@ -205,6 +223,19 @@ class Character {
     this.windfury.gain();
     Debug.log('Windfury Totem proc (+' + this.windfury.ap + ' AP)');
     this.main.swing(true);
+  }
+
+  // Bloodthrill: "Your melee attacks against targets afflicted by your
+  // Rend have a X% chance to activate your Overpower ability for 1 attack
+  // on your current target. Lasts 6 seconds." "Melee attacks" means
+  // autoattacks only -- this is called from Weapon.proc(), never for
+  // yellow-attack abilities like Mortal Strike.
+  procBloodthrill() {
+    if (!this.bloodthrillChance) return;
+    if (!this.rendDot.active()) return;
+    if (m.random() > this.bloodthrillChance) return;
+    this.overpowerReady.gain();
+    Debug.log('Bloodthrill proc: Overpower ready for 6s');
   }
 
   getNextEvent(fightEndsIn) {

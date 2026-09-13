@@ -72,6 +72,7 @@ const abilities = {
   wftotem: new Checkbox('wftotem'),
   deathwish: new Checkbox('deathwish'),
   aponuse: new Checkbox('aponuse'),
+  rend: new Checkbox('rend'),
   slam: new Checkbox('slam'),
   mortalstrike: new Checkbox('mortalstrike'),
   bloodthirst: new Checkbox('bloodthirst'),
@@ -385,7 +386,9 @@ function updateTalentGating() {
   const improvedSlam2 = rank('arms', 'improved-slam') >= 2;
   const mortalStrike = rank('arms', 'mortal-strike') > 0;
   const bloodthirst = rank('fury', 'bloodthirst') > 0;
+  const bloodthrill = rank('fury', 'bloodthrill') > 0;
 
+  gateAbility('rend-row', abilities.rend, bloodthrill);
   gateAbility('slam-row', abilities.slam, improvedSlam2);
   gateAbility('mortalstrike-row', abilities.mortalstrike, mortalStrike);
   gateExecute('executems-row', executems, mortalStrike);

@@ -169,6 +169,58 @@ class Execute extends Ability {
   checkExecuteConditions() { return true; }
 }
 
+// Rend. Only meaningful with Bloodthrill talented (see the checkbox gating
+// in main.js) -- Bloodthrill's proc requires Rend to be up on the target.
+// Deals no direct damage on application; all of it comes from the periodic
+// bleed (RendDot in cooldowns.js). Requires Battle Stance (Defensive isn't
+// modeled, see character.js's Stance comment).
+class Rend extends Ability {
+  constructor(char, usewhen) {
+    super(char, 10, 0, usewhen, 'Rend', ['battle']);
+
+    final(this);
+  }
+
+  getDmg() { return 0; }
+  // "Keep it up as best as possible": only re-cast once it's fully fallen
+  // off. Priority among everything else is left for later refinement.
+  checkConditions() { return !this.char.rendDot.active(); }
+
+  onHit() {
+    super.onHit();
+    this.char.rendDot.apply();
+  }
+}
+
+// Overpower. Classic's dodge-triggered window isn't modeled here --
+// Bloodthrill (procBloodthrill() in character.js) is the only way this sim
+// grants a charge, and using Overpower consumes it immediately regardless
+// of whether the swing then hits or misses. Improved Overpower's crit
+// bonus is flat, not suppressed like normal crit sources -- see
+// forever-talents-notes.md/talent-data.js, it isn't described as an aura
+// or gear-like source there.
+class Overpower extends Ability {
+  constructor(char, usewhen) {
+    super(char, 5, 5, usewhen, 'Overpower', ['battle']);
+
+    final(this);
+  }
+
+  setTarget(target) {
+    super.setTarget(target);
+    this.table.crit =
+        clamp(0, 100)(this.table.crit + this.char.improvedOverpower * 25);
+  }
+
+  getDmg() { return this.char.main.getDmg() + 35 * this.char.multiplier(); }
+  checkConditions() { return this.char.overpowerReady.running(); }
+
+  handle() {
+    this.char.overpowerReady.reset();
+    super.handle();
+  }
+}
+
 // Slam. Only meant to be used once Improved Slam rank 2 is talented --
 // below that it still interrupts (resets) your melee swing timer, which
 // this sim doesn't model at all now that it no longer needs to: rank 2's

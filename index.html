@@ -185,6 +185,14 @@
         <input class="deathwish" name="endoffight" type="checkbox" checked>
         <span class="deathwish">in the last 30 seconds of the fight</span>
         <br>
+        <!-- Rend. Hidden unless Bloodthrill is talented -- see
+             updateTalentGating(). Kept up whenever possible; no threshold
+             to configure yet since spell priority is still a TODO. -->
+        <div id="rend-row">
+        <input id="rend" type="checkbox" checked>
+        <span class="rend">Rend (keep up for Bloodthrill)</span>
+        <br>
+        </div>
         <!-- Slam. Only useful once Improved Slam rank 2 is talented -- see
              updateTalentGating() in main.js, which hides this row (and
              force-unchecks it) otherwise. -->
@@ -320,8 +328,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=2"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=8"></script>
-  <script src="main.js?v=6"></script>
+  <script src="simworker.js?v=10"></script>
+  <script src="main.js?v=7"></script>
 </body>
 
 </html>

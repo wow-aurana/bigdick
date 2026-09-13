@@ -90,6 +90,7 @@ class Weapon {
     for (const proc of this.strprocs) { proc.proc(); }
     if (!extraSwing) this.char.procHoJ();
     if (!extraSwing) this.char.procWindfury();
+    if (!extraSwing) this.char.procBloodthrill();
     // Weapon procs
     if (!extraSwing && (m.random() * 60 < this.stats.speed)) {
       for (let i = 0; i < this.extraAttacks; ++i) {

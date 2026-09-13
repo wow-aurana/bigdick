@@ -173,6 +173,50 @@ class Bloodrage extends CooldownBase {
   }
 }
 
+// Rend's periodic bleed. Rend itself (abilities.js) deals no direct damage
+// on application -- all of it comes from here, credited to Rend's own log
+// so it reports as one "Rend" damage source. Max rank (7, level 60): 147
+// total over 21 sec, ticking every 3 sec -- see forever-spells-notes.md.
+// No rank-scaling modeled, matching this sim's level-60-only assumption.
+// A crit on the application doesn't change the bleed's damage in Classic,
+// so apply() always sets up the same flat total regardless of that roll.
+class RendDot extends CooldownBase {
+  constructor(char) {
+    super(3, 'Rend tick');
+    this.char = char;
+    this.has = { ticksLeft: 0, dmgPerTick: 0 };
+
+    final(this);
+  }
+
+  active() { return this.has.ticksLeft > 0; }
+  canUse() { return this.has.ticksLeft > 0; }
+
+  // force() rather than use(): re-applying while a previous Rend is still
+  // ticking down (shouldn't normally happen, since Rend.checkConditions()
+  // requires !active() first, but this stays safe either way) would
+  // otherwise trip use()'s "already running" assertion.
+  apply() {
+    this.has.ticksLeft = 7;
+    this.has.dmgPerTick = 147 / 7;
+    this.force();
+  }
+
+  handle() {
+    this.has.ticksLeft -= 1;
+    this.char.rend.log.dmg += this.has.dmgPerTick;
+    Debug.log('Rend tick: ' + this.has.dmgPerTick.toFixed(0) + ' damage ('
+              + this.has.ticksLeft + ' tick' + (this.has.ticksLeft === 1 ? '' : 's')
+              + ' left, rage: ' + this.char.rage.is.now.toFixed(1) + ')');
+    // Only re-arm the 3 sec tick timer if there's another tick to come --
+    // otherwise this is done, and the timer must actually read as expired
+    // (not just "about to run out") for the next apply() to work.
+    if (this.has.ticksLeft > 0) this.force();
+  }
+
+  reset() { super.reset(); this.has.ticksLeft = 0; }
+}
+
 // Switching stances is instant but shares its own 1.5 sec cooldown between
 // switches -- separate from the GCD, so an ability used in the same instant
 // as a switch still goes on its own cooldown/GCD normally. See
