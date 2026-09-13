@@ -145,7 +145,6 @@ function collectInputs() {
       level: getInputNumber('targetlvl'),
       armor: getEffectiveArmor(),
       type: getRadioValue('enemytype'),
-      mounted: getInputChecked('mounted'),
     },
     iterations: getInputNumber('iterations'),
     duration: getInputNumber('duration'),
@@ -222,6 +221,7 @@ function runSim(debugOn) {
     };
     reportEp(workers.hit, '1% hit');
     reportEp(workers.crit, '1% crit');
+    reportEp(workers.reducedodge, '1% reduce dodge/parry');
     reportEp(workers.haste, '' + checkboxes.hastestep + '% attack speed');
     reportEp(workers.mskill, '' + checkboxes.mskillstep + ' mainhand skill');
     reportEp(workers.oskill, '' + checkboxes.oskillstep + ' offhand skill');
@@ -269,6 +269,12 @@ function runSim(debugOn) {
       const critCfg = collectInputs();
       critCfg.char.stats.crit += 1;
       workers.crit = createWorker(critCfg, onWorkersFinished);
+    }
+
+    if (checkboxes.reducedodge) {
+      const reduceDodgeCfg = collectInputs();
+      reduceDodgeCfg.char.stats.reduceDodge += 1;
+      workers.reducedodge = createWorker(reduceDodgeCfg, onWorkersFinished);
     }
 
     if (checkboxes.haste) {

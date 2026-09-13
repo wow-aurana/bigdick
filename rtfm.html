@@ -73,6 +73,15 @@
         <li>
           Mortal Strike and Bloodthirst checkboxes only appear once that talent is actually spent, and Slam's only appears at Improved Slam rank 2. Below rank 2, Improved Slam still lets Slam interrupt (reset) your melee swing timer, which this sim doesn't model at all -- Slam is assumed to always be used with rank 2 already talented, at which point it has zero interaction with autoattacks.
         </li>
+        <li>
+          "Reduce dodge/parry" only actually reduces the target's dodge chance. Parry isn't separately modeled by this sim -- an attacker positioned behind the target (the normal DPS stance) can't be parried in the first place, so there's nothing for the stat to reduce there.
+        </li>
+        <li>
+          "Enemy type" covers all 9 creature types that exist in Classic (Beast, Critter, Demon, Dragonkin, Elemental, Giant, Humanoid, Mechanical, Undead -- Aberration wasn't added until modern retail, so it doesn't apply here). There's no separate "mounted target" toggle: mounts are Beast-type creatures, so selecting Beast already covers a mounted target. Right now the only thing "Enemy type" feeds is Spearing Strike's bonus damage against Giants, Dragonkin, or Beasts.
+        </li>
+        <li>
+          Each weapon's "Type" selector (Other/Axe/Mace/Sword/Polearm/Staff) only matters for the Weaponmaster talent: Axe/Polearm get bonus crit, Mace/Staff get armor penetration, and Sword gets a chance at an extra attack, each specific to whichever weapon is actually that type.
+        </li>
       </ul>
     </li>
     <li>

@@ -234,10 +234,11 @@ class Overpower extends Ability {
 }
 
 // Spearing Strike. 40% weapon damage, +80% more (120% total) against
-// Giants, Dragonkin, or a mounted target -- see the "Enemy type"/"Mounted
-// target" setting on the main form, threaded through as char.target.type
-// and char.target.mounted. No stance requirement is mentioned in its
-// tooltip, unlike Sweeping Strikes.
+// Giants, Dragonkin, or a mounted target -- see the "Enemy type" setting
+// on the main form, threaded through as char.target.type. There's no
+// separate "mounted" toggle: mounts are Beast-type creatures, so
+// selecting Beast already covers the mounted case (see rtfm.html). No
+// stance requirement is mentioned in its tooltip, unlike Sweeping Strikes.
 class SpearingStrike extends Ability {
   constructor(char, usewhen) {
     super(char, 15, 10, usewhen, 'Spearing Strike');
@@ -247,7 +248,7 @@ class SpearingStrike extends Ability {
 
   bonusApplies() {
     const type = this.char.target.type;
-    return type === 'giant' || type === 'dragonkin' || this.char.target.mounted;
+    return type === 'giant' || type === 'dragonkin' || type === 'beast';
   }
 
   getDmg() {

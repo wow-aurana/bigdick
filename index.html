@@ -56,9 +56,6 @@
         <input class="enemytype" name="enemytype" type="radio" value="critter">
         <span class="enemytype">Critter</span>
         <br>
-        <input id="mounted" type="checkbox">
-        <span>Mounted target (also triggers Spearing Strike's bonus, and dismounts the target)</span>
-        <br>
         <span class="stat">Target armor:</span>
         <input id="armor" type="number" min="0" max="10000" value="3731">
         <span class="stat" id="effective"></span>
@@ -84,7 +81,7 @@
         <br>
         <span class="stat">Reduce dodge/parry:</span>
         <input id="charreducedodge" type="number" min="0" max="100" step="0.01" value="0">
-        <span>% (reduces the target's dodge and parry chance, same idea as Hit vs. miss)</span>
+        <span>%</span>
         <br>
         <span class="stat">Haste on gear:</span>
         <input id="charhaste" type="number" min="0" max="10" value="0">
@@ -157,7 +154,7 @@
         <input class="twohand" name="thproc" type="radio" value="UTB">
         <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=19334">UTB</a></span>
         <br>
-        <span class="twohand indent">Type (for Weaponmaster):</span>
+        <span class="twohand indent">Type:</span>
         <input class="twohand" name="thtype" type="radio" value="other" checked>
         <span class="twohand">Other</span>
         <input class="twohand" name="thtype" type="radio" value="axe">
@@ -195,7 +192,7 @@
         <input class="mainhand" name="mhproc" type="radio" value="IF">
         <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=11684">IF</a></span>
         <br>
-        <span class="mainhand indent">Type (for Weaponmaster):</span>
+        <span class="mainhand indent">Type:</span>
         <input class="mainhand" name="mhtype" type="radio" value="other" checked>
         <span class="mainhand">Other</span>
         <input class="mainhand" name="mhtype" type="radio" value="axe">
@@ -229,7 +226,7 @@
         <input class="offhand" name="ohproc" type="radio" value="FA">
         <span class="offhand"><a target="_blank" href="https://classicdb.ch/?item=871">FA</a></span>
         <br>
-        <span class="offhand indent">Type (for Weaponmaster):</span>
+        <span class="offhand indent">Type:</span>
         <input class="offhand" name="ohtype" type="radio" value="other" checked>
         <span class="offhand">Other</span>
         <input class="offhand" name="ohtype" type="radio" value="axe">
@@ -371,6 +368,8 @@
         <span class="apep">1% hit</span>
         <input class="apep" name="crit" type="checkbox" checked>
         <span class="apep">1% crit</span>
+        <input class="apep" name="reducedodge" type="checkbox" checked>
+        <span class="apep">1% reduce dodge/parry</span>
         <input class="apep" name="haste" type="checkbox" checked>
         <input class="apep" name="hastestep" type="number" min="1" max="9" value="3">
         <span class="apep">% haste</span>
@@ -406,8 +405,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=4"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=15"></script>
-  <script src="main.js?v=11"></script>
+  <script src="simworker.js?v=16"></script>
+  <script src="main.js?v=12"></script>
 </body>
 
 </html>
