@@ -233,12 +233,11 @@ class Overpower extends Ability {
   }
 }
 
-// Spearing Strike. The real tooltip does +80% weapon damage against
-// Giants/Dragonkin/mounted targets (and dismounts them), but this sim has
-// no concept of target race or mount state, so only the base 40% weapon
-// damage is modeled -- a deliberate underestimate for the rare fights
-// where the bonus would apply, per the user's own call. No stance
-// requirement is mentioned in its tooltip, unlike Sweeping Strikes.
+// Spearing Strike. 40% weapon damage, +80% more (120% total) against
+// Giants, Dragonkin, or a mounted target -- see the "Enemy type"/"Mounted
+// target" setting on the main form, threaded through as char.target.type
+// and char.target.mounted. No stance requirement is mentioned in its
+// tooltip, unlike Sweeping Strikes.
 class SpearingStrike extends Ability {
   constructor(char, usewhen) {
     super(char, 15, 10, usewhen, 'Spearing Strike');
@@ -246,7 +245,16 @@ class SpearingStrike extends Ability {
     final(this);
   }
 
-  getDmg() { return this.char.main.getDmg() * .4; }
+  bonusApplies() {
+    const type = this.char.target.type;
+    return type === 'giant' || type === 'dragonkin' || this.char.target.mounted;
+  }
+
+  getDmg() {
+    const mul = this.bonusApplies() ? 1.2 : .4;
+    return this.char.main.getDmg() * mul;
+  }
+
   checkConditions() { return this.char.rage.has(this.usewhen.rage); }
 }
 

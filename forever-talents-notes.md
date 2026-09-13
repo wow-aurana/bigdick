@@ -51,9 +51,9 @@ Passive. Generates 1 Rage every 3 sec while in combat, **and** reduces Rage loss
 **Deep Wounds** — Rank 0/**1** *(was 0/3 in Classic)*
 Passive. Your critical strikes cause your opponent to bleed, dealing 20% of your melee weapon's average damage over 12 sec.
 
-**Searing Strike** — Rank 0/1 — *(new talent, not in Classic)*
+**Spearing Strike** — Rank 0/1 — *(new talent, not in Classic; this file previously misspelled it "Searing Strike")*
 15 Rage, Melee Range, 10 sec cooldown, Instant.
-A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.
+A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted. Modeled in the sim via the "Enemy type"/"Mounted target" setting on the main form (see abilities.js's SpearingStrike).
 
 **Two-Handed Weapon Specialization** — Rank 0/**3** *(was 0/5 in Classic)*
 Passive. Increases the damage you deal with two-handed melee weapons by 1% per rank (rank 1 confirmed from screenshot; ranks 2-3 assumed to continue +1%/rank, i.e. 1/2/3% — not individually confirmed).

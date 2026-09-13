@@ -5,7 +5,7 @@ importScripts('cooldowns.js?v=8');
 importScripts('auras.js?v=2');
 importScripts('talents.js?v=4');
 importScripts('weapon.js?v=7');
-importScripts('abilities.js?v=11');
+importScripts('abilities.js?v=12');
 importScripts('character.js?v=8');
 
 

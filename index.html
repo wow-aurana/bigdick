@@ -36,6 +36,29 @@
         <span class="stat">Target level:</span>
         <input id="targetlvl" type="number" min="10" max="63" value="63">
         <br>
+        <span class="stat">Enemy type:</span>
+        <input class="enemytype" name="enemytype" type="radio" value="humanoid" checked>
+        <span class="enemytype">Humanoid</span>
+        <input class="enemytype" name="enemytype" type="radio" value="beast">
+        <span class="enemytype">Beast</span>
+        <input class="enemytype" name="enemytype" type="radio" value="undead">
+        <span class="enemytype">Undead</span>
+        <input class="enemytype" name="enemytype" type="radio" value="demon">
+        <span class="enemytype">Demon</span>
+        <input class="enemytype" name="enemytype" type="radio" value="elemental">
+        <span class="enemytype">Elemental</span>
+        <input class="enemytype" name="enemytype" type="radio" value="dragonkin">
+        <span class="enemytype">Dragonkin</span>
+        <input class="enemytype" name="enemytype" type="radio" value="giant">
+        <span class="enemytype">Giant</span>
+        <input class="enemytype" name="enemytype" type="radio" value="mechanical">
+        <span class="enemytype">Mechanical</span>
+        <input class="enemytype" name="enemytype" type="radio" value="critter">
+        <span class="enemytype">Critter</span>
+        <br>
+        <input id="mounted" type="checkbox">
+        <span>Mounted target (also triggers Spearing Strike's bonus, and dismounts the target)</span>
+        <br>
         <span class="stat">Target armor:</span>
         <input id="armor" type="number" min="0" max="10000" value="3731">
         <span class="stat" id="effective"></span>
@@ -379,8 +402,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=4"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=13"></script>
-  <script src="main.js?v=9"></script>
+  <script src="simworker.js?v=14"></script>
+  <script src="main.js?v=10"></script>
 </body>
 
 </html>

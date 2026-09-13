@@ -143,6 +143,8 @@ function collectInputs() {
     target: {
       level: getInputNumber('targetlvl'),
       armor: getEffectiveArmor(),
+      type: getRadioValue('enemytype'),
+      mounted: getInputChecked('mounted'),
     },
     iterations: getInputNumber('iterations'),
     duration: getInputNumber('duration'),
