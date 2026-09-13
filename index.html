@@ -11,10 +11,24 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
   <link href="style.css" rel="stylesheet">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Applied before body renders so there's no flash of the wrong theme.
+    // Dark mode is the default; only an explicit "light" choice opts out.
+    (function() {
+      try {
+        if (localStorage.getItem('bigdickTheme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>
-  <p>First <a href="rtfm.html">RTFM</a>. Then fill out the form...</p>
+  <div class="topbar">
+    <p>First <a href="rtfm.html">RTFM</a>. Then fill out the form...</p>
+    <label class="theme-toggle"><input type="checkbox" id="darkmode" checked> Dark mode</label>
+  </div>
   <form id="setup">
     <div class="container">
       <div class="group">
@@ -274,7 +288,7 @@
   <script src="dom.js"></script>
   <script src="talent-data.js"></script>
   <script src="simworker.js"></script>
-  <script src="main.js"></script>
+  <script src="main.js?v=2"></script>
 </body>
 
 </html>

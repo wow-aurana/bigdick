@@ -2,6 +2,24 @@
 
 const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect.mp3';
 
+// Light/dark mode. Default is dark (see the inline <script> in index.html's
+// <head>, which applies this before the page renders to avoid a flash of
+// the wrong theme). Kept in its own localStorage key rather than folded
+// into the form's saveSettings()/loadSettings(), since it's a display
+// preference rather than a simulation input.
+const THEME_KEY = 'bigdickTheme';
+const darkmodeCheckbox = getElement('darkmode');
+darkmodeCheckbox.checked = !document.documentElement.classList.contains('light-mode');
+darkmodeCheckbox.addEventListener('change', () => {
+  const isDark = darkmodeCheckbox.checked;
+  document.documentElement.classList.toggle('light-mode', !isDark);
+  try {
+    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+  } catch (e) {
+    // Storage unavailable (private browsing, disabled, quota, ...). Ignore.
+  }
+});
+
 const output = new Output();
 
 const updateMitigtion = () => {

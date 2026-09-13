@@ -1,6 +1,46 @@
+:root {
+  /* Dark mode is the default; light-mode below overrides these. */
+  --bg: #111;
+  --text: #ddd;
+  --input-text: #7ec8ff;
+  --link: #e0b040;
+  --submit-bg: #333;
+  --submit-text: #ddd;
+  --submit-border: #555;
+  --invalid-bg: #722;
+}
+
+html.light-mode {
+  --bg: #fff;
+  --text: #111;
+  --input-text: #358;
+  --link: #06c;
+  --submit-bg: #eee;
+  --submit-text: #111;
+  --submit-border: #aaa;
+  --invalid-bg: pink;
+}
+
 body {
   font-family: 'Roboto';
   font-size: 15px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--link);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.theme-toggle {
+  white-space: nowrap;
 }
 
 h4 {
@@ -19,7 +59,7 @@ span {
 }
 
 input:invalid {
-  background-color: pink;
+  background-color: var(--invalid-bg);
 }
 
 .stat {
@@ -43,7 +83,7 @@ input {
   background-color: rgba(0,0,0,0);
   border: 1px rgba(0,0,0,0) solid;
   display: inline-block;
-  color: #358;
+  color: var(--input-text);
   font-family: 'Roboto';
   font-size: 15px;
 }
@@ -55,9 +95,10 @@ input[type=number] {
 }
 
 input[type=submit] {
-  background-color: #eee;
+  background-color: var(--submit-bg);
+  color: var(--submit-text);
+  border: 1px solid var(--submit-border);
   padding: 5px;
-  /*border: 1px solid #aaa;*/
   margin-right: 10px;
   font-weight: 600;
 }
