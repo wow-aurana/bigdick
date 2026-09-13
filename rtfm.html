@@ -85,6 +85,15 @@
         <li>
           "Overpower when ready" isn't talent-gated: the ability itself has a 5 sec charge window that opens whenever one of your attacks is dodged (always available), and Bloodthrill (if talented) adds a second way to open that same window off of autoattacks. Unchecking it turns Overpower off regardless of which trigger would have opened the window.
         </li>
+        <li>
+          "Agility" is optional and only used to exclude agility-derived crit from the +3% crit suppression applied against +3-level targets -- see <code>applyCritSuppression()</code> in <code>util.js</code>. Leave it at 0 if you don't want to bother with the distinction.
+        </li>
+        <li>
+          Default stance's "Lazy" option only switches stance when an ability actually requires it, and never switches back afterward -- unlike Battle/Berserker, which switch back to your preferred stance once the other one's ability is used.
+        </li>
+        <li>
+          "Rend" is kept up as best as possible, mainly so Bloodthrill (if talented) has a target to trigger off of -- see Bloodthrill's notes in <code>forever-talents-notes.md</code>.
+        </li>
       </ul>
     </li>
     <li>
