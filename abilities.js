@@ -169,33 +169,33 @@ class Execute extends Ability {
   checkExecuteConditions() { return true; }
 }
 
-// Slam
+// Slam. Only meant to be used once Improved Slam rank 2 is talented --
+// below that it still interrupts (resets) your melee swing timer, which
+// this sim doesn't model at all now that it no longer needs to: rank 2's
+// "Slam no longer interrupts your melee swing time" makes Slam a plain
+// cast-time GCD ability with zero interaction with autoattacks, so there's
+// no swing-timing window to approximate (the old "cast within N ms of a
+// swing" mechanic and its opportunity-window Cooldown are gone). The
+// checkbox on the main page is hidden below Improved Slam rank 2.
 class Slam extends Ability {
   constructor(char, usewhen) {
     super(char, 15, 0, usewhen, 'Slam');
     this.is = { casting: false };
-    this.opportunity = new Cooldown(this.usewhen.delay / 1000, 'Slam now!');
 
     final(this);
   }
 
   reset() { super.reset(); this.is.casting = false; }
-  tick(seconds) { super.tick(seconds); this.opportunity.tick(seconds); }
   getDmg() { return this.char.main.getDmg() + 87 * this.char.multiplier(); }
 
   checkConditions() {
-    return !this.is.casting
-           && this.opportunity.running()
-           && this.char.rage.has(this.usewhen.rage);
+    return !this.is.casting && this.char.rage.has(this.usewhen.rage);
   }
 
   swing() {
     console.assert(this.is.casting, 'Trying to swing slam when not casting');
     this.is.casting = false;
     super.swing();
-    for (const a of this.char.autos) {
-      a.cooldown.force();
-    }
   }
 
   handle() {
@@ -203,6 +203,27 @@ class Slam extends Ability {
     this.char.gcd.use();
     this.is.casting = true;
     this.char.slamSwing.use();
+  }
+}
+
+// Mortal Strike. "Weapon damage plus 160" per forever-spells-notes.md --
+// unlike Bloodthirst this scales off weapon damage, not attack power. No
+// stance requirement. Only meaningful once talented (see the checkbox
+// gating in main.js/updateTalentGating()).
+class MortalStrike extends Ability {
+  constructor(char, usewhen) {
+    super(char, 30, 6, usewhen, 'Mortal Strike');
+
+    final(this);
+  }
+
+  getDmg() { return this.char.main.getDmg() + 160 * this.char.multiplier(); }
+  checkConditions() { return this.char.rage.has(this.usewhen.rage); }
+
+  checkExecuteConditions() {
+    if (!this.usewhen.execute) return false;
+    if (!this.char.rage.has(this.usewhen.execute.rage)) return false;
+    return (this.char.getAp() > this.usewhen.execute.ap);
   }
 }
 

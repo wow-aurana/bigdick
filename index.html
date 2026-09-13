@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-  <link href="style.css" rel="stylesheet">
+  <link href="style.css?v=2" rel="stylesheet">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <script>
     // Applied before body renders so there's no flash of the wrong theme.
@@ -185,18 +185,29 @@
         <input class="deathwish" name="endoffight" type="checkbox" checked>
         <span class="deathwish">in the last 30 seconds of the fight</span>
         <br>
-        <!-- Slam -->
+        <!-- Slam. Only useful once Improved Slam rank 2 is talented -- see
+             updateTalentGating() in main.js, which hides this row (and
+             force-unchecks it) otherwise. -->
+        <div id="slam-row">
         <input id="slam" type="checkbox" checked>
-        <span class="slam">Slam up to</span>
-        <input class="slam" name="delay" type="number" min="1" max="9000" value="200">
-        <span class="slam">milliseconds after a main hand swing if rage above</span>
+        <span class="slam">Slam when ready and rage above</span>
         <input class="slam" name="rage" type="number" min="15" max="100" value="70">
         <br>
-        <!-- Bloodthirst -->
+        </div>
+        <!-- Mortal Strike. Hidden unless talented -- see updateTalentGating(). -->
+        <div id="mortalstrike-row">
+        <input id="mortalstrike" type="checkbox" checked>
+        <span class="mortalstrike">Mortal Strike when ready and rage above</span>
+        <input class="mortalstrike" name="rage" type="number" min="30" max="100" value="30">
+        <br>
+        </div>
+        <!-- Bloodthirst. Hidden unless talented -- see updateTalentGating(). -->
+        <div id="bloodthirst-row">
         <input id="bloodthirst" type="checkbox" checked>
         <span class="bloodthirst">Bloodthirst when ready and rage above</span>
         <input class="bloodthirst" name="rage" type="number" min="30" max="100" value="30">
         <br>
+        </div>
         <!-- Whirlwind -->
         <input id="whirlwind" type="checkbox" checked>
         <span class="whirlwind">Whirlwind when ready and rage above</span>
@@ -231,13 +242,24 @@
       </div>
       <div class="group executegroup">
         <h4>Execute phase</h4>
-        <!-- Bloodthirst -->
+        <!-- Mortal Strike. Hidden unless talented -- see updateTalentGating(). -->
+        <div id="executems-row">
+        <input id="executems" type="checkbox" checked>
+        <span class="executems">Mortal Strike when ready and rage above</span>
+        <input class="executems" name="rage" type="number" min="30" max="100" value="30">
+        <span class="executems">and attack power above</span>
+        <input class="executems" name="ap" type="number" min="0" max="5000" value="2000">
+        <br>
+        </div>
+        <!-- Bloodthirst. Hidden unless talented -- see updateTalentGating(). -->
+        <div id="executebt-row">
         <input id="executebt" type="checkbox" checked>
         <span class="executebt">Bloodthirst when ready and rage above</span>
         <input class="executebt" name="rage" type="number" min="30" max="100" value="30">
         <span class="executebt">and attack power above</span>
         <input class="executebt" name="ap" type="number" min="0" max="5000" value="2000">
         <br>
+        </div>
         <!-- Whirlwind -->
         <input id="executeww" type="checkbox" checked>
         <span class="executeww">Whirlwind when ready and rage above</span>
@@ -298,8 +320,8 @@
   <script src="items.js"></script>
   <script src="dom.js?v=2"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=6"></script>
-  <script src="main.js?v=5"></script>
+  <script src="simworker.js?v=7"></script>
+  <script src="main.js?v=6"></script>
 </body>
 
 </html>

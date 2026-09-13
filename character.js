@@ -20,7 +20,9 @@ class Character {
     this.flurryHaste = talents.flurry ? 1 + (talents.flurry + 1) * .05 : 1;
     this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
     this.extraRageChance = talents.unbridledWrath * .08;
-    this.slamCast = 1.5 - talents.improvedSlam * .1;
+    // Improved Slam's tooltip (talent-data.js) says -0.25 sec per rank, not
+    // the -0.1 this used to hardcode -- fixed while touching Slam anyway.
+    this.slamCast = 1.5 - talents.improvedSlam * .25;
     this.executeCost = 15 - (talents.improvedExecute > 1 ? 5 :
                              talents.improvedExecute > 0 ? 2 : 0);
     this.improvedTacticalMastery = talents.improvedTacticalMastery;
@@ -69,7 +71,9 @@ class Character {
     this.stanceReturn = new StanceReturn(this);
 
     this.execute = create(Execute, {});
-    
+
+    this.mortalStrike = create(MortalStrike, char.mortalstrike);
+
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
 
     this.whirlwind = create(Whirlwind, char.whirlwind);
@@ -86,6 +90,7 @@ class Character {
     this.abilities = [
       this.execute,
       this.slam,
+      this.mortalStrike,
       this.bloodthirst,
       this.whirlwind,
       this.hamstring,

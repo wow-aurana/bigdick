@@ -64,6 +64,7 @@ mainhand.clickCb = (enabled) => {
   offhand.check(enabled, false);
 };
 
+const executems = new Checkbox('executems');
 const executebt = new Checkbox('executebt');
 const executeww = new Checkbox('executeww');
 
@@ -72,6 +73,7 @@ const abilities = {
   deathwish: new Checkbox('deathwish'),
   aponuse: new Checkbox('aponuse'),
   slam: new Checkbox('slam'),
+  mortalstrike: new Checkbox('mortalstrike'),
   bloodthirst: new Checkbox('bloodthirst'),
   whirlwind: new Checkbox('whirlwind'),
   heroic: new Checkbox('heroic'),
@@ -80,6 +82,11 @@ const abilities = {
   twohand,
   mainhand,
   offhand,
+};
+
+abilities.mortalstrike.clickCb = (enabled) => {
+  if (!enabled) executems.check(enabled);
+  executems.enable(enabled);
 };
 
 abilities.bloodthirst.clickCb = (enabled) => {
@@ -143,6 +150,8 @@ function collectInputs() {
   for (const a of Object.values(abilities)) {
     config.char[a.name] = a.collect();
   }
+  if (executems.checked())
+    config.char.mortalstrike.execute = executems.collect();
   if (executebt.checked())
     config.char.bloodthirst.execute = executebt.collect();
   if (executeww.checked())
@@ -345,4 +354,46 @@ updateTalentsSummary();
 window.addEventListener('focus', updateTalentsSummary);
 window.addEventListener('storage', (e) => {
   if (e.key === 'bigdickTalents') updateTalentsSummary();
+});
+
+// Some abilities only make sense once a specific talent is spent: Mortal
+// Strike and Bloodthirst are talent-only in Classic and stay talent-*gated*
+// here even though Forever then lets you train further ranks at a trainer
+// (see forever-spells-notes.md); Slam is actively bad without Improved
+// Slam rank 2's swing-interrupt removal (see abilities.js). Hide (and
+// force off) their checkboxes otherwise, refreshed on the same triggers as
+// updateTalentsSummary() above.
+function updateTalentGating() {
+  const talents = getTalents();
+  const rank = (tree, key) => (talents[tree] && talents[tree][key]) || 0;
+
+  // Top-level ability checkbox: row hidden, checkbox disabled and forced
+  // off unless the talent it depends on is present.
+  const gateAbility = (rowId, checkbox, available) => {
+    getElement(rowId).style.display = available ? '' : 'none';
+    checkbox.enable(available);
+    if (!available) checkbox.check(false);
+  };
+  // Execute-phase checkbox: same row-hiding/force-off, but its own
+  // enabled/disabled state is already governed by the matching ability
+  // checkbox's clickCb cascade above -- never re-enable it here.
+  const gateExecute = (rowId, checkbox, available) => {
+    getElement(rowId).style.display = available ? '' : 'none';
+    if (!available) checkbox.check(false);
+  };
+
+  const improvedSlam2 = rank('arms', 'improved-slam') >= 2;
+  const mortalStrike = rank('arms', 'mortal-strike') > 0;
+  const bloodthirst = rank('fury', 'bloodthirst') > 0;
+
+  gateAbility('slam-row', abilities.slam, improvedSlam2);
+  gateAbility('mortalstrike-row', abilities.mortalstrike, mortalStrike);
+  gateExecute('executems-row', executems, mortalStrike);
+  gateAbility('bloodthirst-row', abilities.bloodthirst, bloodthirst);
+  gateExecute('executebt-row', executebt, bloodthirst);
+}
+updateTalentGating();
+window.addEventListener('focus', updateTalentGating);
+window.addEventListener('storage', (e) => {
+  if (e.key === 'bigdickTalents') updateTalentGating();
 });

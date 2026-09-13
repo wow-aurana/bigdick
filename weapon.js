@@ -63,7 +63,9 @@ class Weapon {
   }
 
   timeUntil() { return this.cooldown.timeUntil(); }
-  canUse() { return !(this.char.slam && this.char.slam.casting); }
+  // Slam no longer interacts with autoattacks at all (see abilities.js) --
+  // this used to pause swings while a Slam cast was in flight.
+  canUse() { return true; }
 
   reset() {
     this.cooldown.reset();
@@ -101,8 +103,6 @@ class Weapon {
   swing(extraSwing = false) {
     this.cooldown.use();
     this.is.flurried = false;  // will be recalculated in main loop
-
-    if (this.isMainhand && this.char.slam) this.char.slam.opportunity.force();
 
     // Extra swings also can be Heroic Strikes
     if (this.isMainhand && this.char.heroicQueued()) {
