@@ -111,6 +111,7 @@ class Ability {
         const critDmg = dmg * this.char.yellowCritMul;
         this.log.dmg += critDmg;
         this.char.flurry.refresh();
+        this.char.procDeepWounds();
         Debug.log(label + ': critical hit for ' + critDmg.toFixed(0)
                   + ' (rage: ' + rageNow() + ')');
 
@@ -232,6 +233,23 @@ class Overpower extends Ability {
   }
 }
 
+// Spearing Strike. The real tooltip does +80% weapon damage against
+// Giants/Dragonkin/mounted targets (and dismounts them), but this sim has
+// no concept of target race or mount state, so only the base 40% weapon
+// damage is modeled -- a deliberate underestimate for the rare fights
+// where the bonus would apply, per the user's own call. No stance
+// requirement is mentioned in its tooltip, unlike Sweeping Strikes.
+class SpearingStrike extends Ability {
+  constructor(char, usewhen) {
+    super(char, 15, 10, usewhen, 'Spearing Strike');
+
+    final(this);
+  }
+
+  getDmg() { return this.char.main.getDmg() * .4; }
+  checkConditions() { return this.char.rage.has(this.usewhen.rage); }
+}
+
 // Slam. Only meant to be used once Improved Slam rank 2 is talented --
 // below that it still interrupts (resets) your melee swing timer, which
 // this sim doesn't model at all now that it no longer needs to: rank 2's
@@ -300,7 +318,12 @@ class Bloodthirst extends Ability {
     final(this);
   }
 
-  getDmg() { return this.char.getAp() * .45 * this.char.multiplier(); }
+  // 35% AP + 30 flat, per talent-data.js (from the user's own screenshot).
+  // forever-spells-notes.md separately recorded 45% AP with no flat bonus,
+  // but that came from wowforevertalents.com's Classic-talent placeholder,
+  // not a screenshot -- the user's own source wins per this project's
+  // established authority order.
+  getDmg() { return (this.char.getAp() * .35 + 30) * this.char.multiplier(); }
   checkConditions() { return this.char.rage.has(this.usewhen.rage); }
   
   checkExecuteConditions() {
@@ -337,6 +360,46 @@ class Whirlwind extends Ability {
 
   onMiss() { this.char.rage.use(this.cost); }
   onDodge() { this.char.rage.use(this.cost); }
+
+  // Raging Blows: "causes your Whirlwind to also strike with your
+  // off-hand weapon." A fully separate hit/crit/miss roll against the
+  // same attack table, on top of the normal (mainhand-based) swing above.
+  // Doesn't generate rage or proc weapon effects, and isn't counted in
+  // this.log's swings/hits/crits/misses (which stay a clean read on the
+  // mainhand roll) -- only its damage is added, to keep this simple.
+  getOffhandDmg() {
+    const dmg = this.char.off.avgDmg
+              + this.char.getAp() / 14 * this.char.abilityApScaling;
+    return dmg * this.char.multiplier() * this.char.offhandDmgMul;
+  }
+
+  swing() {
+    super.swing();
+    if (this.char.ragingBlows && this.char.off) this.swingOffhand();
+  }
+
+  swingOffhand() {
+    const label = this.log.name + ' (off-hand, Raging Blows)';
+    const rageNow = () => this.char.rage.is.now.toFixed(1);
+    const roll = m.random() * 100;
+    if (roll < this.table.miss) {
+      Debug.log(label + ': miss');
+    } else if (roll < this.table.dodge) {
+      Debug.log(label + ': dodged');
+    } else {
+      const dmg = this.getOffhandDmg() * this.char.armorDmgMul;
+      if (m.random() * 100 < this.table.crit) {
+        const critDmg = dmg * this.char.yellowCritMul;
+        this.log.dmg += critDmg;
+        Debug.log(label + ': critical hit for ' + critDmg.toFixed(0)
+                  + ' (rage: ' + rageNow() + ')');
+      } else {
+        this.log.dmg += dmg;
+        Debug.log(label + ': hit for ' + dmg.toFixed(0)
+                  + ' (rage: ' + rageNow() + ')');
+      }
+    }
+  }
 }
 
 // Heroic Strike

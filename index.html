@@ -129,6 +129,20 @@
         <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=12790">AC</a></span>
         <input class="twohand" name="thproc" type="radio" value="UTB">
         <span class="twohand"><a target="_blank" href="https://classicdb.ch/?item=19334">UTB</a></span>
+        <br>
+        <span class="twohand indent">Type (for Weaponmaster):</span>
+        <input class="twohand" name="thtype" type="radio" value="other" checked>
+        <span class="twohand">Other</span>
+        <input class="twohand" name="thtype" type="radio" value="axe">
+        <span class="twohand">Axe</span>
+        <input class="twohand" name="thtype" type="radio" value="mace">
+        <span class="twohand">Mace</span>
+        <input class="twohand" name="thtype" type="radio" value="sword">
+        <span class="twohand">Sword</span>
+        <input class="twohand" name="thtype" type="radio" value="polearm">
+        <span class="twohand">Polearm</span>
+        <input class="twohand" name="thtype" type="radio" value="staff">
+        <span class="twohand">Staff</span>
         </p>
         <p>  <!-- Main hand -->
         <input id="mainhand" type="checkbox" checked>
@@ -153,6 +167,20 @@
         <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=871">FA</a></span>
         <input class="mainhand" name="mhproc" type="radio" value="IF">
         <span class="mainhand"><a target="_blank" href="https://classicdb.ch/?item=11684">IF</a></span>
+        <br>
+        <span class="mainhand indent">Type (for Weaponmaster):</span>
+        <input class="mainhand" name="mhtype" type="radio" value="other" checked>
+        <span class="mainhand">Other</span>
+        <input class="mainhand" name="mhtype" type="radio" value="axe">
+        <span class="mainhand">Axe</span>
+        <input class="mainhand" name="mhtype" type="radio" value="mace">
+        <span class="mainhand">Mace</span>
+        <input class="mainhand" name="mhtype" type="radio" value="sword">
+        <span class="mainhand">Sword</span>
+        <input class="mainhand" name="mhtype" type="radio" value="polearm">
+        <span class="mainhand">Polearm</span>
+        <input class="mainhand" name="mhtype" type="radio" value="staff">
+        <span class="mainhand">Staff</span>
         </p><p>
         <!-- Offhand -->
         <input id="offhand" type="checkbox" checked>
@@ -173,6 +201,20 @@
         <span class="offhand"><a target="_blank" href="https://classicdb.ch/?item=17705">TB</a></span>
         <input class="offhand" name="ohproc" type="radio" value="FA">
         <span class="offhand"><a target="_blank" href="https://classicdb.ch/?item=871">FA</a></span>
+        <br>
+        <span class="offhand indent">Type (for Weaponmaster):</span>
+        <input class="offhand" name="ohtype" type="radio" value="other" checked>
+        <span class="offhand">Other</span>
+        <input class="offhand" name="ohtype" type="radio" value="axe">
+        <span class="offhand">Axe</span>
+        <input class="offhand" name="ohtype" type="radio" value="mace">
+        <span class="offhand">Mace</span>
+        <input class="offhand" name="ohtype" type="radio" value="sword">
+        <span class="offhand">Sword</span>
+        <input class="offhand" name="ohtype" type="radio" value="polearm">
+        <span class="offhand">Polearm</span>
+        <input class="offhand" name="ohtype" type="radio" value="staff">
+        <span class="offhand">Staff</span>
         </p>
         <input id="hoj" type="checkbox" checked>
         <span class="hoj">Hand of Justice</span>
@@ -193,6 +235,13 @@
         <div id="rend-row">
         <input id="rend" type="checkbox" checked>
         <span class="rend">Rend (keep up for Bloodthrill)</span>
+        <br>
+        </div>
+        <!-- Spearing Strike. Hidden unless talented -- see updateTalentGating(). -->
+        <div id="spearingstrike-row">
+        <input id="spearingstrike" type="checkbox" checked>
+        <span class="spearingstrike">Spearing Strike when ready and rage above</span>
+        <input class="spearingstrike" name="rage" type="number" min="15" max="100" value="40">
         <br>
         </div>
         <!-- Slam. Only useful once Improved Slam rank 2 is talented -- see
@@ -328,10 +377,10 @@
   <p id="output"></p>
 
   <script src="items.js"></script>
-  <script src="dom.js?v=2"></script>
+  <script src="dom.js?v=4"></script>
   <script src="talent-data.js?v=2"></script>
-  <script src="simworker.js?v=11"></script>
-  <script src="main.js?v=8"></script>
+  <script src="simworker.js?v=13"></script>
+  <script src="main.js?v=9"></script>
 </body>
 
 </html>

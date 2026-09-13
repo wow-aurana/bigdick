@@ -77,10 +77,22 @@ class Checkbox {
       } else if (el.type == 'number') {
         result[el.name] = parseFloat(el.value);
       } else if (el.type == 'radio' && el.checked) {
-        result['proc'] = el.value;
+        // Historically every radio group here was a weapon's proc picker
+        // (thproc/mhproc/ohproc), always collected under the literal key
+        // 'proc' regardless of its own `name` -- kept as-is so existing
+        // char.*.proc reads don't need to change. Same idea for the weapon
+        // type picker (thtype/mhtype/ohtype) added for Weaponmaster, always
+        // collected under 'type'. Each weapon's radios need their own real
+        // `name` (not a shared literal) so the three weapon blocks don't
+        // fight over one mutually-exclusive radio group -- this normalizes
+        // them back down to the key the rest of the code expects.
+        const key = el.name.endsWith('proc') ? 'proc'
+                  : el.name.endsWith('type') ? 'type'
+                  : el.name;
+        result[key] = el.value;
       }
     }
-    return result; 
+    return result;
   }
 }
 

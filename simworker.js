@@ -4,7 +4,7 @@ class SimWorker {
   constructor(cfg) {
     this.cfg = cfg;
     this.result = { progress: 0 };
-    this.worker = new Worker('sim.js?v=11');
+    this.worker = new Worker('sim.js?v=13');
 
     this.onProgress = () => {};
     this.onFinished = () => {};
@@ -96,7 +96,8 @@ class SimWorker {
              + (offhand.swings / iterations).toFixed(2));
     for (const source of summary.sources) {
       if (source == mainhand || source == offhand) continue;
-      report.push('' + source.name + 's per fight: '
+      const plural = source.name.endsWith('s') ? '' : 's';
+      report.push('' + source.name + plural + ' per fight: '
                  + (source.swings / iterations).toFixed(2));
     }
     report.push('Rage gain per white hit: '

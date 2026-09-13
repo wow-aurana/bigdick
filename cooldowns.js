@@ -61,7 +61,7 @@ class DeathWish extends CooldownBase {
   }
 
   canUse(fightEndsIn) {
-    if (!this.char.rage.has(10)) return false;
+    if (!this.char.rage.has(30)) return false;
     if (!this.waitForEndOfFight) return true;
     if (fightEndsIn <= 31.5) return true;
     // For fights longer than 210 seconds
@@ -73,7 +73,7 @@ class DeathWish extends CooldownBase {
   use() {
     super.use();
     this.char.gcd.use();
-    this.char.rage.use(10);
+    this.char.rage.use(30);
     Debug.log('Death Wish activated (rage: '
               + this.char.rage.is.now.toFixed(1) + ')');
   }
@@ -197,8 +197,9 @@ class RendDot extends CooldownBase {
   // requires !active() first, but this stays safe either way) would
   // otherwise trip use()'s "already running" assertion.
   apply() {
+    const total = 147 * (1 + this.char.improvedRend * .12);
     this.has.ticksLeft = 7;
-    this.has.dmgPerTick = 147 / 7;
+    this.has.dmgPerTick = total / 7;
     this.force();
   }
 
@@ -211,6 +212,47 @@ class RendDot extends CooldownBase {
     // Only re-arm the 3 sec tick timer if there's another tick to come --
     // otherwise this is done, and the timer must actually read as expired
     // (not just "about to run out") for the next apply() to work.
+    if (this.has.ticksLeft > 0) this.force();
+  }
+
+  reset() { super.reset(); this.has.ticksLeft = 0; }
+}
+
+// Deep Wounds' bleed: "your critical strikes cause your opponent to bleed,
+// dealing 20/40/60% of your melee weapon's average damage over 12 sec."
+// Ticks every 1 sec (12 ticks). Triggers on any crit -- white or yellow,
+// see Character.procDeepWounds(), called from both Weapon.swing() and
+// Ability.swing(). Re-triggering refreshes rather than stacks, matching
+// Rend's own re-application above. Has its own SwingLog (not tied to any
+// one ability) so it shows up as its own line in the damage report --
+// see compileResults() in sim.js.
+class DeepWoundsDot extends CooldownBase {
+  constructor(char) {
+    super(1, 'Deep Wounds tick');
+    this.char = char;
+    this.has = { ticksLeft: 0, dmgPerTick: 0 };
+    this.log = new SwingLog('Deep Wounds');
+
+    final(this);
+  }
+
+  active() { return this.has.ticksLeft > 0; }
+  canUse() { return this.has.ticksLeft > 0; }
+
+  apply() {
+    const total = this.char.main.avgDmg * this.char.deepWoundsPercent;
+    this.has.ticksLeft = 12;
+    this.has.dmgPerTick = total / 12;
+    this.log.swings += 1;  // counts applications, for the report's "per fight" line
+    this.force();
+  }
+
+  handle() {
+    this.has.ticksLeft -= 1;
+    this.log.dmg += this.has.dmgPerTick;
+    Debug.log('Deep Wounds tick: ' + this.has.dmgPerTick.toFixed(0)
+              + ' damage (' + this.has.ticksLeft + ' tick'
+              + (this.has.ticksLeft === 1 ? '' : 's') + ' left)');
     if (this.has.ticksLeft > 0) this.force();
   }
 

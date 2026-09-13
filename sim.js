@@ -1,12 +1,12 @@
 'use strict';
 
-importScripts('util.js?v=3');
-importScripts('cooldowns.js?v=6');
+importScripts('util.js?v=4');
+importScripts('cooldowns.js?v=8');
 importScripts('auras.js?v=2');
-importScripts('talents.js?v=3');
-importScripts('weapon.js?v=6');
-importScripts('abilities.js?v=10');
-importScripts('character.js?v=7');
+importScripts('talents.js?v=4');
+importScripts('weapon.js?v=7');
+importScripts('abilities.js?v=11');
+importScripts('character.js?v=8');
 
 
 function reportProgress(progress) {
@@ -18,6 +18,7 @@ function compileResults(char) {
 
   const dmgSources = [...char.autos].concat(char.abilities);
   if (char.heroic) dmgSources.push(char.heroic);
+  if (char.deepWounds) dmgSources.push(char.deepWounds);
   res.dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
   res.sources = dmgSources.map((s) => s.log);
 

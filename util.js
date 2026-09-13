@@ -61,7 +61,9 @@ function baseAttackChances(char, target, weaponSkill, missBonus = 0) {
   const hitSuppression = skillDiff > 10 ? (skillDiff - 10) * .2 : 0;
   const hitOnGear = m.max(0, char.stats.hit - hitSuppression);
   const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
-  const miss = clamp(0, 100)(5 + missFromSkill + missBonus - hitOnGear);
+  // Precision (+1/2/3% hit with all abilities and melee attacks).
+  const miss = clamp(0, 100)(
+      5 + missFromSkill + missBonus - hitOnGear - char.precisionHit);
 
   // dodge
   const dodge = clamp(0, 100)(5 + skillDiff * .1);
@@ -90,19 +92,21 @@ class SwingLog {
 }
 
 class Rage {
-  constructor(lvl) {
+  // `max` is 100 by default, raised by Boundless Rage (+10/20/30).
+  constructor(lvl, max = 100) {
     this.is = { now: 0 };
     this.log = { gained: 0, fromSwings: 0, swings: 0, };
+    this.max = max;
 
     // See https://wowwiki.fandom.com/wiki/Rage#Rage_conversion_value
     this.constant = 0.0091107836 * lvl * lvl + 3.225598133 * lvl + 4.2652911;
     final(this);
   }
-  
+
   has(amount) { return this.is.now >= amount; }
 
   gain(amount) {
-    const gain = m.min(amount, 100 - this.is.now);
+    const gain = m.min(amount, this.max - this.is.now);
     this.log.gained += gain;
     this.is.now = this.is.now + gain;
   }
@@ -110,7 +114,7 @@ class Rage {
   gainFromSwing(dmg) {
     this.log.swings += 1;
     const amount = dmg / this.constant * 7.5
-    const gain = m.min(amount, 100 - this.is.now);
+    const gain = m.min(amount, this.max - this.is.now);
     this.log.fromSwings += gain;
     this.log.gained += gain;
     this.is.now = this.is.now + gain;

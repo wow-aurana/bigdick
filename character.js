@@ -5,30 +5,62 @@ class Character {
     this.stats = char.stats;
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
-    this.rage = new Rage(char.level);
     this.can = { execute: false };
 
     // Target armor mitigation
     this.armorDmgMul = 1;
 
-    // Talents
+    // Talents. Parsed before Rage below since Boundless Rage raises its cap.
     const talents = parseTalents(char.talents);
+    this.rage = new Rage(char.level, 100 + talents.boundlessRage * 10);
     this.heroicCost = 15 - talents.improvedHS;
     this.yellowCritMul = 2 + talents.impale * .1;
     this.weaponspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
-    this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
-    this.flurryHaste = talents.flurry ? 1 + (talents.flurry + 1) * .05 : 1;
-    this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
-    this.extraRageChance = talents.unbridledWrath * .08;
-    // Improved Slam's tooltip (talent-data.js) says -0.25 sec per rank, not
-    // the -0.1 this used to hardcode -- fixed while touching Slam anyway.
+    // Dual Wield Specialization: +5%/rank off-hand damage (on top of the
+    // 50% base), +20%/rank off-hand rage generation, +2%/rank off-hand hit.
+    this.offhandDmgMul = .5 + talents.dualWieldSpec * .05;
+    this.offhandRageMul = 1 + talents.dualWieldSpec * .2;
+    this.offhandHitBonus = talents.dualWieldSpec * 2;
+    // -0.25 sec/rank per Improved Slam's tooltip (talent-data.js) -- this
+    // used to hardcode -0.1, fixed while touching Slam anyway.
     this.slamCast = 1.5 - talents.improvedSlam * .25;
+    // 5%/rank, no rank-1 offset -- this used to add an extra +1 to the rank
+    // before scaling (1 + (rank+1)*.05), giving one rank too many at every
+    // level (e.g. 30% at max rank instead of the tooltip's 25%). Fixed.
+    this.flurryHaste = 1 + talents.flurry * .05;
+    this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
+    // 12%/rank per the tooltip (talent-data.js), not the 8% this used to
+    // hardcode. The "2 rage for two-handed weapons" part of the tooltip is
+    // handled at the point rage is actually granted -- see Weapon.swing().
+    this.extraRageChance = talents.unbridledWrath * .12;
+    // -3 Rage at rank 1, -5 (cumulative, not -2 as this used to say) at
+    // rank 2 -- matches the confirmed correction already recorded in
+    // forever-talents-notes.md, which the code itself never actually got
+    // updated to match until now.
     this.executeCost = 15 - (talents.improvedExecute > 1 ? 5 :
-                             talents.improvedExecute > 0 ? 2 : 0);
+                             talents.improvedExecute > 0 ? 3 : 0);
     this.improvedTacticalMastery = talents.improvedTacticalMastery;
     this.improvedOverpower = talents.improvedOverpower;
     // 2/4/6/8/10% per rank -- see procBloodthrill().
     this.bloodthrillChance = talents.bloodthrill * .02;
+    // +12/24/36% Rend bleed damage -- see RendDot.apply() in cooldowns.js.
+    this.improvedRend = talents.improvedRend;
+    // Deep Wounds: 20/40/60% of weapon average damage, as a fraction --
+    // see DeepWoundsDot in cooldowns.js. Only constructed if talented.
+    this.deepWoundsPercent = talents.deepWounds * .2;
+    this.deepWounds = talents.deepWounds ? new DeepWoundsDot(this) : null;
+    // Raging Blows: Whirlwind also strikes with the off-hand weapon --
+    // see Whirlwind.swingOffhand() in abilities.js.
+    this.ragingBlows = !!talents.ragingBlows;
+    // +1/2/3% hit with all abilities and melee attacks -- see
+    // baseAttackChances() in util.js.
+    this.precisionHit = talents.precision;
+    // Axe/Polearm crit, Mace/Staff armor pen, Sword extra-attack chance,
+    // all per weapon type -- see Weapon.setTarget()/effectiveArmorMul()/
+    // proc() in weapon.js. Same raw rank (1-5) drives all three; which one
+    // (if any) actually applies depends on that weapon's own configured
+    // type.
+    this.weaponmaster = talents.weaponmaster;
 
     // Stance. Defensive Stance is never modeled -- only Battle and
     // Berserker are real options here. "lazy" only switches when an
@@ -94,6 +126,8 @@ class Character {
 
     this.mortalStrike = create(MortalStrike, char.mortalstrike);
 
+    this.spearingStrike = create(SpearingStrike, char.spearingstrike);
+
     this.bloodthirst = create(Bloodthirst, char.bloodthirst);
 
     this.whirlwind = create(Whirlwind, char.whirlwind);
@@ -113,6 +147,7 @@ class Character {
       this.rend,
       this.slam,
       this.mortalStrike,
+      this.spearingStrike,
       this.bloodthirst,
       this.whirlwind,
       this.hamstring,
@@ -131,6 +166,7 @@ class Character {
       this.apOnUse,
       this.stanceReturn,
       this.rendDot,
+      this.deepWounds,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([
@@ -230,6 +266,15 @@ class Character {
     this.windfury.gain();
     Debug.log('Windfury Totem proc (+' + this.windfury.ap + ' AP)');
     this.main.swing(true);
+  }
+
+  // Deep Wounds: "your critical strikes cause your opponent to bleed."
+  // Unlike Bloodthrill this triggers on *any* crit, white or yellow --
+  // called from both Weapon.swing() and Ability.swing()'s crit branches.
+  procDeepWounds() {
+    if (!this.deepWounds) return;
+    this.deepWounds.apply();
+    Debug.log('Deep Wounds applied: ' + (this.main.avgDmg * this.deepWoundsPercent).toFixed(0) + ' over 12s');
   }
 
   // Bloodthrill: "Your melee attacks against targets afflicted by your

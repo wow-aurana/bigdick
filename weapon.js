@@ -45,6 +45,10 @@ class Weapon {
     const { miss, dodge, crit } =
         baseAttackChances(this.char, target, this.stats.skill, missBonus);
     this.table.miss = miss;
+    // Dual Wield Specialization's off-hand hit bonus (+2/4/6/8/10%).
+    if (!this.isMainhand) {
+      this.table.miss = clamp(0, 100)(this.table.miss - this.char.offhandHitBonus);
+    }
 
     this.table.dodge = dodge;
     this.table.dodge += this.table.miss;
@@ -59,7 +63,26 @@ class Weapon {
     this.table.glance += this.table.dodge;
 
     this.table.crit = crit;
+    // Weaponmaster: Axe/Polearm get a flat crit bonus (+1/2/3/4/5%),
+    // specific to whichever weapon is actually that type.
+    if (this.stats.type === 'axe' || this.stats.type === 'polearm') {
+      this.table.crit = clamp(0, 100)(this.table.crit + this.char.weaponmaster);
+    }
     this.table.crit += this.table.glance;
+  }
+
+  // Weaponmaster: Mace/Staff attacks "ignore X% of the target's armor"
+  // (+3/6/9/12/15%). The sim only ever precomputes one mitigation number
+  // from the target's raw armor (Character.armorDmgMul), so exact armor
+  // isn't threaded down to individual weapons -- this approximates armor
+  // penetration as closing X% of the gap between full mitigation and none,
+  // which is a common stand-in when the real armor value isn't available.
+  effectiveArmorMul() {
+    if (this.stats.type !== 'mace' && this.stats.type !== 'staff') {
+      return this.char.armorDmgMul;
+    }
+    const armorPen = this.char.weaponmaster * .03;
+    return this.char.armorDmgMul + (1 - this.char.armorDmgMul) * armorPen;
   }
 
   timeUntil() { return this.cooldown.timeUntil(); }
@@ -99,6 +122,20 @@ class Weapon {
         this.char.main.swing(true);
       }
     }
+    // Weaponmaster: Sword gets a flat chance (+1/2/3/4/5%) to trigger an
+    // extra attack, specific to whichever weapon is actually a sword.
+    if (!extraSwing && this.stats.type === 'sword'
+        && m.random() * 100 < this.char.weaponmaster) {
+      Debug.log(this.log.name + ' Weaponmaster (Sword) proc: extra attack');
+      this.char.main.cooldown.reset();
+      this.char.main.swing(true);
+    }
+  }
+
+  // Dual Wield Specialization's off-hand rage generation bonus
+  // (+20/40/60/80/100%).
+  rageGain(dmg) {
+    return this.isMainhand ? dmg : dmg * this.char.offhandRageMul;
   }
 
   swing(extraSwing = false) {
@@ -127,7 +164,11 @@ class Weapon {
       }
     }
 
-    let dmg = this.getDmg() * this.char.armorDmgMul;
+    // Unbridled Wrath's extra-rage chance grants 2 rage instead of 1 for
+    // two-handed weapons.
+    const extraRage = this.char.twohand ? 2 : 1;
+
+    let dmg = this.getDmg() * this.effectiveArmorMul();
     if (roll < this.table.miss) {
       this.log.misses += 1;
       Debug.log(label + ': miss');
@@ -135,7 +176,7 @@ class Weapon {
     } else if (roll < this.table.dodge) {
       this.log.dodges += 1;
       // According to Vilius on Fight Club, dodges give 75% rage.
-      this.char.rage.gainFromSwing(dmg * .75);
+      this.char.rage.gainFromSwing(this.rageGain(dmg * .75));
       this.char.procOverpowerDodge();
       Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
 
@@ -144,8 +185,8 @@ class Weapon {
       this.proc(extraSwing);
       dmg *= this.table.glanceMul;
       this.log.dmg += dmg;
-      this.char.rage.gainFromSwing(dmg);
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.char.rage.gainFromSwing(this.rageGain(dmg));
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
       Debug.log(label + ': glancing blow for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
 
@@ -154,9 +195,10 @@ class Weapon {
       this.proc(extraSwing);
       dmg *= 2;
       this.log.dmg += dmg;
-      this.char.rage.gainFromSwing(dmg);
+      this.char.rage.gainFromSwing(this.rageGain(dmg));
       this.char.flurry.refresh();
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.char.procDeepWounds();
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
       Debug.log(label + ': critical hit for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
 
@@ -164,8 +206,8 @@ class Weapon {
       this.log.hits += 1;
       this.proc(extraSwing);
       this.log.dmg += dmg;
-      this.char.rage.gainFromSwing(dmg);
-      if (this.char.extraRageChance > m.random()) this.char.rage.gain(1);
+      this.char.rage.gainFromSwing(this.rageGain(dmg));
+      if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
       Debug.log(label + ': hit for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
     }
