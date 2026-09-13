@@ -25,16 +25,21 @@ Two sources, cross-checked against each other:
    showing Classic's numbers as a placeholder). As of this writing the
    Forever beta hasn't started (begins 2026-09-17), so **only 4 of the 36
    spells have any confirmed Forever-specific data** (2 new, 1 changed, 1
-   removed) — everything else below is Classic's real data standing in
-   until the beta client is out. This site also supplied the higher-rank
+   tagged removed) — everything else below is Classic's real data standing
+   in until the beta client is out. This site also supplied the higher-rank
    numbers (Classic rank tables weren't fetched rank-by-rank; only rank 1
    was pulled from Wowhead directly for each spell, which is enough to
    confirm cost/cooldown/cast time/stance since those don't change by rank).
+   **Caveat**: this ability tracker (4/36 confirmed) is much less mature
+   than the same site's talent tracker (54/54 confirmed), and its one
+   "removed" tag is directly contradicted by the talent side's data — see
+   the Intercept entry below. Don't take this tracker's tags as confidently
+   as the talent notes treat theirs.
 
 Tags used below:
 - **[FOREVER: NEW]** — no Classic equivalent; footage-confirmed to exist in Forever.
 - **[FOREVER: CHANGED]** — footage-confirmed different from Classic; specifics noted inline.
-- **[FOREVER: REMOVED]** — footage-confirmed gone from the Forever warrior kit.
+- **[FOREVER: REMOVED]** — footage-confirmed gone from the Forever warrior kit (used once below, for Intercept — and even there, see that entry's caveat; take this tag with a grain of salt).
 - Untagged — no Forever-specific confirmation either way yet; numbers shown are Classic's, standing in as a placeholder until the beta ships.
 - **(talent-tooltip placeholder)** — this spell is baseline-only in Forever (learned from a trainer/by level), but wowforevertalents doesn't have Forever numbers for it, so it's showing the *Classic talent version's* tooltip as the closest stand-in. Treat the numbers as illustrative, not confirmed.
 
@@ -173,11 +178,21 @@ cooldown. No stance requirement.
 
 **Berserker Stance** — see Stances.
 
-**Intercept** — **[FOREVER: REMOVED]** — confirmed gone from the Forever
-warrior kit entirely. Classic reference data: Level 30, 10 Rage, 8-25 yd
-range, Instant, 30 sec cooldown. **Requires Berserker Stance only** (not
-Battle+Berserker, contrary to common recollection — verified directly).
-"Charge an enemy, generate rage, and stun it."
+**Intercept** — **[CONTRADICTED, do not trust the "removed" tag]**. The
+abilities tracker on wowforevertalents.com tags this "Removed in Forever"
+(and its ability grid visually drops the icon from the Fury list) — but
+the *same site's talent calculator* (a far more mature dataset: 54/54
+talents footage-confirmed vs. this ability tracker's 4/36) still has
+**Improved Intercept** at Fury tier 20, tagged "✓ Same as Classic (verified)
+· 3 sources," with the tooltip "Reduces the cooldown of your Intercept
+ability by 5 sec." That talent only makes sense if the base Intercept spell
+still exists, so the "Removed" tag on the abilities page is most likely a
+tracking error on the less-verified half of that site, not a real Forever
+change. **Treat Intercept as presumed still present** until the beta
+confirms one way or the other. Classic reference data: Level 30, 10 Rage,
+8-25 yd range, Instant, 30 sec cooldown. **Requires Berserker Stance only**
+(not Battle+Berserker, contrary to common recollection — verified
+directly). "Charge an enemy, generate rage, and stun it."
 
 **Slam** — **[FOREVER: CHANGED]** — one of the 2 confirmed changes. Base
 rank learned at level 30: 15 Rage, Melee Range, 1.5 sec cast, no stance
@@ -288,14 +303,18 @@ on the target. Also causes a high amount of threat."
 
 | Any stance | Battle only | Defensive only | Berserker only | Battle + Defensive | Battle + Berserker |
 |---|---|---|---|---|---|
-| Heroic Strike, Battle Shout, Demoralizing Shout, Cleave, Intimidating Shout, Challenging Shout, Sunder Armor, Bloodrage, Bloodthirst*, Shield Slam*, Slam | Charge, Overpower, Mocking Blow, Retaliation, Thunder Clap | Taunt, Revenge, Shield Block, Disarm, Shield Wall | Berserker Rage, Whirlwind, Pummel, Recklessness, Intercept (removed) | Shield Bash | Rend, Hamstring, Execute |
+| Heroic Strike, Battle Shout, Demoralizing Shout, Cleave, Intimidating Shout, Challenging Shout, Sunder Armor, Bloodrage, Bloodthirst*, Shield Slam*, Slam | Charge, Overpower, Mocking Blow, Retaliation, Thunder Clap | Taunt, Revenge, Shield Block, Disarm, Shield Wall | Berserker Rage, Whirlwind, Pummel, Recklessness, Intercept† | Shield Bash | Rend, Hamstring, Execute |
 
 \* Bloodthirst/Shield Slam checked against their Classic *talent* tooltips
 (no Classic baseline version exists to check, since they're talent-only
 there); Mortal Strike's stance requirement is unverified (see entry above).
+† Intercept is presumed still present despite the abilities tracker's
+"Removed" tag — see that entry's caveat above.
 
 ## Open questions / to revisit once the beta is live
 
+- Whether Intercept is actually still in the kit (presumed yes — see its
+  entry above) and, if so, whether its stance/cost/cooldown changed at all.
 - Real Forever tooltip numbers for the 2 new spells (Tactical Mastery,
   Victory Rush) and the changed one (Slam's new per-rank values).
 - Whether Defensive/Berserker Stance still require a class quest, or are
