@@ -1,7 +1,7 @@
 'use strict';
 
 class Weapon {
-  constructor(char, stats, name) {
+  constructor(char, stats, name, isMainhand = true) {
     this.log = new SwingLog(name);
 
     this.char = char;
@@ -10,18 +10,17 @@ class Weapon {
 
     this.stats = stats;
     this.avgDmg = (stats.min + stats.max) * .5;
-    this.isMainhand = true;  // Will be set to false for OH in Character
+    this.isMainhand = isMainhand;
     this.is = { flurried: false };
     this.table = {};
-    
+
     const crusader = stats.crusader ? new Crusader(stats.speed) : null;
     const strproc = getStrengthProc(stats.speed, stats.proc);
     this.strprocs = [crusader, strproc].filter((e) => !!e);
     this.extraAttacks = getExtraAttacks(stats.proc);
-  }
 
-  // TODO refactor offhand flag so this crutch isn't needed.
-  lock() { final(this); }
+    final(this);
+  }
 
   tick(seconds) {
     this.cooldown.tick(seconds);
@@ -37,42 +36,26 @@ class Weapon {
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
   setTarget(target) {
-    const stats = this.char.stats;
-
-    const targetDef = target.level * 5;
-    const baseSkill = this.char.level * 5;
-    const skillDiff = targetDef - this.stats.skill;
-
-    // miss
-    // see this blue post:
-    // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
-    // Hit rating suppression scales continuously past the +10 skill deficit
-    // threshold: https://github.com/magey/classic-warrior/wiki/Attack-table
-    const hitSuppression = skillDiff > 10 ? (skillDiff - 10) * .2 : 0;
-    const hitOnGear = m.max(0, this.char.stats.hit - hitSuppression);
-    const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
-    const baseMiss = 5 + missFromSkill;
     // Dual wield miss penalty is a flat +19, not the older 0.8x+20 estimate:
     // https://github.com/magey/classic-warrior/wiki/Attack-table
-    const actualMiss = !this.char.off ? baseMiss : (baseMiss + 19);
-    this.table.miss = clamp(0, 100)(actualMiss - hitOnGear);
-    
-    // dodge
-    this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
+    const missBonus = this.char.off ? 19 : 0;
+    const { miss, dodge, crit } =
+        baseAttackChances(this.char, target, this.stats.skill, missBonus);
+    this.table.miss = miss;
+
+    this.table.dodge = dodge;
     this.table.dodge += this.table.miss;
 
     // glance
+    const targetDef = target.level * 5;
+    const baseSkill = this.char.level * 5;
+    const skillDiff = targetDef - this.stats.skill;
     this.table.glanceMul = clamp(.2, .95)(.65 + (15 - skillDiff) * .04);
     const glance = 10 + (targetDef - m.min(baseSkill, this.stats.skill)) * 2;
-    this.table.glance = clamp(0, 100)(glance); 
+    this.table.glance = clamp(0, 100)(glance);
     this.table.glance += this.table.dodge;
 
-    // crit
-    const baseSkillDiff = targetDef - baseSkill;
-    const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
-    const suppressedCrit = applyCritSuppression(
-        this.char.stats.crit, this.char.stats.agility, magicNumber);
-    this.table.crit = clamp(0, 100)(suppressedCrit - baseSkillDiff * .2);
+    this.table.crit = crit;
     this.table.crit += this.table.glance;
     final(this.table);
   }

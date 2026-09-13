@@ -14,6 +14,42 @@ function applyCritSuppression(totalCrit, agility, suppression) {
   return agiCrit + m.max(0, nonAgiCrit - suppression);
 }
 
+// Base miss/dodge/crit chances against `target`, as independent percentages
+// (not yet chained into a cumulative roll table -- white and yellow attacks
+// each stack these together differently: white attacks add glancing blows
+// on top and yellow attacks use a separate two-roll system instead of
+// chaining crit at all). weaponSkill is the attacker's weapon skill rating;
+// missBonus is an additional flat miss percentage added before the
+// hit-rating subtraction (used for the dual-wield miss penalty).
+// See https://github.com/magey/classic-warrior/wiki/Attack-table
+function baseAttackChances(char, target, weaponSkill, missBonus = 0) {
+  const targetDef = target.level * 5;
+  const baseSkill = char.level * 5;
+  const skillDiff = targetDef - weaponSkill;
+
+  // miss
+  // see this blue post:
+  // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
+  // Hit rating suppression scales continuously past the +10 skill deficit
+  // threshold.
+  const hitSuppression = skillDiff > 10 ? (skillDiff - 10) * .2 : 0;
+  const hitOnGear = m.max(0, char.stats.hit - hitSuppression);
+  const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
+  const miss = clamp(0, 100)(5 + missFromSkill + missBonus - hitOnGear);
+
+  // dodge
+  const dodge = clamp(0, 100)(5 + skillDiff * .1);
+
+  // crit
+  const baseSkillDiff = targetDef - baseSkill;
+  const magicNumber = (target.level - char.level) > 2 ? 1.8 : 0;
+  const suppressedCrit =
+      applyCritSuppression(char.stats.crit, char.stats.agility, magicNumber);
+  const crit = clamp(0, 100)(suppressedCrit - baseSkillDiff * .2);
+
+  return { miss, dodge, crit };
+}
+
 class SwingLog {
   constructor(name) {
     this.name = name;

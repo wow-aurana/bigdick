@@ -1,7 +1,6 @@
 'use strict';
 
 function getElement(id) { return document.getElementById(id); }
-function getInputString(id) { return getElement(id).value; }
 function getInputNumber(id) { return parseFloat(getElement(id).value); }
 function getInputChecked(id) { return getElement(id).checked; }
 

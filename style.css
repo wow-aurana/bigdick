@@ -101,10 +101,6 @@ input[type=number]::-webkit-outer-spin-button {
   text-align: left;
 }
 
-#talents {
-  width: 600px;
-}
-
 input.indent {
   margin-left: 24px;
 }

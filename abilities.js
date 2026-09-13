@@ -22,33 +22,12 @@ class Ability {
 
   // See https://github.com/magey/classic-warrior/wiki/Attack-table
   setTarget(target) {
-    const stats = this.char.stats;
-
-    const targetDef = target.level * 5;
-    const baseSkill = this.char.level * 5;
-    const skillDiff = targetDef - this.char.main.stats.skill;
-
-    // miss
-    // see this blue post:
-    // https://us.forums.blizzard.com/en/wow/t/bug-hit-tables/185675/33
-    // Hit rating suppression scales continuously past the +10 skill deficit
-    // threshold: https://github.com/magey/classic-warrior/wiki/Attack-table
-    const hitSuppression = skillDiff > 10 ? (skillDiff - 10) * .2 : 0;
-    const hitOnGear = m.max(0, this.char.stats.hit - hitSuppression);
-    const missFromSkill = (skillDiff > 10 ? .2 : .1) * skillDiff;
-    this.table.miss =
-        clamp(0, 100)(5 + missFromSkill - hitOnGear);
-
-    // dodge
-    this.table.dodge = clamp(0, 100)(5 + skillDiff * .1);
+    const { miss, dodge, crit } =
+        baseAttackChances(this.char, target, this.char.main.stats.skill);
+    this.table.miss = miss;
+    this.table.dodge = dodge;
     this.table.dodge += this.table.miss;
-
-    // crit
-    const baseSkillDiff = targetDef - baseSkill;
-    const magicNumber = (target.level - this.char.level) > 2 ? 1.8 : 0;
-    const suppressedCrit = applyCritSuppression(
-        this.char.stats.crit, this.char.stats.agility, magicNumber);
-    this.table.crit = clamp(0, 100)(suppressedCrit - baseSkillDiff * .2);
+    this.table.crit = crit;
     final(this.table);
   }
 

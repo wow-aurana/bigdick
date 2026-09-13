@@ -17,7 +17,7 @@ class Character {
     this.yellowCritMul = 2 + talents.impale * .1;
     this.weaponspec = char.twohand ? (1 + talents.twoHandSpec * .01) : 1;
     this.offhandDmgMul = .5 + talents.dualWieldSpec * .025;
-    this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * .05) || 0;
+    this.flurryHaste = talents.flurry ? 1 + (talents.flurry + 1) * .05 : 1;
     this.anger = talents.angerMgmt ? new AngerManagement(this.rage) : null;
     this.extraRageChance = talents.unbridledWrath * .08;
     this.slamCast = 1.5 - talents.improvedSlam * .1;
@@ -33,13 +33,8 @@ class Character {
                             : char.mainhand.dagger ? 1.7 : 2.4;
 
     this.main = new Weapon(this, char.twohand || char.mainhand, 'Mainhand');
-    this.main.lock();
-
-    this.off = char.offhand ? new Weapon(this, char.offhand, 'Offhand') : null;
-    if (this.off) {
-      this.off.isMainhand = false;
-      this.off.lock();
-    }
+    this.off = char.offhand ?
+        new Weapon(this, char.offhand, 'Offhand', false) : null;
 
     // AP on use (Blood Fury, trinkets etc.)
     this.apOnUse = !!char.aponuse ? new ApOnUse(char.aponuse) : null;
@@ -178,20 +173,14 @@ class Character {
   }
 
   getNextEvent(fightEndsIn) {
-    // console.clear();
     // Reroll brain lag
     this.brainlag.current = m.random() * this.brainlag.max;
 
-    const nextEvent = this.events.reduce((ret, e) => {
-      // console.log(e);
+    return this.events.reduce((ret, e) => {
       if (!e.canUse(fightEndsIn)) return ret;
       if (e.timeUntil() >= ret.timeUntil()) return ret;
       return e;
     }, this.main);
-    // console.log('-----');
-    // console.log(nextEvent);
-    // debugger;
-    return nextEvent;
   }
 
   advanceTime(seconds) {

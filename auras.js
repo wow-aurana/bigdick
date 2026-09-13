@@ -48,7 +48,6 @@ class WindfuryAp extends Aura {
     final(this);
   }
 
-  gain() { super.gain(); }
   tick(seconds) { super.tick(seconds); this.icd.tick(seconds); }
   offCooldown() { return !this.icd.running(); }
   triggerIcd() { this.icd.use(); }
