@@ -383,11 +383,13 @@ function updateTalentGating() {
     if (!available) checkbox.check(false);
   };
 
+  const deathWish = rank('fury', 'death-wish') > 0;
   const improvedSlam2 = rank('arms', 'improved-slam') >= 2;
   const mortalStrike = rank('arms', 'mortal-strike') > 0;
   const bloodthirst = rank('fury', 'bloodthirst') > 0;
   const bloodthrill = rank('fury', 'bloodthrill') > 0;
 
+  gateAbility('deathwish-row', abilities.deathwish, deathWish);
   gateAbility('rend-row', abilities.rend, bloodthrill);
   gateAbility('slam-row', abilities.slam, improvedSlam2);
   gateAbility('mortalstrike-row', abilities.mortalstrike, mortalStrike);
