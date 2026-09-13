@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-  <link href="style.css?v=2" rel="stylesheet">
+  <link href="style.css?v=3" rel="stylesheet">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <script>
     // Applied before body renders so there's no flash of the wrong theme.
@@ -37,24 +37,17 @@
         <input id="targetlvl" type="number" min="10" max="63" value="63">
         <br>
         <span class="stat">Enemy type:</span>
-        <input class="enemytype" name="enemytype" type="radio" value="humanoid" checked>
-        <span class="enemytype">Humanoid</span>
-        <input class="enemytype" name="enemytype" type="radio" value="beast">
-        <span class="enemytype">Beast</span>
-        <input class="enemytype" name="enemytype" type="radio" value="undead">
-        <span class="enemytype">Undead</span>
-        <input class="enemytype" name="enemytype" type="radio" value="demon">
-        <span class="enemytype">Demon</span>
-        <input class="enemytype" name="enemytype" type="radio" value="elemental">
-        <span class="enemytype">Elemental</span>
-        <input class="enemytype" name="enemytype" type="radio" value="dragonkin">
-        <span class="enemytype">Dragonkin</span>
-        <input class="enemytype" name="enemytype" type="radio" value="giant">
-        <span class="enemytype">Giant</span>
-        <input class="enemytype" name="enemytype" type="radio" value="mechanical">
-        <span class="enemytype">Mechanical</span>
-        <input class="enemytype" name="enemytype" type="radio" value="critter">
-        <span class="enemytype">Critter</span>
+        <div class="enemytype-grid">
+        <label><input class="enemytype" name="enemytype" type="radio" value="humanoid" checked> Humanoid</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="beast"> Beast</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="undead"> Undead</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="demon"> Demon</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="elemental"> Elemental</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="dragonkin"> Dragonkin</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="giant"> Giant</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="mechanical"> Mechanical</label>
+        <label><input class="enemytype" name="enemytype" type="radio" value="critter"> Critter</label>
+        </div>
         <br>
         <span class="stat">Target armor:</span>
         <input id="armor" type="number" min="0" max="10000" value="3731">
