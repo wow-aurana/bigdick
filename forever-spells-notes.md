@@ -44,9 +44,12 @@ Tags used below:
 - **(talent-tooltip placeholder)** — wowforevertalents doesn't have Forever-specific numbers for this spell yet, so it's showing the *Classic talent version's* tooltip as the closest stand-in. Treat the numbers as illustrative, not confirmed. Used for Mortal Strike, Bloodthirst and Shield Slam — see the note below on how those three actually work.
 
 **Mortal Strike, Bloodthirst and Shield Slam — unlock via talent, then
-train normally (per the user, 2026-09-19).** In Classic, Bloodthirst and
-Shield Slam are single-rank talents — spend the one talent point and
-that's it, no further ranks exist. **Forever changes this**: you still
+train normally (per the user, 2026-09-19).** All three have always been
+Classic talents — the final/capstone talent of their respective tree
+(Mortal Strike caps Arms, Bloodthirst caps Fury, Shield Slam caps
+Protection) — and in Classic they're single-rank: spend the one talent
+point and that's it, no further ranks exist. **Forever changes this**: you
+still
 need to spend a talent point to unlock rank 1 (they haven't become free
 baseline spells), but from there you train ranks 2, 3, 4... from a trainer
 like any other spell, the same as Rend or Sunder Armor. This explains why
@@ -154,15 +157,14 @@ Battle Stance only.**
 Melee attacks made from behind cannot be counterattacked. A maximum of 30
 attacks will cause retaliation."
 
-**Mortal Strike** — Rank 4 (talent-tooltip placeholder). Unlocked via the
-Arms talent at tier 7 (see `talent-data.js`'s `mortal-strike` entry —
-requires Sweeping Strikes rank 1 first); ranks 2-4 then trainable, rank 4
-by level 60 (trainer slot shown: level 48). **[FOREVER: NEW]** — doesn't
-exist in vanilla Classic at all (it's a TBC+ ability); this is one of the
-2 confirmed-new entries. 30 Rage, Melee Range, Instant, 6 sec cooldown.
-No stance requirement (per direct tooltip check — treat this as reliable
-the way the other verified-stance entries in this file are, not as an open
-question).
+**Mortal Strike** — Rank 4 (talent-tooltip placeholder). Same situation as
+Bloodthirst and Shield Slam: it's the capstone Arms talent (see
+`talent-data.js`'s `mortal-strike` entry, tier 7 — requires Sweeping
+Strikes rank 1 first) and has always existed in Classic, single-rank
+there; unlocked via that talent point, then ranks 2-4 trainable in
+Forever, rank 4 by level 60 (trainer slot shown: level 48). 30 Rage, Melee
+Range, Instant, 6 sec cooldown. No stance requirement (checked directly
+against the Classic talent tooltip; treat as reliable).
 "A vicious strike that deals weapon damage plus 160 and wounds the target,
 reducing the effectiveness of any healing by 50% for 10 sec."
 
@@ -328,11 +330,12 @@ on the target. Also causes a high amount of threat."
 
 | Any stance | Battle only | Defensive only | Berserker only | Battle + Defensive | Battle + Berserker |
 |---|---|---|---|---|---|
-| Heroic Strike, Battle Shout, Demoralizing Shout, Cleave, Intimidating Shout, Challenging Shout, Sunder Armor, Bloodrage, Bloodthirst*, Shield Slam*, Slam | Charge, Overpower, Mocking Blow, Retaliation, Thunder Clap | Taunt, Revenge, Shield Block, Disarm, Shield Wall | Berserker Rage, Whirlwind, Pummel, Recklessness, Intercept† | Shield Bash | Rend, Hamstring, Execute |
+| Heroic Strike, Battle Shout, Demoralizing Shout, Cleave, Intimidating Shout, Challenging Shout, Sunder Armor, Bloodrage, Bloodthirst*, Shield Slam*, Mortal Strike*, Slam | Charge, Overpower, Mocking Blow, Retaliation, Thunder Clap | Taunt, Revenge, Shield Block, Disarm, Shield Wall | Berserker Rage, Whirlwind, Pummel, Recklessness, Intercept† | Shield Bash | Rend, Hamstring, Execute |
 
-\* Bloodthirst/Shield Slam checked against their Classic *talent* tooltips
-(no Classic baseline version exists to check, since they're talent-only
-there); Mortal Strike's stance requirement is unverified (see entry above).
+\* Bloodthirst/Shield Slam/Mortal Strike checked against their Classic
+*talent* tooltips (no Classic baseline/trainer version exists to check,
+since all three are talent-only there — see the note above on how Forever
+changes this).
 † Intercept is presumed still present despite the abilities tracker's
 "Removed" tag — see that entry's caveat above.
 
@@ -341,8 +344,7 @@ there); Mortal Strike's stance requirement is unverified (see entry above).
 - Whether Intercept is actually still in the kit (presumed yes — see its
   entry above) and, if so, whether its stance/cost/cooldown changed at all.
 - Real Forever tooltip numbers for Tactical Mastery and Victory Rush (see
-  the user's working guesses on each, above), Slam's new per-rank values,
-  and Mortal Strike's exact attack-power/weapon-damage scaling once it's
-  out of "borrowed TBC talent tooltip" territory.
+  the user's working guesses on each, above) and Slam's new per-rank
+  values.
 - Whether Defensive/Berserker Stance still require a class quest, or are
   simply level-gated now.
