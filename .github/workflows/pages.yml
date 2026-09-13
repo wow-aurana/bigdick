@@ -1,0 +1,58 @@
+name: Deploy Pages
+
+# Publishes master at the site root (unchanged URL:
+# https://wow-aurana.github.io/bigdick/) and forever under /forever/
+# (https://wow-aurana.github.io/bigdick/forever/), both from one Pages
+# site. This file must exist, identically, on both master and forever
+# for a push to either branch to trigger it -- GitHub only evaluates
+# workflow files present on the ref that was actually pushed.
+on:
+  push:
+    branches: [master, forever]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time; let a newer push win instead of
+# queuing every intermediate one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: site
+
+      - name: Checkout forever
+        uses: actions/checkout@v4
+        with:
+          ref: forever
+          path: site/forever
+
+      - name: Strip .git metadata from the assembled site
+        run: rm -rf site/.git site/forever/.git
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
