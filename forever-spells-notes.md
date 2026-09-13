@@ -41,7 +41,21 @@ Tags used below:
 - **[FOREVER: CHANGED]** — footage-confirmed different from Classic; specifics noted inline.
 - **[FOREVER: REMOVED]** — footage-confirmed gone from the Forever warrior kit (used once below, for Intercept — and even there, see that entry's caveat; take this tag with a grain of salt).
 - Untagged — no Forever-specific confirmation either way yet; numbers shown are Classic's, standing in as a placeholder until the beta ships.
-- **(talent-tooltip placeholder)** — this spell is baseline-only in Forever (learned from a trainer/by level), but wowforevertalents doesn't have Forever numbers for it, so it's showing the *Classic talent version's* tooltip as the closest stand-in. Treat the numbers as illustrative, not confirmed.
+- **(talent-tooltip placeholder)** — wowforevertalents doesn't have Forever-specific numbers for this spell yet, so it's showing the *Classic talent version's* tooltip as the closest stand-in. Treat the numbers as illustrative, not confirmed. Used for Mortal Strike, Bloodthirst and Shield Slam — see the note below on how those three actually work.
+
+**Mortal Strike, Bloodthirst and Shield Slam — unlock via talent, then
+train normally (per the user, 2026-09-19).** In Classic, Bloodthirst and
+Shield Slam are single-rank talents — spend the one talent point and
+that's it, no further ranks exist. **Forever changes this**: you still
+need to spend a talent point to unlock rank 1 (they haven't become free
+baseline spells), but from there you train ranks 2, 3, 4... from a trainer
+like any other spell, the same as Rend or Sunder Armor. This explains why
+wowforevertalents' rank selector for all three skips rank 1 and only shows
+ranks 2 onward — rank 1 comes from the talent point, not the trainer, so
+it doesn't appear in a "trainable ranks" list. The "Level 48"/"Level 60"
+trainer levels recorded below are for those trainable ranks 2+, not for
+unlocking the spell in the first place (that still requires the talent
+point, at whatever level the talent tier allows).
 
 **Two "well-known vanilla trivia" corrections** worth flagging since they
 contradict common assumption (verified directly against live Wowhead Classic
@@ -132,13 +146,14 @@ Battle Stance only.**
 Melee attacks made from behind cannot be counterattacked. A maximum of 30
 attacks will cause retaliation."
 
-**Mortal Strike** — Rank 4 (talent-tooltip placeholder). Level 60 (trainer
-slot: level 48). **[FOREVER: NEW]** — doesn't exist in vanilla Classic at
-all (it's a TBC+ ability); this is one of the 2 confirmed-new entries.
-30 Rage, Melee Range, Instant, 6 sec cooldown. Stance requirement not
-independently verified (no Classic version exists to check against; TBC's
-Mortal Strike has no stance requirement, plausibly the same here, but
-**unconfirmed**).
+**Mortal Strike** — Rank 4 (talent-tooltip placeholder). Unlocked via a
+talent point (see note above); ranks 2-4 then trainable, rank 4 by level
+60 (trainer slot shown: level 48). **[FOREVER: NEW]** — doesn't exist in
+vanilla Classic at all (it's a TBC+ ability); this is one of the 2
+confirmed-new entries. 30 Rage, Melee Range, Instant, 6 sec cooldown.
+Stance requirement not independently verified (no Classic version exists
+to check against; TBC's Mortal Strike has no stance requirement, plausibly
+the same here, but **unconfirmed**).
 "A vicious strike that deals weapon damage plus 160 and wounds the target,
 reducing the effectiveness of any healing by 50% for 10 sec."
 
@@ -218,14 +233,13 @@ Range, Instant, 10 sec cooldown. **Requires Berserker Stance only.**
 "Pummel the target for 50 damage (rank 2). It also interrupts spellcasting
 and prevents any spell in that school from being cast for 4 sec."
 
-**Bloodthirst** — Rank 4 (talent-tooltip placeholder). Level 60 (trainer
-slot: level 48). Appears here as a **baseline trainer spell** in Forever —
-in Classic this is a Fury *talent*, not trainer-taught, so its very
-presence in this list is itself a de facto Forever change (not
-independently footage-tagged by the tracker, but structurally new). 30
-Rage, Melee Range, Instant, 6 sec cooldown. No stance requirement (checked
-directly against the Classic talent tooltip — somewhat surprising for a
-"Berserker-flavored" ability, but confirmed no "Forms" restriction).
+**Bloodthirst** — Rank 4 (talent-tooltip placeholder). Still a talent to
+unlock rank 1 (single-rank-only in Classic), but ranks 2-4 are then
+trainable in Forever — see note above; rank 4 by level 60 (trainer slot
+shown: level 48). 30 Rage, Melee Range, Instant, 6 sec cooldown. No stance
+requirement (checked directly against the Classic talent tooltip —
+somewhat surprising for a "Berserker-flavored" ability, but confirmed no
+"Forms" restriction).
 "Instantly attack the target causing damage equal to 45% of your attack
 power. In addition, the next 5 successful melee attacks will restore 20
 health. This effect lasts 8 sec."
@@ -288,11 +302,12 @@ Defensive Stance only.**
 "Reduces the damage taken from melee attacks, ranged attacks and spells by
 75% for 10 sec."
 
-**Shield Slam** — Rank 4 (talent-tooltip placeholder). Level 60 (trainer
-slot: level 48). Same situation as Bloodthirst: appears as a **baseline
-trainer spell** here, a talent in Classic. 20 Rage, Melee Range, Instant, 6
-sec cooldown. No stance requirement (checked directly against the Classic
-talent tooltip — only requires a shield equipped, not a specific stance).
+**Shield Slam** — Rank 4 (talent-tooltip placeholder). Same situation as
+Bloodthirst: still a talent to unlock rank 1, ranks 2-4 then trainable —
+rank 4 by level 60 (trainer slot shown: level 48). 20 Rage, Melee Range,
+Instant, 6 sec cooldown. No stance requirement (checked directly against
+the Classic talent tooltip — only requires a shield equipped, not a
+specific stance).
 "Slam the target with your shield, causing 342 to 358 damage, modified by
 your shield block value, and has a 50% chance of dispelling 1 magic effect
 on the target. Also causes a high amount of threat."
@@ -319,8 +334,11 @@ there); Mortal Strike's stance requirement is unverified (see entry above).
   Victory Rush) and the changed one (Slam's new per-rank values).
 - Whether Defensive/Berserker Stance still require a class quest, or are
   simply level-gated now.
-- Whether Bloodthirst/Shield Slam/Mortal Strike/Recklessness's move to
-  baseline-at-level-48/50 comes with new stance requirements distinct from
-  their Classic talent versions (all three "Talent" placeholders above
-  showed no stance requirement, but that's the *talent* tooltip's rule, not
-  necessarily what Forever's baseline version does).
+- Whether Bloodthirst/Shield Slam/Mortal Strike pick up a stance
+  requirement once trained past rank 1 in Forever, distinct from their
+  Classic single-rank talent tooltips (checked above showed no stance
+  requirement, but that's the *talent* tooltip's rule for rank 1 only —
+  Forever's higher, trainer-taught ranks are unverified).
+- Exact talent tier/point cost to unlock Mortal Strike/Bloodthirst/Shield
+  Slam's rank 1 in Forever (confirmed the mechanic — talent unlocks it,
+  then train normally — but not the specific talent slot or level).
