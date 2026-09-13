@@ -51,6 +51,12 @@ class Character {
     // usable while this is up, consumed the instant Overpower is used --
     // see Overpower.handle() in abilities.js.
     this.overpowerReady = new Aura(6, 'Bloodthrill');
+    // Overpower's default (talent-free) trigger: usable for 5 sec after
+    // the target dodges any of your attacks. Classic-era duration, not
+    // confirmed changed for Forever. A separate Aura from the Bloodthrill
+    // one above since they have different durations, but Overpower.handle()
+    // consumes both regardless of which one (or both) let it be cast.
+    this.overpowerDodge = new Aura(5, 'Overpower (dodge)');
     this.abilityApScaling = !!char.twohand ? 3.3
                             : char.mainhand.dagger ? 1.7 : 2.4;
 
@@ -81,9 +87,9 @@ class Character {
     this.execute = create(Execute, {});
 
     this.rend = create(Rend, char.rend);
-    // No checkbox: entirely dependent on Bloodthrill actually granting a
-    // charge (this.overpowerReady), which only happens with points spent
-    // there in the first place.
+    // No checkbox: always available, gated purely by whether a charge is
+    // up (either from a dodge, always possible, or from Bloodthrill, if
+    // talented -- see Overpower.checkConditions() in abilities.js).
     this.overpower = new Overpower(this, {});
 
     this.mortalStrike = create(MortalStrike, char.mortalstrike);
@@ -133,6 +139,7 @@ class Character {
       this.windfury,
       this.stance,
       this.overpowerReady,
+      this.overpowerDodge,
     ]).filter(exists);
 
     // Set target
@@ -236,6 +243,14 @@ class Character {
     if (m.random() > this.bloodthrillChance) return;
     this.overpowerReady.gain();
     Debug.log('Bloodthrill proc: Overpower ready for 6s');
+  }
+
+  // Overpower's baseline trigger, independent of Bloodthrill: any of your
+  // attacks (white or yellow) being dodged grants a 5 sec window. Called
+  // from the dodge branch of both Weapon.swing() and Ability.swing().
+  procOverpowerDodge() {
+    this.overpowerDodge.gain();
+    Debug.log('Target dodged: Overpower ready for 5s');
   }
 
   getNextEvent(fightEndsIn) {

@@ -99,6 +99,7 @@ class Ability {
     } else if (firstRoll < this.table.dodge) {
       this.log.dodges += 1;
       this.onDodge();
+      this.char.procOverpowerDodge();
       Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
     } else {
       const dmg = this.getDmg() * this.char.armorDmgMul;
@@ -213,10 +214,20 @@ class Overpower extends Ability {
   }
 
   getDmg() { return this.char.main.getDmg() + 35 * this.char.multiplier(); }
-  checkConditions() { return this.char.overpowerReady.running(); }
+
+  // Either window is enough to use it -- Bloodthrill (talent-driven) or
+  // the default dodge trigger (always available, see
+  // Character.procOverpowerDodge()).
+  checkConditions() {
+    return this.char.overpowerReady.running()
+        || this.char.overpowerDodge.running();
+  }
 
   handle() {
+    // Using Overpower consumes both windows regardless of which one (or
+    // both) actually enabled this cast.
     this.char.overpowerReady.reset();
+    this.char.overpowerDodge.reset();
     super.handle();
   }
 }

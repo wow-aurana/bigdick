@@ -136,6 +136,7 @@ class Weapon {
       this.log.dodges += 1;
       // According to Vilius on Fight Club, dodges give 75% rage.
       this.char.rage.gainFromSwing(dmg * .75);
+      this.char.procOverpowerDodge();
       Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
 
     } else if (roll < this.table.glance) {

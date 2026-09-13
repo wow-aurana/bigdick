@@ -4,9 +4,9 @@ importScripts('util.js?v=3');
 importScripts('cooldowns.js?v=6');
 importScripts('auras.js?v=2');
 importScripts('talents.js?v=3');
-importScripts('weapon.js?v=5');
-importScripts('abilities.js?v=9');
-importScripts('character.js?v=6');
+importScripts('weapon.js?v=6');
+importScripts('abilities.js?v=10');
+importScripts('character.js?v=7');
 
 
 function reportProgress(progress) {
