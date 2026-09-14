@@ -158,11 +158,12 @@ input.indent {
   flex: 0 0 750px;
 }
 
-/* Enemy type: a 3x3 grid instead of a plain inline flow, both so it's
-   easier to scan and so a radio and its label can never end up split
+/* Enemy type and Race: a 3x3 grid instead of a plain inline flow, both so
+   it's easier to scan and so a radio and its label can never end up split
    across a line wrap (each pair is now a single <label>, an atomic
    inline-block unit). */
-.enemytype-grid {
+.enemytype-grid,
+.race-grid {
   display: inline-grid;
   grid-template-columns: repeat(3, auto);
   column-gap: 12px;

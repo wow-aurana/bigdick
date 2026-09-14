@@ -135,6 +135,12 @@ function collectInputs() {
       level: getInputNumber('charlvl'),
       talents: getTalents(),
       stance: getRadioValue('stance'),
+      race: getRadioValue('race'),
+      maxhp: getInputNumber('maxhp'),
+      raceactive: {
+        trigger: getRadioValue('raceactive'),
+        seconds: getInputNumber('raceactiveseconds'),
+      },
       bok: getInputChecked('bok'),
       hoj: getInputChecked('hoj'),
       ragepotion: getInputChecked('ragepotion'),
@@ -420,3 +426,18 @@ window.addEventListener('focus', updateTalentGating);
 window.addEventListener('storage', (e) => {
   if (e.key === 'bigdickForeverTalents') updateTalentGating();
 });
+
+// Race-dependent rows: Max HP only matters for Undead's Touch of the
+// Grave, and the "Racial active ability" timing only matters for the four
+// races with an on-use racial (Elune's Light/Eureka!/Blood Fury/
+// Berserking). See character.js for what each race actually does.
+function updateRaceGating() {
+  const race = getRadioValue('race');
+  getElement('maxhp-row').style.display = race === 'undead' ? '' : 'none';
+  const hasActive = ['nightelf', 'gnome', 'orc', 'troll'].includes(race);
+  getElement('raceactive-row').style.display = hasActive ? '' : 'none';
+}
+updateRaceGating();
+for (const el of document.getElementsByName('race')) {
+  el.addEventListener('change', updateRaceGating);
+}

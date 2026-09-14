@@ -6,6 +6,19 @@ class Character {
     this.level = char.level;
     this.gcd = new Cooldown(1.5, 'GCD');
     this.can = { execute: false };
+    // Player race -- see forever-racials-notes.md for sourcing/confidence
+    // on each bonus below. Values mostly borrowed as-is from a similar
+    // Forever sim (tzcnt/WarriorSim); several are that project's own
+    // unconfirmed guesses, not verified game data.
+    this.race = char.race || 'human';
+    // Touch of the Grave (Undead) needs the player's own max health, which
+    // this sim otherwise never tracks -- a plain manual input, not derived
+    // from stamina/gear. See procTouchOfGrave().
+    this.maxHp = char.maxhp || 0;
+    // Eureka! (Gnome): charges left, each consumed by the next ability
+    // cast -- see consumeEureka() and Ability.handle()/swing(). Nested
+    // (like this.can above) since Character itself gets frozen below.
+    this.racial = { eurekaCharges: 0 };
 
     // Target armor mitigation
     this.armorDmgMul = 1;
@@ -76,6 +89,23 @@ class Character {
     // Weapons, procs etc.
     this.handOfJustice = char.hoj;
     this.blessingOfKings = char.bok;
+    // Racial active ability (Elune's Light/Eureka!/Blood Fury/Berserking)
+    // -- only one of these exists, matching whichever race is selected.
+    // Passive-only races (Human, Dwarf, Undead, Tauren, Skyborne) leave
+    // this null. See RacialActive/EurekaActive in cooldowns.js and the
+    // "Racial active ability" setting for the trigger/delay config.
+    const raceActiveCfg = char.raceactive || { trigger: 'immediate' };
+    this.racialActive =
+        this.race === 'nightelf' ? new RacialActive(this, "Elune's Light", 180, 15, raceActiveCfg)
+      : this.race === 'gnome' ? new EurekaActive(this, raceActiveCfg)
+      : this.race === 'orc' ? new RacialActive(this, 'Blood Fury', 120, 15, raceActiveCfg)
+      : this.race === 'troll' ? new RacialActive(this, 'Berserking', 180, 10, raceActiveCfg)
+      : null;
+    // Touch of the Grave (Undead racial) -- see procTouchOfGrave().
+    // Wrapped in { log } like every other dmgSources entry sim.js's
+    // compileResults() expects (char.heroic, char.deepWounds, ...).
+    this.touchOfGrave = this.race === 'undead' ?
+        { log: new SwingLog('Touch of the Grave') } : null;
     this.windfury = !!char.wftotem ? new WindfuryAp(char.wftotem) : null;
     this.flurry = new Flurry();
     this.rendDot = new RendDot(this);
@@ -169,6 +199,7 @@ class Character {
       this.stanceReturn,
       this.rendDot,
       this.deepWounds,
+      this.racialActive,
     ]).filter(exists);
 
     this.cooldowns = [...this.events].concat([
@@ -213,22 +244,50 @@ class Character {
   }
 
   // Berserker Stance grants +3% crit; Battle (and, if it mattered here,
-  // Defensive) doesn't.
+  // Defensive) doesn't. Elune's Light (Night Elf racial) adds +10% while
+  // active, on top.
   getCrit() {
-    return this.stats.crit + (this.stance.is.current === 'berserker' ? 3 : 0);
+    const eluneLight = this.race === 'nightelf' && this.racialActive
+        && this.racialActive.active() ? 10 : 0;
+    return this.stats.crit + (this.stance.is.current === 'berserker' ? 3 : 0)
+        + eluneLight;
+  }
+
+  // Weaponmaster (Axe/Polearm) and the Human/Dwarf/Orc weapon-type racials
+  // (Sword/Mace/Axe) all grant flat crit while wielding a qualifying
+  // weapon -- shared by Weapon.setTarget() (per actual weapon) and
+  // Ability.setTarget() (abilities always resolve off the mainhand).
+  weaponTypeCritBonus(type) {
+    let bonus = 0;
+    if (type === 'axe' || type === 'polearm') bonus += this.weaponmaster;
+    if (this.race === 'human' && type === 'sword') bonus += 2;
+    if (this.race === 'dwarf' && type === 'mace') bonus += 1;
+    if (this.race === 'orc' && type === 'axe') bonus += 1;
+    return bonus;
+  }
+
+  // +5% damage against a matching enemy type (Dwarf/Troll vs. Beasts,
+  // Skyborne vs. Elementals) -- see the "Enemy type" setting. Applies
+  // everywhere multiplier() does, same as Death Wish just below; like
+  // Death Wish, this doesn't reach DOT ticks (Rend/Deep Wounds), which
+  // already don't scale with multiplier() at all.
+  racialDamageMul() {
+    const type = this.target.type;
+    if ((this.race === 'dwarf' || this.race === 'troll') && type === 'beast') return 1.05;
+    if (this.race === 'skyborne' && type === 'elemental') return 1.05;
+    return 1;
   }
 
   multiplier() {
-    if (!this.deathwish) return this.weaponspec;
-    if (!this.deathwish.active()) return this.weaponspec;
-    return this.weaponspec * 1.2;
+    const deathWishMul = this.deathwish && this.deathwish.active() ? 1.2 : 1;
+    return this.weaponspec * deathWishMul * this.racialDamageMul();
   }
 
   getAp() {
     let apBuffs = !!this.apOnUse ? this.apOnUse.getAp() : 0;
     // TODO lower WF ranks
     if (this.windfury && this.windfury.running()) apBuffs += this.windfury.ap;
-    
+
     let procStr = 0;
     for (const weapon of this.autos) {
       for (const proc of weapon.strprocs) {
@@ -237,7 +296,12 @@ class Character {
     }
     if (this.ragePotion) procStr += this.ragePotion.getStr();
     if (this.blessingOfKings) procStr *= 1.1;
-    return this.stats.ap + apBuffs + procStr * 2;
+    const total = this.stats.ap + apBuffs + procStr * 2;
+    // Blood Fury (Orc racial): "multiplies total AP... by 1.10" -- applied
+    // last, on top of everything else above.
+    const bloodFury = this.race === 'orc' && this.racialActive
+        && this.racialActive.active() ? 1.1 : 1;
+    return total * bloodFury;
   }
 
   heroicQueued() {
@@ -277,6 +341,32 @@ class Character {
     if (!this.deepWounds) return;
     this.deepWounds.apply();
     Debug.log('Deep Wounds applied: ' + (this.main.avgDmg * this.deepWoundsPercent).toFixed(0) + ' over 12s');
+  }
+
+  // Touch of the Grave (Undead racial): 5% chance per *landed* damaging
+  // melee hit (white or yellow -- hit, crit or glance, not miss/dodge) to
+  // deal 5% of the player's own max HP as magic damage. No internal
+  // cooldown per the source this was ported from. Magic damage, so it
+  // skips armor mitigation entirely. Called from Weapon.swing()'s
+  // hit/crit/glance branches and Ability.swing()'s hit/crit branches.
+  procTouchOfGrave() {
+    if (!this.touchOfGrave) return;
+    if (m.random() > .05) return;
+    const dmg = this.maxHp * .05;
+    this.touchOfGrave.log.dmg += dmg;
+    this.touchOfGrave.log.swings += 1;
+    Debug.log('Touch of the Grave proc: ' + dmg.toFixed(0) + ' magic damage');
+  }
+
+  // Eureka! (Gnome racial): consumes one charge (if any) for the ability
+  // currently being cast -- see Ability.handle()/swing() in abilities.js.
+  // Not called for autoattacks or Heroic Strike (see abilities.js's
+  // HeroicStrike comment) -- a known simplification, not a full port of
+  // "consumes a charge including misses/dodges/non-damaging abilities."
+  consumeEureka() {
+    if (this.racial.eurekaCharges <= 0) return false;
+    this.racial.eurekaCharges -= 1;
+    return true;
   }
 
   // Bloodthrill: "Your melee attacks against targets afflicted by your

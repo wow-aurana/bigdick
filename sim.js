@@ -1,12 +1,12 @@
 'use strict';
 
 importScripts('util.js?v=5');
-importScripts('cooldowns.js?v=8');
+importScripts('cooldowns.js?v=10');
 importScripts('auras.js?v=2');
 importScripts('talents.js?v=4');
-importScripts('weapon.js?v=7');
-importScripts('abilities.js?v=13');
-importScripts('character.js?v=9');
+importScripts('weapon.js?v=9');
+importScripts('abilities.js?v=14');
+importScripts('character.js?v=11');
 
 
 function reportProgress(progress) {
@@ -19,6 +19,7 @@ function compileResults(char) {
   const dmgSources = [...char.autos].concat(char.abilities);
   if (char.heroic) dmgSources.push(char.heroic);
   if (char.deepWounds) dmgSources.push(char.deepWounds);
+  if (char.touchOfGrave) dmgSources.push(char.touchOfGrave);
   res.dmg = dmgSources.reduce((a, s) => a + s.log.dmg, 0);
   res.sources = dmgSources.map((s) => s.log);
 
@@ -70,7 +71,11 @@ function runSimulation(cfg) {
       Debug.time = timer;
       nextEvent.handle();
       char.main.applyFlurry();
-      if (char.off) char.off.applyFlurry();
+      char.main.applyRacialHaste();
+      if (char.off) {
+        char.off.applyFlurry();
+        char.off.applyRacialHaste();
+      }
       char.queueHeroicStrike();
     }
 

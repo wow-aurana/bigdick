@@ -5,13 +5,17 @@ class Weapon {
     this.log = new SwingLog(name);
 
     this.char = char;
-    const speed = stats.speed / (1 + char.stats.haste / 100);
+    // Wind Blessed (Skyborne racial): +1% haste, always on -- folded
+    // straight into gear haste since it never changes mid-fight, unlike
+    // Berserking's temporary haste (see applyRacialHaste() below).
+    const totalHaste = char.stats.haste + (char.race === 'skyborne' ? 1 : 0);
+    const speed = stats.speed / (1 + totalHaste / 100);
     this.cooldown = new Cooldown(speed, name);
 
     this.stats = stats;
     this.avgDmg = (stats.min + stats.max) * .5;
     this.isMainhand = isMainhand;
-    this.is = { flurried: false };
+    this.is = { flurried: false, berserking: false };
     this.table = {};
 
     const crusader = stats.crusader ? new Crusader(stats.speed) : null;
@@ -62,12 +66,8 @@ class Weapon {
     this.table.glance = clamp(0, 100)(glance);
     this.table.glance += this.table.dodge;
 
-    this.table.crit = crit;
-    // Weaponmaster: Axe/Polearm get a flat crit bonus (+1/2/3/4/5%),
-    // specific to whichever weapon is actually that type.
-    if (this.stats.type === 'axe' || this.stats.type === 'polearm') {
-      this.table.crit = clamp(0, 100)(this.table.crit + this.char.weaponmaster);
-    }
+    this.table.crit = clamp(0, 100)(
+        crit + this.char.weaponTypeCritBonus(this.stats.type));
     this.table.crit += this.table.glance;
   }
 
@@ -93,6 +93,7 @@ class Weapon {
   reset() {
     this.cooldown.reset();
     this.is.flurried = false;
+    this.is.berserking = false;
     for (const proc of this.strprocs) { proc.reset(); }
   }
 
@@ -108,7 +109,24 @@ class Weapon {
       this.is.flurried = true;
     }
   }
-  
+
+  // Berserking (Troll racial): +10% autoattack speed while active. Same
+  // toggle-on-state-change pattern as applyFlurry() above, just for a
+  // (usually much longer) racial cooldown window instead of Flurry
+  // charges.
+  applyRacialHaste() {
+    const active = this.char.race === 'troll' && this.char.racialActive
+        && this.char.racialActive.active();
+    if (this.is.berserking && !active) {
+      this.cooldown.time.left *= 1.1;
+      this.is.berserking = false;
+    }
+    if (!this.is.berserking && active) {
+      this.cooldown.time.left /= 1.1;
+      this.is.berserking = true;
+    }
+  }
+
   proc(extraSwing) {
     for (const proc of this.strprocs) { proc.proc(); }
     if (!extraSwing) this.char.procHoJ();
@@ -141,6 +159,7 @@ class Weapon {
   swing(extraSwing = false) {
     this.cooldown.use();
     this.is.flurried = false;  // will be recalculated in main loop
+    this.is.berserking = false;  // ditto -- see applyRacialHaste()
 
     // Extra swings also can be Heroic Strikes
     if (this.isMainhand && this.char.heroicQueued()) {
@@ -187,6 +206,7 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(this.rageGain(dmg));
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
+      this.char.procTouchOfGrave();
       Debug.log(label + ': glancing blow for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
 
@@ -199,6 +219,7 @@ class Weapon {
       this.char.flurry.refresh();
       this.char.procDeepWounds();
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
+      this.char.procTouchOfGrave();
       Debug.log(label + ': critical hit for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
 
@@ -208,6 +229,7 @@ class Weapon {
       this.log.dmg += dmg;
       this.char.rage.gainFromSwing(this.rageGain(dmg));
       if (this.char.extraRageChance > m.random()) this.char.rage.gain(extraRage);
+      this.char.procTouchOfGrave();
       Debug.log(label + ': hit for ' + dmg.toFixed(0)
                 + ' (rage: ' + rageNow() + ')');
     }

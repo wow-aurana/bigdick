@@ -16,6 +16,9 @@ class Ability {
     this.stances = stances;
 
     this.table = {};
+    // Mutable per-cast state, nested (like this.is/this.has elsewhere)
+    // since instances get frozen -- see handle()/effectiveCost()/swing().
+    this.cast = { eurekaBoosted: false };
   }
 
   reset() { this.cooldown.reset(); }
@@ -36,8 +39,16 @@ class Ability {
     this.table.miss = miss;
     this.table.dodge = dodge;
     this.table.dodge += this.table.miss;
-    this.table.crit = crit;
+    // Weaponmaster and the weapon-type racials (Human/Dwarf/Orc) both
+    // apply to abilities too, off the mainhand -- abilities always resolve
+    // against it regardless of which hand a white swing would use.
+    this.table.crit = clamp(0, 100)(
+        crit + this.char.weaponTypeCritBonus(this.char.main.stats.type));
   }
+
+  // Eureka! (Gnome racial): -40% rage cost while a charge applies to this
+  // cast -- see this.cast.eurekaBoosted, set once in handle().
+  effectiveCost() { return this.cost * (this.cast.eurekaBoosted ? .6 : 1); }
 
   timeUntil() {
     return m.max(this.cooldown.timeUntil(), this.char.gcd.timeUntil()) +
@@ -47,9 +58,9 @@ class Ability {
   checkConditions() { return true; }
   checkExecuteConditions() { return false; }
   // Assuming rage refunding is 80%
-  onMiss() { this.char.rage.use(this.cost * .2); }
-  onDodge() { this.char.rage.use(this.cost * .2); }
-  onHit() { this.char.rage.use(this.cost); }
+  onMiss() { this.char.rage.use(this.effectiveCost() * .2); }
+  onDodge() { this.char.rage.use(this.effectiveCost() * .2); }
+  onHit() { this.char.rage.use(this.effectiveCost()); }
 
   inRightStance() {
     return !this.stances || this.stances.includes(this.char.stance.is.current);
@@ -102,7 +113,10 @@ class Ability {
       this.char.procOverpowerDodge();
       Debug.log(label + ': dodged (rage: ' + rageNow() + ')');
     } else {
-      const dmg = this.getDmg() * this.char.armorDmgMul;
+      // Eureka! (Gnome racial): +10% damage while a charge applies to
+      // this cast -- see this.cast.eurekaBoosted, set once in handle().
+      const eurekaMul = this.cast.eurekaBoosted ? 1.1 : 1;
+      const dmg = this.getDmg() * this.char.armorDmgMul * eurekaMul;
       this.onHit();
       const secondRoll = m.random() * 100;
       if (secondRoll < this.table.crit) {
@@ -112,6 +126,7 @@ class Ability {
         this.log.dmg += critDmg;
         this.char.flurry.refresh();
         this.char.procDeepWounds();
+        this.char.procTouchOfGrave();
         Debug.log(label + ': critical hit for ' + critDmg.toFixed(0)
                   + ' (rage: ' + rageNow() + ')');
 
@@ -119,6 +134,7 @@ class Ability {
         this.log.hits += 1;
         this.char.main.proc();
         this.log.dmg += dmg;
+        this.char.procTouchOfGrave();
         Debug.log(label + ': hit for ' + dmg.toFixed(0)
                   + ' (rage: ' + rageNow() + ')');
       }
@@ -131,6 +147,11 @@ class Ability {
     if (this.stances && !this.inRightStance()) {
       this.char.stance.switchTo(this.stances[0]);
     }
+    // Eureka! (Gnome racial): consume a charge (if any) for this cast --
+    // see Character.consumeEureka(). Not called for Heroic Strike, which
+    // bypasses handle() entirely (see HeroicStrike below) -- a known
+    // simplification.
+    this.cast.eurekaBoosted = this.char.consumeEureka();
     this.cooldown.use();
     this.char.gcd.use();
     this.swing();
@@ -151,6 +172,9 @@ class Execute extends Ability {
   }
 
   // TODO verify that rage is refunded correctly
+  // Deliberately not using effectiveCost() here: Execute's rage math is
+  // already special-cased (it resets remaining rage to 0 on hit), and
+  // Eureka!'s cost reduction is documented as not changing that.
   onMiss() { this.char.rage.use(this.cost); }
   onDodge() { this.char.rage.use(this.cost); }
 
@@ -396,7 +420,10 @@ class Whirlwind extends Ability {
     } else if (roll < this.table.dodge) {
       Debug.log(label + ': dodged');
     } else {
-      const dmg = this.getOffhandDmg() * this.char.armorDmgMul;
+      // Shares the main swing's Eureka! charge/bonus (already resolved in
+      // handle(), see this.cast.eurekaBoosted) -- not consumed again here.
+      const eurekaMul = this.cast.eurekaBoosted ? 1.1 : 1;
+      const dmg = this.getOffhandDmg() * this.char.armorDmgMul * eurekaMul;
       if (m.random() * 100 < this.table.crit) {
         const critDmg = dmg * this.char.yellowCritMul;
         this.log.dmg += critDmg;
@@ -412,6 +439,11 @@ class Whirlwind extends Ability {
 }
 
 // Heroic Strike
+// Triggered from Weapon.swing(), which calls this.char.heroic.swing()
+// directly -- handle() (where Eureka! charges get consumed) never runs
+// for Heroic Strike, and this.cast.eurekaBoosted stays permanently false
+// on its own instance, so it never receives or spends an Eureka! charge.
+// A known simplification (see forever-racials-notes.md).
 class HeroicStrike extends Ability {
   constructor(char, usewhen) {
     super(char, char.heroicCost, 0, usewhen, 'Heroic Strike');

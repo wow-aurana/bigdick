@@ -76,6 +76,13 @@ class DeathWish extends CooldownBase {
     this.char.rage.use(30);
     Debug.log('Death Wish activated (rage: '
               + this.char.rage.is.now.toFixed(1) + ')');
+    // "With Death Wish" racial trigger: piggyback the racial active
+    // ability's use onto this one, silently skipped if it's still on its
+    // own cooldown -- see RacialActive in cooldowns.js.
+    const racial = this.char.racialActive;
+    if (racial && racial.trigger === 'deathwish' && !racial.running()) {
+      racial.handle();
+    }
   }
 
   active() { return (this.duration - this.time.left) < 30; }
@@ -99,6 +106,61 @@ class RagePotion extends CooldownBase {
     this.rage.gain(gain);
     Debug.log('Mighty Rage Potion: +' + gain.toFixed(1) + ' rage (rage: '
               + this.rage.is.now.toFixed(1) + ')');
+  }
+}
+
+// Generic on-use racial ability (Elune's Light, Blood Fury, Berserking --
+// Eureka! is a small subclass below). Off the GCD, no rage cost. What the
+// buff window actually *does* (crit, AP, haste...) is read elsewhere via
+// active(), the same pattern Death Wish's own this.char.deathwish.active()
+// already uses -- see Character.getCrit()/getAp() and
+// Weapon.applyRacialHaste().
+//
+// `trigger` (from the "Racial active ability" setting) picks the schedule:
+//  - 'immediate': usable from the start of the fight, then on cooldown.
+//  - 'delayed': not usable until `cfg.seconds` into the fight, then on
+//    cooldown as normal after that first use.
+//  - 'deathwish': never picked by the normal event loop (canUse() is
+//    always false) -- instead Death Wish's own use() calls use() on this
+//    directly, so it only ever fires alongside Death Wish, silently
+//    skipped if still on cooldown at that moment.
+class RacialActive extends CooldownBase {
+  constructor(char, name, duration, uptime, cfg) {
+    super(duration, name);
+    this.char = char;
+    this.uptime = uptime;
+    this.trigger = cfg.trigger;
+    this.delaySeconds = cfg.trigger === 'delayed' ? (cfg.seconds || 0) : 0;
+    this.reset();
+
+    final(this);
+  }
+
+  active() { return this.duration - this.time.left < this.uptime; }
+  canUse() { return this.trigger !== 'deathwish'; }
+
+  handle() {
+    this.use();
+    Debug.log(this.name + ' activated');
+  }
+
+  reset() { this.time.left = this.trigger === 'delayed' ? this.delaySeconds : 0; }
+}
+
+// Eureka! (Gnome): rather than a duration-gated buff, grants 3 charges
+// consumed one at a time by the next 3 abilities -- see
+// Character.consumeEureka() and Ability.handle()/swing() in abilities.js.
+class EurekaActive extends RacialActive {
+  constructor(char, cfg) {
+    super(char, 'Eureka!', 120, 0, cfg);
+
+    final(this);
+  }
+
+  handle() {
+    this.use();
+    this.char.racial.eurekaCharges = 3;
+    Debug.log('Eureka! activated: next 3 abilities cost 40% less rage and deal 10% more damage');
   }
 }
 
