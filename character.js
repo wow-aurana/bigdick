@@ -94,12 +94,18 @@ class Character {
     // Passive-only races (Human, Dwarf, Undead, Tauren, Skyborne) leave
     // this null. See RacialActive/EurekaActive in cooldowns.js and the
     // "Racial active ability" setting for the trigger/delay config.
+    //
+    // Blood Fury triggers the GCD (confirmed: true in vanilla, only
+    // changed in patch 3.0.3 -- Forever is a 1.12 baseline). Berserking
+    // costs 5 rage but has never had a GCD. Elune's Light/Eureka! have
+    // neither, per WarriorSim -- unconfirmed independently, since both are
+    // new to Forever with no Classic precedent to check.
     const raceActiveCfg = char.raceactive || { trigger: 'immediate' };
     this.racialActive =
         this.race === 'nightelf' ? new RacialActive(this, "Elune's Light", 180, 15, raceActiveCfg)
       : this.race === 'gnome' ? new EurekaActive(this, raceActiveCfg)
-      : this.race === 'orc' ? new RacialActive(this, 'Blood Fury', 120, 15, raceActiveCfg)
-      : this.race === 'troll' ? new RacialActive(this, 'Berserking', 180, 10, raceActiveCfg)
+      : this.race === 'orc' ? new RacialActive(this, 'Blood Fury', 120, 15, raceActiveCfg, { onGcd: true })
+      : this.race === 'troll' ? new RacialActive(this, 'Berserking', 180, 10, raceActiveCfg, { rageCost: 5 })
       : null;
     // Touch of the Grave (Undead racial) -- see procTouchOfGrave().
     // Wrapped in { log } like every other dmgSources entry sim.js's

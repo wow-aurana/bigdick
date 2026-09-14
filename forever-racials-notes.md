@@ -39,23 +39,45 @@ not something new here).
 
 ## Active abilities
 
-Four races get an on-use ability. All are off the GCD and cost no rage
-(per WarriorSim's own notes). The **Racial active ability** setting picks
-when it's used, shared across whichever race actually has one:
+Four races get an on-use ability. The **Racial active ability** setting
+picks when it's used, shared across whichever race actually has one:
 - **Immediately (on cooldown)**: usable from the start of the fight, then
   reused every time it's off cooldown.
-- **With Death Wish**: fires in lockstep with Death Wish's own activation
-  instead of its own schedule, silently skipped if still on cooldown at
-  that moment.
+- **With Death Wish**: not eligible on its own schedule at all -- instead
+  Death Wish's own activation arms it, and the normal event loop fires it
+  as soon as it's actually eligible afterward (immediately, for a GCD-free
+  racial; after Death Wish's own GCD clears, for Blood Fury -- see below).
+  Silently skipped (never armed) if still on cooldown at that moment.
 - **X seconds into the fight**: delayed first use, then on cooldown as
   normal after that.
 
-| Race | Ability | Effect | Cooldown | Status |
-| --- | --- | --- | --- | --- |
-| Night Elf | Elune's Light | +10% crit, 15s | 3 min | Confirmed value/duration; cooldown is WarriorSim's own guess |
-| Gnome | Eureka! | Next 3 abilities: -40% rage cost, +10% damage | 2 min | +10% damage confirmed; -40% cost and cooldown are WarriorSim's own guesses |
-| Orc | Blood Fury | +10% total AP (multiplicative, applied last), 15s | 2 min | +10%/15s confirmed for Forever specifically -- note this is *not* Classic's real Blood Fury (+25% melee AP, 2 min CD, -50% healing taken for 25s); Forever's version is reworked. Cooldown assumed from Classic, not confirmed for Forever. |
-| Troll | Berserking | +10% autoattack speed (fixed, no longer health-scaling like Classic), 10s | 3 min | +10%/10s confirmed for Forever; cooldown assumed from Classic (raised from 2 to 3 min at some point), not confirmed for Forever |
+GCD and rage cost are **not** uniform across the four -- confirmed via
+real Classic patch history, not assumed:
+- **Blood Fury triggers the GCD.** This was true throughout vanilla/1.12;
+  it only stopped triggering the GCD in patch 3.0.3 (2008-11-04, shortly
+  before Wrath), well after Classic's baseline. Since Forever is a 1.12
+  ruleset, Blood Fury keeps the GCD here. Confirmed independently via web
+  search *and* by WarriorSim's own code (`player.timer = 1500` in its
+  `BloodFury.use()`) -- both agree.
+- **Berserking has never had a GCD**, but costs 5 rage to activate (also
+  confirmed independently and by WarriorSim's code, which sets
+  `player.rage -= 5` with no GCD line).
+- **Elune's Light and Eureka! have neither** -- per WarriorSim's own
+  notes, stated flatly rather than hedged like some of its other
+  provisional values, but still not independently confirmed here since
+  both are new to Forever with no Classic precedent to check.
+
+Verified: with Blood Fury set to "with Death Wish", it now lands exactly
+1.50s after Death Wish's own timestamp every time (waiting out the GCD
+Death Wish itself just used), where it used to fire at the identical
+timestamp before this was caught and fixed.
+
+| Race | Ability | Effect | Cooldown | GCD | Rage cost | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| Night Elf | Elune's Light | +10% crit, 15s | 3 min | No | No | Effect confirmed; cooldown is WarriorSim's own guess |
+| Gnome | Eureka! | Next 3 abilities: -40% rage cost, +10% damage | 2 min | No | No | +10% damage confirmed; -40% cost and cooldown are WarriorSim's own guesses |
+| Orc | Blood Fury | +10% total AP (multiplicative, applied last), 15s | 2 min | **Yes, 1.5s** | No | +10%/15s confirmed for Forever specifically -- note this is *not* Classic's real Blood Fury (+25% melee AP, 2 min CD, -50% healing taken for 25s); Forever's version is reworked. Cooldown assumed from Classic, not confirmed for Forever. |
+| Troll | Berserking | +10% autoattack speed (fixed, no longer health-scaling like Classic), 10s | 3 min | No | **Yes, 5** | +10%/10s confirmed for Forever; cooldown assumed from Classic (raised from 2 to 3 min at some point), not confirmed for Forever |
 
 Eureka!'s charge consumption is implemented at the shared `Ability` level
 (`this.cast.eurekaBoosted`, set once in `handle()`), covering Mortal

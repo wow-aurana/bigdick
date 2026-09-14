@@ -76,12 +76,13 @@ class DeathWish extends CooldownBase {
     this.char.rage.use(30);
     Debug.log('Death Wish activated (rage: '
               + this.char.rage.is.now.toFixed(1) + ')');
-    // "With Death Wish" racial trigger: piggyback the racial active
-    // ability's use onto this one, silently skipped if it's still on its
-    // own cooldown -- see RacialActive in cooldowns.js.
+    // "With Death Wish" racial trigger: arm the racial active ability,
+    // silently skipped if it's still on its own cooldown -- the normal
+    // event loop actually fires it (see RacialActive.arm()/canUse() in
+    // cooldowns.js for why this isn't a direct call).
     const racial = this.char.racialActive;
     if (racial && racial.trigger === 'deathwish' && !racial.running()) {
-      racial.handle();
+      racial.arm();
     }
   }
 
@@ -110,41 +111,71 @@ class RagePotion extends CooldownBase {
 }
 
 // Generic on-use racial ability (Elune's Light, Blood Fury, Berserking --
-// Eureka! is a small subclass below). Off the GCD, no rage cost. What the
-// buff window actually *does* (crit, AP, haste...) is read elsewhere via
-// active(), the same pattern Death Wish's own this.char.deathwish.active()
-// already uses -- see Character.getCrit()/getAp() and
-// Weapon.applyRacialHaste().
+// Eureka! is a small subclass below). What the buff window actually *does*
+// (crit, AP, haste...) is read elsewhere via active(), the same pattern
+// Death Wish's own this.char.deathwish.active() already uses -- see
+// Character.getCrit()/getAp() and Weapon.applyRacialHaste().
+//
+// `options.onGcd`/`options.rageCost` model real, confirmed-by-history
+// mechanics: Blood Fury triggered the GCD in vanilla (that only changed in
+// patch 3.0.3, well after Classic's 1.12 baseline, so Forever/Classic
+// still has the GCD version) and costs no rage; Berserking has never had a
+// GCD but costs 5 rage. Elune's Light/Eureka! have neither, per WarriorSim
+// (unconfirmed independently -- both are new Forever-only abilities with
+// no Classic precedent to check).
 //
 // `trigger` (from the "Racial active ability" setting) picks the schedule:
 //  - 'immediate': usable from the start of the fight, then on cooldown.
 //  - 'delayed': not usable until `cfg.seconds` into the fight, then on
 //    cooldown as normal after that first use.
-//  - 'deathwish': never picked by the normal event loop (canUse() is
-//    always false) -- instead Death Wish's own use() calls use() on this
-//    directly, so it only ever fires alongside Death Wish, silently
-//    skipped if still on cooldown at that moment.
+//  - 'deathwish': not eligible on its own schedule (canUse() stays false)
+//    until Death Wish's own use() calls arm() on it. Once armed, the
+//    normal event loop picks it up like anything else -- immediately for
+//    a GCD-free racial (so it still lands at the same timestamp as Death
+//    Wish), or after Death Wish's own GCD clears for Blood Fury, since a
+//    GCD ability genuinely can't fire in the same instant as another one.
+//    Skipped (never armed) if still on cooldown at that moment.
 class RacialActive extends CooldownBase {
-  constructor(char, name, duration, uptime, cfg) {
+  constructor(char, name, duration, uptime, cfg, options = {}) {
     super(duration, name);
     this.char = char;
     this.uptime = uptime;
     this.trigger = cfg.trigger;
     this.delaySeconds = cfg.trigger === 'delayed' ? (cfg.seconds || 0) : 0;
+    this.onGcd = !!options.onGcd;
+    this.rageCost = options.rageCost || 0;
+    this.is = { armed: false };
     this.reset();
 
     final(this);
   }
 
   active() { return this.duration - this.time.left < this.uptime; }
-  canUse() { return this.trigger !== 'deathwish'; }
+
+  canUse() {
+    if (this.trigger === 'deathwish' && !this.is.armed) return false;
+    return this.char.rage.has(this.rageCost);
+  }
+
+  timeUntil() {
+    return this.onGcd ? m.max(this.time.left, this.char.gcd.timeUntil()) : this.time.left;
+  }
+
+  arm() { this.is.armed = true; }
 
   handle() {
     this.use();
-    Debug.log(this.name + ' activated');
+    this.is.armed = false;
+    if (this.onGcd) this.char.gcd.use();
+    if (this.rageCost) this.char.rage.use(this.rageCost);
+    Debug.log(this.name + ' activated'
+              + (this.rageCost ? ' (rage: ' + this.char.rage.is.now.toFixed(1) + ')' : ''));
   }
 
-  reset() { this.time.left = this.trigger === 'delayed' ? this.delaySeconds : 0; }
+  reset() {
+    this.time.left = this.trigger === 'delayed' ? this.delaySeconds : 0;
+    this.is.armed = false;
+  }
 }
 
 // Eureka! (Gnome): rather than a duration-gated buff, grants 3 charges
@@ -159,6 +190,7 @@ class EurekaActive extends RacialActive {
 
   handle() {
     this.use();
+    this.is.armed = false;
     this.char.racial.eurekaCharges = 3;
     Debug.log('Eureka! activated: next 3 abilities cost 40% less rage and deal 10% more damage');
   }
