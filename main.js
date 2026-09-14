@@ -7,7 +7,12 @@ const audioURL = 'https://www.myinstants.com/media/sounds/anime-wow-sound-effect
 // the wrong theme). Kept in its own localStorage key rather than folded
 // into the form's saveSettings()/loadSettings(), since it's a display
 // preference rather than a simulation input.
-const THEME_KEY = 'bigdickTheme';
+// "Forever"-namespaced (unlike the base sim's plain "bigdick..." keys)
+// since this and the base sim share one GitHub Pages origin
+// (wow-aurana.github.io/bigdick/ vs /bigdick/forever/) -- localStorage
+// and BroadcastChannel are both origin-scoped, not path-scoped, so an
+// un-namespaced key would be shared state between the two.
+const THEME_KEY = 'bigdickForeverTheme';
 const darkmodeCheckbox = getElement('darkmode');
 darkmodeCheckbox.checked = !document.documentElement.classList.contains('light-mode');
 darkmodeCheckbox.addEventListener('change', () => {
@@ -26,10 +31,10 @@ darkmodeCheckbox.addEventListener('change', () => {
 // toggle above: restoring a checked state via loadSettings()'s .click()
 // would try to window.open() outside of a user gesture on page load and get
 // silently swallowed by the popup blocker, so this always starts unchecked.
-const debugChannel = new BroadcastChannel('bigdickDebug');
+const debugChannel = new BroadcastChannel('bigdickForeverDebug');
 const debugCheckbox = getElement('debuglog');
 debugCheckbox.addEventListener('change', () => {
-  if (debugCheckbox.checked) window.open('debug.html', 'bigdickDebug');
+  if (debugCheckbox.checked) window.open('debug.html', 'bigdickForeverDebug');
 });
 
 const output = new Output();
@@ -365,7 +370,7 @@ function updateTalentsSummary() {
 updateTalentsSummary();
 window.addEventListener('focus', updateTalentsSummary);
 window.addEventListener('storage', (e) => {
-  if (e.key === 'bigdickTalents') updateTalentsSummary();
+  if (e.key === 'bigdickForeverTalents') updateTalentsSummary();
 });
 
 // Some abilities only make sense once a specific talent is spent: Mortal
@@ -413,5 +418,5 @@ function updateTalentGating() {
 updateTalentGating();
 window.addEventListener('focus', updateTalentGating);
 window.addEventListener('storage', (e) => {
-  if (e.key === 'bigdickTalents') updateTalentGating();
+  if (e.key === 'bigdickForeverTalents') updateTalentGating();
 });

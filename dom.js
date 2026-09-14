@@ -10,10 +10,10 @@ function getRadioValue(name) {
 }
 
 // Talent selection made on talents.html; see TALENTS_STORAGE_KEY in
-// talent-picker.js.
+// talent-picker.js -- the key here must match it.
 function getTalents() {
   try {
-    return JSON.parse(localStorage.getItem('bigdickTalents')) || {};
+    return JSON.parse(localStorage.getItem('bigdickForeverTalents')) || {};
   } catch (e) {
     return {};
   }
@@ -132,7 +132,9 @@ class WeaponCheckbox extends Checkbox {
 // weapon slot has a "min"/"max"/"speed"/"skill"), so `name` alone isn't a
 // stable key. We key on `id` when present, otherwise on the element's first
 // CSS class (the group it belongs to, matching a Checkbox id) plus `name`.
-const SETTINGS_KEY = 'bigdickSettings';
+// "Forever"-namespaced since this sim shares a GitHub Pages origin with
+// the base Classic sim (localStorage is origin-, not path-, scoped).
+const SETTINGS_KEY = 'bigdickForeverSettings';
 
 function settingsKey(el) {
   if (el.id) return 'id:' + el.id;

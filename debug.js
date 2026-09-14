@@ -8,7 +8,11 @@ const logEl = document.getElementById('log');
 const statusEl = document.getElementById('status');
 const runButton = document.getElementById('run');
 
-const channel = new BroadcastChannel('bigdickDebug');
+// Namespaced with "Forever" (unlike the plain "bigdick..." keys/channels
+// in the base sim) since this and the base sim are published under the
+// same GitHub Pages origin (wow-aurana.github.io) -- an un-namespaced
+// name would be shared storage/broadcast state between the two.
+const channel = new BroadcastChannel('bigdickForeverDebug');
 channel.onmessage = (e) => {
   const msg = e.data;
   if (msg.type === 'reset') {

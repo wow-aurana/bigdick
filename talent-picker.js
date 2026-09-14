@@ -4,7 +4,11 @@
 // the main sim page reads (see collectInputs() in main.js), so points spent
 // here are picked up by the sim immediately -- no copy/pasting a spec URL.
 
-const TALENTS_STORAGE_KEY = 'bigdickTalents';
+// "Forever"-namespaced since this sim and the base Classic sim share one
+// GitHub Pages origin (wow-aurana.github.io) -- localStorage is
+// origin-scoped, not path-scoped, so an un-namespaced key would be
+// shared state between the two. Must match dom.js's getTalents().
+const TALENTS_STORAGE_KEY = 'bigdickForeverTalents';
 const CELL_SIZE = 46; // must match --cell in talents.css
 const CELL_PITCH = CELL_SIZE + 18; // CELL_SIZE + --gap in talents.css
 
